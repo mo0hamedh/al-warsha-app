@@ -1,0 +1,49 @@
+name: el_warsha
+description: "تطبيق الورشة لإدارة المهام"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.7.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  
+  # مكتبات Firebase
+  firebase_core: ^3.10.1
+  firebase_auth: ^5.4.1
+  cloud_firestore: ^5.6.1
+  google_sign_in: ^6.2.2
+  
+  # مكتبات إضافية
+  provider: ^6.1.5
+  go_router: ^17.0.0
+  intl: ^0.19.0
+  flutter_localizations:
+    sdk: flutter
+  uuid: ^4.5.3
+  confetti: ^0.8.0
+  google_fonts: ^6.3.2
+  shared_preferences: ^2.5.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  integration_test:
+    sdk: flutter
+  flutter_launcher_icons: ^0.13.1
+
+flutter_icons:
+  image_path: "assets/icons/app_logo.png"
+  android: true
+  ios: true
+  web:
+    generate: true
+
+flutter:
+  uses-material-design: true
+
+

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "766301000676",
+    "project_id": "al-wershah",
+    "storage_bucket": "al-wershah.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:766301000676:android:b55f2fb6480624c2f8edf1",
+        "android_client_info": {
+          "package_name": "com.elwarsha.el_warsha"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBv61vm0R5IfwZY9-gsSs3Yx0YSd_5IIbo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

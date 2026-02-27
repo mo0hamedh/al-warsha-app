@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../services/auth_service.dart';
 import '../../providers/theme_provider.dart';
 import '../home_screen.dart';
@@ -264,6 +265,86 @@ class _LoginScreenState extends State<LoginScreen> {
                             },
                             child: Text('ليس لديك حساب؟ إنشاء حساب جديد', style: GoogleFonts.cairo(color: theme.accentOrange, fontWeight: FontWeight.bold)),
                           ),
+
+                          // ━━━━━━━━━━━━━━━━━━━━
+                          // 1. معلومات الإصدار والمطور:
+                          // ━━━━━━━━━━━━━━━━━━━━
+                          const SizedBox(height: 32),
+                          const Divider(color: Colors.white12),
+                          const SizedBox(height: 16),
+                          Text(
+                            "تطوير: Mohamed Hosam",
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.cairo(
+                              color: Colors.grey,
+                              fontSize: 12,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            "الإصدار 1.0.0",
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.cairo(
+                              color: Colors.grey.withOpacity(0.6),
+                              fontSize: 11,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              GestureDetector(
+                                onTap: () => launchUrl(
+                                  Uri.parse('https://t.me/engmohamedhosam'),
+                                  mode: LaunchMode.externalApplication,
+                                ),
+                                child: Container(
+                                  width: 36,
+                                  height: 36,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF1E1E1E),
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(color: Colors.white12),
+                                  ),
+                                  child: const Icon(
+                                    Icons.telegram,
+                                    color: Color(0xFF29B6F6),
+                                    size: 20,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              GestureDetector(
+                                onTap: () => launchUrl(
+                                  Uri.parse('https://www.instagram.com/eng.mohamedhosam'),
+                                  mode: LaunchMode.externalApplication,
+                                ),
+                                child: Container(
+                                  width: 36,
+                                  height: 36,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF1E1E1E),
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(color: Colors.white12),
+                                    gradient: const LinearGradient(
+                                      colors: [
+                                        Color(0xFF833AB4),
+                                        Color(0xFFF77737),
+                                      ],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    ),
+                                  ),
+                                  child: const Icon(
+                                    Icons.camera_alt,
+                                    color: Colors.white,
+                                    size: 20,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 24),
                         ],
                       ),
                     ),

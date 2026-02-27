@@ -62,6 +62,12 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
     }
   }
 
+  // Fields for Notifications Tab
+  final TextEditingController _notifTitleController = TextEditingController();
+  final TextEditingController _notifBodyController = TextEditingController();
+  String _notifTargetGroup = 'الكل';
+
+
   @override
   void initState() {
     super.initState();
@@ -75,7 +81,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
     final theme = context.watch<ThemeProvider>();
     
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         backgroundColor: theme.bg,
         appBar: AppBar(
@@ -91,6 +97,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
             tabs: const [
               Tab(text: 'الجداول', icon: Icon(Icons.calendar_month)),
               Tab(text: 'الاشتراكات', icon: Icon(Icons.workspace_premium)),
+              Tab(text: 'إشعارات', icon: Icon(Icons.campaign)),
             ],
           ),
         ),
@@ -98,6 +105,88 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
           children: [
             _buildSchedulesTab(theme),
             _buildSubscriptionsTab(theme),
+            _buildNotificationsTab(theme),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNotificationsTab(ThemeProvider theme) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24),
+      child: Directionality(
+        textDirection: TextDirection.rtl,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('📢 إرسال إشعار جديد', style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 22, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 24),
+            TextField(
+              controller: _notifTitleController,
+              style: TextStyle(color: theme.primaryText),
+              decoration: InputDecoration(
+                labelText: 'عنوان الإشعار',
+                labelStyle: TextStyle(color: theme.textSecondary),
+                filled: true,
+                fillColor: theme.card,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _notifBodyController,
+              maxLines: 4,
+              style: TextStyle(color: theme.primaryText),
+              decoration: InputDecoration(
+                labelText: 'نص الإشعار',
+                labelStyle: TextStyle(color: theme.textSecondary),
+                filled: true,
+                fillColor: theme.card,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Text('إرسال إلى:', style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 16)),
+                const SizedBox(width: 16),
+                DropdownButton<String>(
+                  value: _notifTargetGroup,
+                  dropdownColor: theme.card,
+                  style: GoogleFonts.cairo(color: theme.primaryText, fontWeight: FontWeight.bold),
+                  items: ['الكل', 'المشتركين فقط', 'غير المشتركين'].map((g) => DropdownMenuItem(value: g, child: Text(g))).toList(),
+                  onChanged: (val) {
+                    if (val != null) setState(() => _notifTargetGroup = val);
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 32),
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                onPressed: () async {
+                  final title = _notifTitleController.text.trim();
+                  final body = _notifBodyController.text.trim();
+                  if (title.isEmpty || body.isEmpty) return;
+
+                  await _dbService.sendNotificationToAll(title, body, _notifTargetGroup);
+                  
+                  if (!mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('تم الإرسال بنجاح', style: GoogleFonts.cairo())));
+                  _notifTitleController.clear();
+                  _notifBodyController.clear();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.accentOrange,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  elevation: 5,
+                ),
+                child: Text('إرسال 📢', style: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+              ),
+            ),
           ],
         ),
       ),

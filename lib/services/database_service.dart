@@ -5,7 +5,9 @@ import '../models/task_model.dart';
 import '../models/category_data.dart';
 import '../models/habit_model.dart';
 import '../models/schedule_model.dart';
+import '../models/study_room_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:math';
 
 class DatabaseService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -189,6 +191,25 @@ class DatabaseService {
       await _db.collection('users').doc(friendUid).update({
         'friendRequests': FieldValue.arrayUnion([currentUid]),
       });
+
+      // إرسال إشعار داخل التطبيق
+      final senderDoc = await _db.collection('users').doc(currentUid).get();
+      final senderName = senderDoc.data()?['name'] ?? 'مستخدم';
+      
+      await _db
+        .collection('notifications')
+        .doc(friendUid)
+        .collection('items')
+        .add({
+          'type': 'friend_request',
+          'fromName': senderName,
+          'fromId': currentUid,
+          'title': '👥 طلب صداقة جديد',
+          'body': '$senderName يريد إضافتك كصديق',
+          'isRead': false,
+          'createdAt': Timestamp.now(),
+        });
+
       return null; // null = success
     } catch (e) {
       return 'حدث خطأ: $e';
@@ -437,6 +458,7 @@ class DatabaseService {
         .collection('users')
         .doc(userId)
         .collection('habits')
+        .limit(50)
         .snapshots()
         .map((snapshot) {
       return snapshot.docs.map((doc) => HabitModel.fromMap(doc.data(), doc.id)).toList();
@@ -756,9 +778,249 @@ class DatabaseService {
        // Return Top 10
        return rankings.take(10).toList();
        
-     } catch (e) {
+      } catch (e) {
         debugPrint('Error fetching weekly leaderboard: $e');
         return [];
      }
+  }
+
+  // ── الإشعارات (Notifications) ──────────────────────────────────────
+  Stream<List<Map<String, dynamic>>> getUserNotifications(String uid) {
+    return _db
+      .collection('notifications')
+      .doc(uid)
+      .collection('items')
+      .orderBy('createdAt', descending: true)
+      .snapshots()
+      .map((snapshot) => snapshot.docs.map((doc) {
+            final data = doc.data();
+            data['id'] = doc.id;
+            return data;
+          }).toList());
+  }
+
+  Future<void> markNotificationAsRead(String uid, String notificationId) async {
+    try {
+      await _db
+        .collection('notifications')
+        .doc(uid)
+        .collection('items')
+        .doc(notificationId)
+        .update({'isRead': true});
+    } catch (e) {
+      debugPrint('Error marking notification read: $e');
+    }
+  }
+
+  Future<void> sendNotificationToAll(String title, String body, String targetGroup) async {
+    try {
+      Query<Map<String, dynamic>> query = _db.collection('users');
+      
+      if (targetGroup == 'المشتركين فقط') {
+        query = query.where('isPremium', isEqualTo: true);
+      } else if (targetGroup == 'غير المشتركين') {
+        query = query.where('isPremium', isEqualTo: false);
+      }
+
+      final snapshot = await query.get();
+      
+      // We will loop and add to each user's notifications collection
+      final batch = _db.batch();
+      int count = 0;
+
+      for (var doc in snapshot.docs) {
+        final userId = doc.id;
+        final notifRef = _db.collection('notifications').doc(userId).collection('items').doc();
+        batch.set(notifRef, {
+          'type': 'broadcast',
+          'title': title,
+          'body': body,
+          'isRead': false,
+          'createdAt': Timestamp.now(),
+        });
+        
+        count++;
+        // Commit in chunks of 500 if the app scales (Firestore limit)
+        if (count % 450 == 0) {
+           await batch.commit();
+        }
+      }
+      
+      if (count % 450 != 0) {
+        await batch.commit();
+      }
+      
+    } catch (e) {
+      debugPrint('Error sending broadcast: $e');
+    }
+  }
+
+  // ── Study Room Methods ──────────────────────────────────────────
+
+  Future<String> createStudyRoom(String userId, String userName) async {
+    final random = Random();
+    final String roomCode = (1000 + random.nextInt(9000)).toString(); // 4 digits
+    
+    final member = StudyRoomMemberModel(
+      userId: userId,
+      name: userName,
+      joinedAt: Timestamp.now(),
+      isReady: true, // host is ready by default
+    );
+
+    final roomData = {
+      'hostId': userId,
+      'hostName': userName,
+      'roomCode': roomCode,
+      'status': 'waiting',
+      'sessionType': 'focus',
+      'timerDuration': 1500, // 25 mins
+      'timerStartedAt': null,
+      'members': [member.toMap()],
+      'maxMembers': 2,
+      'createdAt': Timestamp.now(),
+    };
+
+    final docRef = _db.collection('studyRooms').doc();
+    await docRef.set(roomData);
+    
+    return roomCode;
+  }
+
+  Future<bool> joinStudyRoom(String roomCode, String userId, String userName) async {
+    try {
+      final query = await _db.collection('studyRooms').where('roomCode', isEqualTo: roomCode).limit(1).get();
+      if (query.docs.isEmpty) return false;
+      
+      final doc = query.docs.first;
+      final room = StudyRoomModel.fromMap(doc.data(), doc.id);
+      
+      if (room.members.length >= room.maxMembers) return false;
+      if (room.members.any((m) => m.userId == userId)) return true;
+
+      final newMember = StudyRoomMemberModel(
+        userId: userId,
+        name: userName,
+        joinedAt: Timestamp.now(),
+        isReady: false,
+      );
+
+      await doc.reference.update({
+        'members': FieldValue.arrayUnion([newMember.toMap()])
+      });
+      return true;
+    } catch (e) {
+      debugPrint('Error joining room: $e');
+      return false;
+    }
+  }
+
+  Stream<StudyRoomModel?> getStudyRoom(String roomCode) {
+    return _db.collection('studyRooms').where('roomCode', isEqualTo: roomCode).snapshots().map((snapshot) {
+      if (snapshot.docs.isEmpty) return null;
+      return StudyRoomModel.fromMap(snapshot.docs.first.data(), snapshot.docs.first.id);
+    });
+  }
+
+  Future<void> startTimer(String roomCode, int durationSeconds, String type) async {
+    final query = await _db.collection('studyRooms').where('roomCode', isEqualTo: roomCode).limit(1).get();
+    if (query.docs.isNotEmpty) {
+      await query.docs.first.reference.update({
+        'status': 'studying',
+        'timerStartedAt': Timestamp.now(),
+      });
+    }
+  }
+
+  Future<void> updateRoomSettings(String roomCode, int durationSeconds, String type) async {
+    final query = await _db.collection('studyRooms').where('roomCode', isEqualTo: roomCode).limit(1).get();
+    if (query.docs.isNotEmpty) {
+      await query.docs.first.reference.update({
+        'timerDuration': durationSeconds,
+        'sessionType': type,
+      });
+    }
+  }
+
+  Future<void> endSession(String roomCode) async {
+    final query = await _db.collection('studyRooms').where('roomCode', isEqualTo: roomCode).limit(1).get();
+    if (query.docs.isNotEmpty) {
+      await query.docs.first.reference.update({
+        'status': 'ended',
+      });
+      
+      Future.delayed(const Duration(seconds: 5), () async {
+        try {
+          final check = await query.docs.first.reference.get();
+          if (check.exists) {
+            await query.docs.first.reference.delete();
+          }
+        } catch (_) {}
+      });
+    }
+  }
+
+  Future<void> resetSession(String roomCode) async {
+    final query = await _db.collection('studyRooms').where('roomCode', isEqualTo: roomCode).limit(1).get();
+    if (query.docs.isNotEmpty) {
+      final docRef = query.docs.first.reference;
+      final room = StudyRoomModel.fromMap(query.docs.first.data(), query.docs.first.id);
+      
+      // Reset ready status of all non-host members
+      List<Map<String, dynamic>> updatedMembers = room.members.map((m) {
+        return StudyRoomMemberModel(
+          userId: m.userId,
+          name: m.name,
+          joinedAt: m.joinedAt,
+          isReady: m.userId == room.hostId, // Host is always ready
+        ).toMap();
+      }).toList();
+
+      await docRef.update({
+        'status': 'waiting',
+        'timerStartedAt': null,
+        'members': updatedMembers,
+      });
+    }
+  }
+
+  Future<void> leaveRoom(String roomCode, String userId) async {
+    final query = await _db.collection('studyRooms').where('roomCode', isEqualTo: roomCode).limit(1).get();
+    if (query.docs.isEmpty) return;
+    
+    final docRefs = query.docs.first;
+    final room = StudyRoomModel.fromMap(docRefs.data(), docRefs.id);
+    
+    final updatedMembers = room.members.where((m) => m.userId != userId).toList();
+    
+    if (updatedMembers.isEmpty || room.hostId == userId) {
+      await docRefs.reference.delete();
+    } else {
+      await docRefs.reference.update({
+        'members': updatedMembers.map((m) => m.toMap()).toList()
+      });
+    }
+  }
+
+  Future<void> toggleMemberReadyStatus(String roomCode, String userId) async {
+    final query = await _db.collection('studyRooms').where('roomCode', isEqualTo: roomCode).limit(1).get();
+    if (query.docs.isEmpty) return;
+    
+    final docRef = query.docs.first.reference;
+    final room = StudyRoomModel.fromMap(query.docs.first.data(), query.docs.first.id);
+    
+    List<Map<String, dynamic>> updatedMembers = room.members.map((m) {
+      if (m.userId == userId) {
+        return StudyRoomMemberModel(
+          userId: m.userId,
+          name: m.name,
+          joinedAt: m.joinedAt,
+          isReady: !m.isReady,
+        ).toMap();
+      }
+      return m.toMap();
+    }).toList();
+
+    await docRef.update({'members': updatedMembers});
   }
 }

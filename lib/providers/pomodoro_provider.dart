@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:hive/hive.dart';
 import '../services/auth_service.dart';
 import '../services/database_service.dart';
+import '../services/connectivity_service.dart';
 
 class PomodoroProvider extends ChangeNotifier {
   final AuthService _authService;
@@ -26,7 +28,15 @@ class PomodoroProvider extends ChangeNotifier {
 
   double get progress => _remainingSeconds / _currentDuration;
 
-  PomodoroProvider(this._authService);
+  StreamSubscription? _connectivitySubscription;
+
+  PomodoroProvider(this._authService) {
+    _connectivitySubscription = ConnectivityService.onlineStatus.listen((isOnline) {
+      if (isOnline) {
+        _syncPendingSessions();
+      }
+    });
+  }
 
   void startTimer() {
     if (_isRunning) return;
@@ -73,7 +83,25 @@ class PomodoroProvider extends ChangeNotifier {
     if (user != null) {
       final minutes = (_currentDuration / 60).round();
       final type = _isRestMode ? 'break' : 'focus';
-      await _dbService.saveFocusSession(user.uid, minutes, type);
+      
+      final session = {
+        'date': DateTime.now().toIso8601String(),
+        'uid': user.uid,
+        'duration': minutes,
+        'type': type,
+        'synced': false,
+      };
+
+      // احفظ محلياً دائماً
+      final box = Hive.box('settings');
+      final pending = List<Map<dynamic, dynamic>>.from(box.get('pending_sessions', defaultValue: []));
+      pending.add(session);
+      await box.put('pending_sessions', pending);
+
+      // لو المتصل ارفع فوراً
+      if (await ConnectivityService.isOnline()) {
+        await _syncPendingSessions();
+      }
     }
 
     // Reset timer to original duration
@@ -81,8 +109,35 @@ class PomodoroProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> _syncPendingSessions() async {
+    final box = Hive.box('settings');
+    final pending = List<Map<dynamic, dynamic>>.from(box.get('pending_sessions', defaultValue: []));
+    bool hasChanges = false;
+
+    for (var i = 0; i < pending.length; i++) {
+      var session = pending[i];
+      if (session['synced'] == false) {
+        try {
+          // This requires DatabaseService to accept the uid parameter. Since earlier signatures did:
+          await _dbService.saveFocusSession(session['uid'], session['duration'], session['type']);
+          session['synced'] = true;
+          hasChanges = true;
+        } catch(e) {
+          debugPrint('Error syncing session: $e');
+        }
+      }
+    }
+
+    if (hasChanges) {
+      // Remove synced items from local or just keep them synced (we'll cleanly remove to save space)
+      final remaining = pending.where((s) => s['synced'] == false).toList();
+      await box.put('pending_sessions', remaining);
+    }
+  }
+
   @override
   void dispose() {
+    _connectivitySubscription?.cancel();
     _timer?.cancel();
     super.dispose();
   }

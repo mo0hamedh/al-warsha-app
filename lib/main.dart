@@ -7,7 +7,19 @@ import 'services/auth_service.dart';
 import 'providers/task_provider.dart';
 import 'providers/pomodoro_provider.dart';
 import 'providers/theme_provider.dart';
+import 'providers/theme_provider.dart';
 import 'screens/auth_wrapper.dart';
+import 'screens/study_room_screen.dart';
+import 'services/notification_service.dart';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:flutter/foundation.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import 'models/user_model.dart';
+import 'models/habit_model.dart';
+import 'services/database_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,7 +28,28 @@ void main() async {
       options: DefaultFirebaseOptions.currentPlatform,
     );
   }
+
+  // تحميل الخطوط مسبقاً للويب لتحسين الأداء
+  if (kIsWeb) {
+    await GoogleFonts.pendingFonts([
+      GoogleFonts.cairo(),
+      GoogleFonts.tajawal(),
+    ]);
+  }
   
+  // تفعيل الـ offline persistence
+  FirebaseFirestore.instance.settings = const Settings(
+    persistenceEnabled: true,
+    cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
+  );
+
+  // تهيئة Hive للبيانات المحلية
+  await Hive.initFlutter();
+  await Hive.openBox('tasks');
+  await Hive.openBox('habits');
+  await Hive.openBox('settings');
+
+  await NotificationService.init();
   runApp(
     MultiProvider(
       providers: [
@@ -30,6 +63,24 @@ void main() async {
           update: (context, auth, previous) => previous ?? PomodoroProvider(auth),
         ),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        
+        // ── Global Streams Optimization ──
+        StreamProvider<UserModel?>(
+          create: (context) {
+            final auth = context.read<AuthService>();
+            if (auth.currentUser == null) return const Stream.empty();
+            return DatabaseService().getUserProfile(auth.currentUser!.uid);
+          },
+          initialData: null,
+        ),
+        StreamProvider<List<HabitModel>>(
+          create: (context) {
+            final auth = context.read<AuthService>();
+            if (auth.currentUser == null) return const Stream.empty();
+            return DatabaseService().getUserHabits(auth.currentUser!.uid);
+          },
+          initialData: const [],
+        ),
       ],
       child: const ElWarshaApp(),
     ),
@@ -58,6 +109,18 @@ class ElWarshaApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       home: const AuthWrapper(),
+      onGenerateRoute: (settings) {
+        if (settings.name == '/study_room') {
+          final args = settings.arguments as Map<String, dynamic>;
+          return MaterialPageRoute(
+            builder: (context) => StudyRoomScreen(
+              roomCode: args['roomCode'],
+              isHost: args['isHost'],
+            ),
+          );
+        }
+        return null;
+      },
     );
   }
 }

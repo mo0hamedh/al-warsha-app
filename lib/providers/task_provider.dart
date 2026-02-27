@@ -19,6 +19,7 @@ class TaskProvider extends ChangeNotifier {
         .collection('users')
         .doc(user.uid)
         .collection('tasks')
+        .limit(50)
         .snapshots()
         .map((snapshot) {
       return snapshot.docs

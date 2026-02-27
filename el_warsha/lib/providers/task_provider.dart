@@ -27,7 +27,7 @@ class TaskProvider extends ChangeNotifier {
     });
   }
 
-  Future<String?> addTask(String title, String description, int estimatedMinutes) async {
+  Future<String?> addTask(String title, String description, int estimatedMinutes, {String category = 'other'}) async {
     final user = _authService.currentUser;
     if (user == null) return 'يجب تسجيل الدخول أولاً';
 
@@ -36,6 +36,7 @@ class TaskProvider extends ChangeNotifier {
       title: title,
       description: description,
       estimatedMinutes: estimatedMinutes,
+      category: category,
     );
 
     try {

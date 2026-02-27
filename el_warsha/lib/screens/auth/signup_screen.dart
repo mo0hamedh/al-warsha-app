@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../services/auth_service.dart';
+import '../../providers/theme_provider.dart';
+import '../home_screen.dart';
+import 'login_screen.dart';
 import '../../services/auth_service.dart';
 import '../../providers/theme_provider.dart';
 
@@ -40,7 +43,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
       }
     } else {
       if (mounted) {
-        context.go('/home');
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
       }
     }
   }
@@ -61,7 +67,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
       }
     } else {
       if (mounted) {
-        context.go('/home');
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
       }
     }
   }
@@ -100,7 +109,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
                         color: theme.primaryText,
-                        shadows: [Shadow(color: theme.primaryText.withOpacity(0.3), blurRadius: 6)],
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -185,7 +193,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     const SizedBox(height: 24),
                     TextButton(
-                      onPressed: () => context.go('/login'),
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (_) => const LoginScreen()),
+                        );
+                      },
                       child: Text('لديك حساب بالفعل؟ تسجيل الدخول', style: GoogleFonts.cairo(color: theme.accentOrange)),
                     ),
                   ],

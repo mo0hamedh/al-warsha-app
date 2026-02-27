@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../services/auth_service.dart';
 import '../../services/database_service.dart';
 import '../../models/user_model.dart';
 import '../../providers/theme_provider.dart';
 import '../../core/theme/app_theme.dart';
+import '../admin/admin_schedule_panel.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -47,41 +50,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
           )),
         centerTitle: true,
         actions: [
-          StreamBuilder<UserModel?>(
-            stream: _dbService.getUserProfile(user.uid),
+          FutureBuilder<DocumentSnapshot>(
+            future: FirebaseFirestore.instance
+              .collection('users')
+              .doc(FirebaseAuth.instance.currentUser!.uid)
+              .get(),
             builder: (context, snapshot) {
-              int requestsCount = snapshot.data?.friendRequests.length ?? 0;
-              return Row(
-                children: [
-                  IconButton(
-                    onPressed: () => _showInboxDialog(context, user.uid, snapshot.data, themeProvider),
-                    icon: Stack(
-                      alignment: Alignment.topRight,
-                      children: [
-                        Icon(Icons.mail_outline, color: themeProvider.primaryText),
-                        if (requestsCount > 0)
-                          Container(
-                            padding: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              color: themeProvider.accentOrange,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Text(
-                              '$requestsCount',
-                              style: const TextStyle(fontSize: 10, color: Colors.white, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                      ],
+              if (!snapshot.hasData) return const SizedBox();
+              final data = snapshot.data!.data() as Map<String, dynamic>?;
+              if (data == null) return const SizedBox();
+              
+              final isAdmin = data['isAdmin'] == true;
+              if (!isAdmin) return const SizedBox();
+              return IconButton(
+                icon: const Icon(
+                  Icons.admin_panel_settings,
+                  color: Color(0xFFFF6A00),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const AdminSchedulePanel()
                     ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.settings_outlined, color: themeProvider.primaryText),
-                    onPressed: () => _showSettingsDialog(context, user.uid, snapshot.data, themeProvider),
-                  ),
-                ],
+                  );
+                },
               );
             },
-          )
+          ),
         ],
       ),
       body: Directionality(
@@ -103,7 +99,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             }
 
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator(color: _accentOrange));
+              return Center(child: CircularProgressIndicator(color: themeProvider.accentOrange));
             }
 
             final userProfile = snapshot.data;
@@ -116,7 +112,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const SizedBox(height: 16),
                     Text(
                       'لم يتم العثور على بيانات المستخدم',
-                      style: GoogleFonts.cairo(color: _primaryWhite, fontSize: 16),
+                      style: GoogleFonts.cairo(color: themeProvider.primaryText, fontSize: 16),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 24),
@@ -131,7 +127,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       },
                       icon: const Icon(Icons.refresh),
                       label: Text('إنشاء الملف', style: GoogleFonts.cairo()),
-                      style: ElevatedButton.styleFrom(backgroundColor: _accentOrange, foregroundColor: Colors.white),
+                      style: ElevatedButton.styleFrom(backgroundColor: themeProvider.accentOrange, foregroundColor: Colors.white),
                     ),
                   ],
                 ),
@@ -292,7 +288,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('لوحة الشرف', style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 18, fontWeight: FontWeight.bold)),
+            Row(
+              children: [
+                Text('لوحة الشرف', style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 18, fontWeight: FontWeight.bold)),
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: Colors.blueAccent.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.blueAccent.withOpacity(0.3)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.people_alt, color: Colors.blueAccent, size: 12),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${userProfile.friends.length}',
+                        style: GoogleFonts.cairo(color: Colors.blueAccent, fontWeight: FontWeight.bold, fontSize: 11),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
             TextButton.icon(
               onPressed: () => _showAddFriendDialog(context, userProfile.id, theme),
               icon: Icon(Icons.person_add_outlined, color: theme.accentOrange, size: 16),

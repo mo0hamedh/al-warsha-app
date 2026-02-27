@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../services/auth_service.dart';
@@ -35,7 +34,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       );
 
       if (error == null) {
-        context.pop(); // Go back to login screen on success
+        Navigator.pop(context); // Go back to login screen on success
       }
     }
   }
@@ -123,7 +122,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     ),
                     const SizedBox(height: 16),
                     TextButton(
-                      onPressed: () => context.pop(),
+                      onPressed: () => Navigator.pop(context),
                       child: Text('العودة لتسجيل الدخول', style: GoogleFonts.cairo(color: theme.accentOrange)),
                     ),
                   ],

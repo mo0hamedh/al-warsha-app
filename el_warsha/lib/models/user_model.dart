@@ -8,6 +8,13 @@ class UserModel {
   final List<String> friendRequests; // الطلبات المعلقة
   final int weeklyFocusPoints;
   final int totalFocusMinutes; // إجمالي دقائق التركيز المتراكمة
+  final int weeklyFocusMinutes; // دقائق التركيز الأسبوعية
+  final List<Map<String, dynamic>> focusSessions; // سجل الجلسات
+  final int monthlyPoints; // نقاط الشهر الحالي
+  final List<String> allTimeBadges; // الأوسمة الدائمة
+  final int bestRank; // أفضل مركز وصل إليه
+  final bool isAdmin; // صلاحيات المشرف
+  final bool isPremium; // مشترك في الخطة المميزة
 
   UserModel({
     required this.id,
@@ -19,6 +26,13 @@ class UserModel {
     this.friendRequests = const [],
     this.weeklyFocusPoints = 0,
     this.totalFocusMinutes = 0,
+    this.weeklyFocusMinutes = 0,
+    this.focusSessions = const [],
+    this.monthlyPoints = 0,
+    this.allTimeBadges = const [],
+    this.bestRank = 0,
+    this.isAdmin = false,
+    this.isPremium = false,
   });
 
   factory UserModel.fromMap(Map<String, dynamic> data, String id) {
@@ -32,6 +46,13 @@ class UserModel {
       friendRequests: List<String>.from(data['friendRequests'] ?? []),
       weeklyFocusPoints: data['weeklyFocusPoints'] ?? 0,
       totalFocusMinutes: data['totalFocusMinutes'] ?? 0,
+      weeklyFocusMinutes: data['weeklyFocusMinutes'] ?? 0,
+      focusSessions: List<Map<String, dynamic>>.from(data['focusSessions'] ?? []),
+      monthlyPoints: data['monthlyPoints'] ?? 0,
+      allTimeBadges: List<String>.from(data['allTimeBadges'] ?? []),
+      bestRank: data['bestRank'] ?? 0,
+      isAdmin: data['isAdmin'] ?? false,
+      isPremium: data['isPremium'] ?? false,
     );
   }
 
@@ -45,6 +66,13 @@ class UserModel {
       'friendRequests': friendRequests,
       'weeklyFocusPoints': weeklyFocusPoints,
       'totalFocusMinutes': totalFocusMinutes,
+      'weeklyFocusMinutes': weeklyFocusMinutes,
+      'focusSessions': focusSessions,
+      'monthlyPoints': monthlyPoints,
+      'allTimeBadges': allTimeBadges,
+      'bestRank': bestRank,
+      'isAdmin': isAdmin,
+      'isPremium': isPremium,
     };
   }
 }

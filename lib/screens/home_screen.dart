@@ -911,33 +911,66 @@ class _HomeScreenState extends State<HomeScreen> {
                   scrollDirection: Axis.horizontal,
                   reverse: true,
                   child: Row(
-                    children:
-                        currentFilters.map((f) {
-                          TaskCategory? customCat;
-                          try {
-                            customCat = customCategories.firstWhere(
-                              (c) => c.name == f,
-                            );
-                          } catch (_) {}
-                          return Padding(
-                            padding: const EdgeInsets.only(left: 10),
-                            child: HomeFilterChipsWidget(
-                              label: f,
-                              selected: _selectedFilter == f,
-                              customCategory: customCat,
-                              uid: uid,
-                              onFilterSelected:
-                                  (val) =>
-                                      setState(() => _selectedFilter = val),
-                            ),
+                    children: [
+                      ...currentFilters.map((f) {
+                        TaskCategory? customCat;
+                        try {
+                          customCat = customCategories.firstWhere(
+                            (c) => c.name == f,
                           );
-                        }).toList(),
+                        } catch (_) {}
+                        return Padding(
+                          padding: const EdgeInsets.only(left: 10),
+                          child: HomeFilterChipsWidget(
+                            label: f,
+                            selected: _selectedFilter == f,
+                            customCategory: customCat,
+                            uid: uid,
+                            onFilterSelected:
+                                (val) =>
+                                    setState(() => _selectedFilter = val),
+                          ),
+                        );
+                      }),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: GestureDetector(
+                          onTap: () => _showAddCategoryDialog(context, uid),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: const Color(0xFFFF6A00)),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.add, 
+                                  color: Color(0xFFFF6A00), size: 16),
+                                const SizedBox(width: 4),
+                                Text("إضافة",
+                                  style: GoogleFonts.cairo(
+                                    color: const Color(0xFFFF6A00),
+                                    fontSize: 13,
+                                  )),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 16),
                 // Task list
                 if (filtered.isEmpty)
-                  _buildEmptyState(theme)
+                  Expanded(
+                    child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      child: _buildEmptyState(theme),
+                    ),
+                  )
                 else
                   Expanded(
                     child: ListView.builder(
@@ -986,6 +1019,163 @@ class _HomeScreenState extends State<HomeScreen> {
                 fontSize: 15,
               ),
               textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showAddCategoryDialog(BuildContext context, String uid) {
+    if (uid.isEmpty) return;
+
+    final nameController = TextEditingController();
+    IconData selectedIcon = Icons.push_pin;
+    Color selectedColor = const Color(0xFFFF6A00);
+    
+    final icons = [
+      Icons.push_pin, Icons.menu_book, Icons.work, Icons.track_changes, Icons.fitness_center,
+      Icons.palette, Icons.music_note, Icons.directions_run, Icons.apple, Icons.flight
+    ];
+    final colors = [
+      const Color(0xFFFF6A00), const Color(0xFF4FC3F7),
+      const Color(0xFF66BB6A), const Color(0xFFAB47BC),
+      const Color(0xFFFF5252), const Color(0xFFFFD700),
+    ];
+
+    showDialog(
+      context: context,
+      builder: (_) => StatefulBuilder(
+        builder: (context, setStateBuilder) => AlertDialog(
+          backgroundColor: const Color(0xFF1E1E1E),
+          title: Text("تصنيف جديد ✨",
+            style: GoogleFonts.cairo(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            )),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameController,
+                textDirection: TextDirection.rtl,
+                style: GoogleFonts.cairo(
+                  color: Colors.white),
+                decoration: InputDecoration(
+                  hintText: "اسم التصنيف",
+                  hintStyle: GoogleFonts.cairo(
+                    color: Colors.grey),
+                  fillColor: const Color(0xFF2A2A2A),
+                  filled: true,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: Color(0xFFFF6A00)),
+                  ),
+                ),
+              ),
+              
+              const SizedBox(height: 16),
+              
+              Text("اختر أيقونة:",
+                style: GoogleFonts.cairo(
+                  color: Colors.grey, fontSize: 12)),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: icons.map((icon) =>
+                  GestureDetector(
+                    onTap: () => setStateBuilder(() => 
+                      selectedIcon = icon),
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: selectedIcon == icon
+                          ? const Color(0xFFFF6A00).withOpacity(0.2)
+                          : const Color(0xFF2A2A2A),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: selectedIcon == icon
+                            ? const Color(0xFFFF6A00)
+                            : Colors.transparent,
+                        ),
+                      ),
+                      child: Icon(icon, color: Colors.white, size: 20),
+                    ),
+                  )
+                ).toList(),
+              ),
+              
+              const SizedBox(height: 16),
+              
+              Text("اختر لون:",
+                style: GoogleFonts.cairo(
+                  color: Colors.grey, fontSize: 12)),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: colors.map((color) =>
+                  GestureDetector(
+                    onTap: () => setStateBuilder(() => 
+                      selectedColor = color),
+                    child: Container(
+                      width: 32,
+                      height: 32,
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      decoration: BoxDecoration(
+                        color: color,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: selectedColor == color
+                            ? Colors.white
+                            : Colors.transparent,
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                  )
+                ).toList(),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text("إلغاء",
+                style: GoogleFonts.cairo(
+                  color: Colors.grey)),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFF6A00),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              onPressed: () async {
+                if (nameController.text.isEmpty) return;
+                
+                final newCategory = TaskCategory(
+                  id: DateTime.now().millisecondsSinceEpoch.toString(),
+                  name: nameController.text,
+                  icon: selectedIcon,
+                  color: selectedColor,
+                  isCustom: true,
+                );
+
+                await DatabaseService().saveCustomCategory(uid, newCategory);
+                if (context.mounted) Navigator.pop(context);
+              },
+              child: Text("حفظ ✅",
+                style: GoogleFonts.cairo(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                )),
             ),
           ],
         ),
@@ -1430,7 +1620,6 @@ class PomodoroCardWidget extends StatelessWidget {
     );
   }
 }
-
 class HomeFilterChipsWidget extends StatelessWidget {
   final String label;
   final bool selected;

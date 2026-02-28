@@ -32,7 +32,7 @@ class TaskCategory {
       name: map['name'] ?? 'أخرى',
       icon: IconData(
         map['iconCodePoint'] ?? Icons.more_horiz.codePoint,
-        fontFamily: map['iconFontFamily'],
+        fontFamily: map['iconFontFamily'] ?? 'MaterialIcons',
         fontPackage: map['iconFontPackage'],
       ),
       color: Color(map['colorValue'] ?? 0xFF78909C),

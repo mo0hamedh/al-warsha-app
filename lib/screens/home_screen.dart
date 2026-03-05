@@ -12,6 +12,7 @@ import '../providers/pomodoro_provider.dart';
 import '../services/auth_service.dart';
 import '../services/database_service.dart';
 import '../services/connectivity_service.dart';
+import '../services/local_storage_service.dart';
 import '../widgets/add_task_dialog.dart';
 import '../providers/theme_provider.dart';
 import 'profile/profile_screen.dart';
@@ -40,6 +41,30 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       DailyCheckInDialog.showIfNeeded(context);
     });
+    _checkAndLockYesterday();
+  }
+
+  bool _isSameDay(DateTime? date1, DateTime date2) {
+    if (date1 == null) return false;
+    return date1.year == date2.year &&
+           date1.month == date2.month &&
+           date1.day == date2.day;
+  }
+
+  Future<void> _checkAndLockYesterday() async {
+    final now = DateTime.now();
+    final lastCheck = await LocalStorageService.getLastLockCheck();
+    
+    if (!_isSameDay(lastCheck, now)) {
+      final user = context.read<AuthService>().currentUser;
+      if (user != null) {
+        final schedule = await _dbService.getActiveSchedule().first;
+        if (schedule != null) {
+          await _dbService.lockPreviousDay(user.uid, schedule.id);
+        }
+      }
+      await LocalStorageService.setLastLockCheck(now);
+    }
   }
 
   // ── Max content width for large screens (Web / Desktop) ──
@@ -1392,34 +1417,62 @@ class HomeHeaderWidget extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(width: 8),
-          // Weekly Focus Rank Badge
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(
-              color: theme.accentOrange.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: theme.accentOrange.withOpacity(0.3)),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.local_fire_department,
-                  color: theme.accentOrange,
-                  size: 16,
+          // Points Badges
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Container(
+                // تم زيادة الحشوة من اليسار (left: 14) لمنع حرف "ي" من التداخل مع الإطار
+                padding: const EdgeInsets.only(right: 10, left: 14, top: 6, bottom: 6),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1E1E1E),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: const Color(0xFFFF6A00), width: 1.5),
                 ),
-                const SizedBox(width: 4),
-                Text(
-                  '${profile?.weeklyFocusPoints ?? 0} نقطة',
-                  style: GoogleFonts.tajawal(
-                    color: theme.accentOrange,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                  ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text("🔥", style: TextStyle(fontSize: 12)),
+                    const SizedBox(width: 6),
+                    Text(
+                      '${profile?.monthlyPoints ?? 0} شهري',
+                      style: GoogleFonts.cairo(
+                        color: const Color(0xFFFF6A00),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 11,
+                        height: 1.2,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(height: 6),
+              Container(
+                padding: const EdgeInsets.only(right: 10, left: 14, top: 6, bottom: 6),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1E1E1E),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: const Color(0xFFFFD700), width: 1.5),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text("⭐", style: TextStyle(fontSize: 12)),
+                    const SizedBox(width: 6),
+                    Text(
+                      '${profile?.totalPoints ?? 0} إجمالي',
+                      style: GoogleFonts.cairo(
+                        color: const Color(0xFFFFD700),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 11,
+                        height: 1.2,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../services/auth_service.dart';
 import 'home_screen.dart';
 import 'auth/login_screen.dart';
+import 'splash_screen.dart';
 
 class AuthWrapper extends StatelessWidget {
   const AuthWrapper({super.key});
@@ -15,9 +16,7 @@ class AuthWrapper extends StatelessWidget {
       stream: authService.authStateChanges,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator(color: Color(0xFFE67E22))),
-          );
+          return const SplashScreen();
         }
 
         if (snapshot.hasData) {

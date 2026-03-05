@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="el_warsha"
+        android:label="الورشة"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

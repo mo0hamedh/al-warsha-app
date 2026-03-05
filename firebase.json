@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": " Must select at least one feature. Use SPACEBAR to select features, or specify a feature by running firebase ",
+    "public": "build/web",
     "ignore": [
       "firebase.json",
       "**/.*",

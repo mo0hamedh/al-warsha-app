@@ -73,24 +73,27 @@ class TaskProvider extends ChangeNotifier {
         
     final userRef = _db.collection('users').doc(user.uid);
 
-    batch.update(taskRef, {'isCompleted': isCompleting});
-    
-    // الأمان لعدم هبوط النقاط تحت الصفر
-    if (isCompleting) {
+    // الأمان لعدم هبوط النقاط تحت الصفر (حسب طلب المستخدم الجديد: إضافة النقاط مرة واحدة وعدم خصمها)
+    // الآن نستخدم isPointsEarned لمنع تكرار النقاط عند إلغاء وإعادة التحديد
+    if (isCompleting && !task.isPointsEarned) {
+      batch.update(taskRef, {
+        'isCompleted': isCompleting,
+        'isPointsEarned': true, // علامة إن المهمة دي أخدت نقاطها خلاص
+      });
+      
       batch.update(userRef, {
-        'weeklyFocusPoints': FieldValue.increment(1)
+        'monthlyPoints': FieldValue.increment(5),
+        'totalPoints': FieldValue.increment(5),
+        // Keep weeklyFocusPoints increment for backward compatibility if used elsewhere, but mainly use the new split points for tasks
+        'weeklyFocusPoints': FieldValue.increment(5) 
       });
     } else {
-      final userDoc = await userRef.get();
-      if (userDoc.exists) {
-        final currentPoints = userDoc.data()?['weeklyFocusPoints'] ?? 0;
-        if (currentPoints > 0) {
-          batch.update(userRef, {
-            'weeklyFocusPoints': FieldValue.increment(-1)
-          });
-        }
-      }
+      // إما بنلغي صح (uncomplete) أو المهمة أصلاً متأخد نقاطها قبل كده
+      batch.update(taskRef, {'isCompleted': isCompleting});
     }
+    
+    // ⚠️ لا يتم خصم النقاط أبداً إذا تم إرجاع المهمة (uncomplete)
+    // النقاط محفوظة دائماً بمجرد إكمال المهمة لأول مرة وتسجيل isPointsEarned
 
     await batch.commit();
   }

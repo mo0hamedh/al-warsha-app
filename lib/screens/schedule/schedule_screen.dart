@@ -24,11 +24,19 @@ class ScheduleScreen extends StatefulWidget {
 class _ScheduleScreenState extends State<ScheduleScreen> with SingleTickerProviderStateMixin {
   final DatabaseService _dbService = DatabaseService();
   late TabController _tabController;
+  
+  Stream<DocumentSnapshot>? _userStream;
+  Stream<WeeklyScheduleModel?>? _scheduleStream;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+  }
+
+  void _initStreams(String uid) {
+    _userStream ??= FirebaseFirestore.instance.collection('users').doc(uid).snapshots();
+    _scheduleStream ??= _dbService.getActiveSchedule();
   }
 
   @override
@@ -44,80 +52,24 @@ class _ScheduleScreenState extends State<ScheduleScreen> with SingleTickerProvid
     final user = authService.currentUser;
 
     if (user == null) return const SizedBox.shrink();
+    
+    _initStreams(user.uid);
 
-    return StreamBuilder<DocumentSnapshot>(
-      stream: FirebaseFirestore.instance.collection('users').doc(user.uid).snapshots(),
-      builder: (context, snapshot) {
-         if (snapshot.connectionState == ConnectionState.waiting) return Center(child: CircularProgressIndicator(color: theme.accentOrange));
-         
-         final data = snapshot.data?.data() as Map<String, dynamic>?;
-         final isPremium = data?['isPremium'] == true;
-
-         if (!isPremium) {
-            return _buildLockedScreen(theme);
-         }
-
-         return Scaffold(
-           backgroundColor: theme.bg,
-           appBar: AppBar(
-             backgroundColor: Colors.transparent,
-             elevation: 0,
-             centerTitle: true,
-             title: Text(
-               'جدول الورشة 📋',
-               style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 22, fontWeight: FontWeight.bold),
-             ),
-             bottom: TabBar(
-               controller: _tabController,
-               indicatorColor: theme.accentOrange,
-               labelColor: theme.accentOrange,
-               unselectedLabelColor: theme.textSecondary,
-               labelStyle: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 16),
-               tabs: const [
-                 Tab(text: 'جدولي'),
-                 Tab(text: 'المنافسة'),
-                 Tab(text: 'إحصائياتي'),
-               ],
-             ),
-           ),
-           body: StreamBuilder<WeeklyScheduleModel?>(
-             stream: _dbService.getActiveSchedule(),
-             builder: (ctx, scheduleSnap) {
-                if (scheduleSnap.connectionState == ConnectionState.waiting) return Center(child: CircularProgressIndicator(color: theme.accentOrange));
-                
-                final activeSchedule = scheduleSnap.data;
-                if (activeSchedule == null) {
-                   return Center(child: Text('لا يوجد جدول نشط حالياً', style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 18)));
-                }
-
-                return StreamBuilder<ScheduleProgressModel?>(
-                  stream: _dbService.getUserProgress(user.uid, activeSchedule.id),
-                  builder: (ctx2, progressSnap) {
-                     final progress = progressSnap.data;
-                     
-                     return Column(
-                       children: [
-                         _buildHeaderCard(activeSchedule, progress, theme),
-                         Expanded(
-                           child: TabBarView(
-                             controller: _tabController,
-                             children: [
-                               ScheduleGridTab(schedule: activeSchedule, progress: progress, userId: user.uid),
-                               ScheduleLeaderboardTab(weekId: activeSchedule.id),
-                               ScheduleStatsTab(userId: user.uid, schedule: activeSchedule, progress: progress),
-                             ],
-                           ),
-                         ),
-                       ],
-                     );
-                  }
-                );
-             },
-           ),
-         );
-      }
+    return _PremiumGate(
+      userStream: _userStream!,
+      theme: theme,
+      lockedChild: _buildLockedScreen(theme),
+      unlockedBuilder: () => _ScheduleScaffold(
+        theme: theme,
+        tabController: _tabController,
+        userId: user.uid,
+        dbService: _dbService,
+        scheduleStream: _scheduleStream!,
+        buildHeaderCard: _buildHeaderCard,
+      ),
     );
   }
+
 
   Widget _buildLockedScreen(ThemeProvider theme) {
     return Scaffold(
@@ -210,7 +162,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> with SingleTickerProvid
                 onTap: () async {
                   final url = Uri.parse('https://forms.gle/6SwS2vwRQAtzrEeX7');
                   if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-                    debugPrint('Could not launch \$url');
+                    debugPrint('Could not launch $url');
                   }
                 },
                 borderRadius: BorderRadius.circular(16),
@@ -309,5 +261,181 @@ class _ScheduleScreenState extends State<ScheduleScreen> with SingleTickerProvid
          ],
        ),
      );
+  }
+}
+
+class _PremiumGate extends StatelessWidget {
+  final Stream<DocumentSnapshot> userStream;
+  final ThemeProvider theme;
+  final Widget lockedChild;
+  final Widget Function() unlockedBuilder;
+
+  const _PremiumGate({
+    required this.userStream,
+    required this.theme,
+    required this.lockedChild,
+    required this.unlockedBuilder,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<DocumentSnapshot>(
+      stream: userStream,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting && !snapshot.hasData) {
+          return Scaffold(
+            backgroundColor: theme.bg,
+            body: Center(child: CircularProgressIndicator(color: theme.accentOrange)),
+          );
+        }
+
+        final data = snapshot.data?.data() as Map<String, dynamic>?;
+        final isPremium = data?['isPremium'] == true;
+
+        if (!isPremium) {
+          return lockedChild;
+        }
+
+        return unlockedBuilder();
+      },
+    );
+  }
+}
+
+class _ScheduleScaffold extends StatelessWidget {
+  final ThemeProvider theme;
+  final TabController tabController;
+  final String userId;
+  final DatabaseService dbService;
+  final Stream<WeeklyScheduleModel?> scheduleStream;
+  final Widget Function(WeeklyScheduleModel, ScheduleProgressModel?, ThemeProvider) buildHeaderCard;
+
+  const _ScheduleScaffold({
+    required this.theme,
+    required this.tabController,
+    required this.userId,
+    required this.dbService,
+    required this.scheduleStream,
+    required this.buildHeaderCard,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: theme.bg,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+        title: Text(
+          'جدول الورشة 📋',
+          style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 22, fontWeight: FontWeight.bold),
+        ),
+        bottom: TabBar(
+          controller: tabController,
+          indicatorColor: theme.accentOrange,
+          labelColor: theme.accentOrange,
+          unselectedLabelColor: theme.textSecondary,
+          labelStyle: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 16),
+          tabs: const [
+            Tab(text: 'جدولي'),
+            Tab(text: 'المنافسة'),
+            Tab(text: 'إحصائياتي'),
+          ],
+        ),
+      ),
+      body: _ScheduleBody(
+        userId: userId,
+        dbService: dbService,
+        theme: theme,
+        tabController: tabController,
+        scheduleStream: scheduleStream,
+        buildHeaderCard: buildHeaderCard,
+      ),
+    );
+  }
+}
+
+class _ScheduleBody extends StatefulWidget {
+  final String userId;
+  final DatabaseService dbService;
+  final ThemeProvider theme;
+  final TabController tabController;
+  final Stream<WeeklyScheduleModel?> scheduleStream;
+  final Widget Function(WeeklyScheduleModel, ScheduleProgressModel?, ThemeProvider) buildHeaderCard;
+
+  const _ScheduleBody({
+    required this.userId,
+    required this.dbService,
+    required this.theme,
+    required this.tabController,
+    required this.scheduleStream,
+    required this.buildHeaderCard,
+  });
+
+  @override
+  State<_ScheduleBody> createState() => _ScheduleBodyState();
+}
+
+class _ScheduleBodyState extends State<_ScheduleBody> {
+  Stream<ScheduleProgressModel?>? _progressStream;
+  String? _lastWeekId;
+
+  void _initProgressStream(String weekId) {
+    if (_lastWeekId != weekId) {
+      _lastWeekId = weekId;
+      _progressStream = widget.dbService.getUserProgress(widget.userId, weekId);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<WeeklyScheduleModel?>(
+      stream: widget.scheduleStream,
+      builder: (ctx, scheduleSnap) {
+        if (scheduleSnap.connectionState == ConnectionState.waiting && !scheduleSnap.hasData) {
+          return Center(child: CircularProgressIndicator(color: widget.theme.accentOrange));
+        }
+
+        final activeSchedule = scheduleSnap.data;
+        if (activeSchedule == null) {
+          return Center(
+            child: Text(
+              'لا يوجد جدول نشط حالياً',
+              style: GoogleFonts.cairo(color: widget.theme.textSecondary, fontSize: 18),
+            ),
+          );
+        }
+
+        _initProgressStream(activeSchedule.id);
+
+        return StreamBuilder<ScheduleProgressModel?>(
+          stream: _progressStream,
+          builder: (ctx2, progressSnap) {
+            if (progressSnap.connectionState == ConnectionState.waiting && !progressSnap.hasData) {
+               return Center(child: CircularProgressIndicator(color: widget.theme.accentOrange));
+            }
+            
+            final progress = progressSnap.data;
+
+            return Column(
+              children: [
+                widget.buildHeaderCard(activeSchedule, progress, widget.theme),
+                Expanded(
+                  child: TabBarView(
+                    controller: widget.tabController,
+                    children: [
+                      ScheduleGridTab(schedule: activeSchedule, progress: progress, userId: widget.userId),
+                      ScheduleLeaderboardTab(weekId: activeSchedule.id),
+                      ScheduleStatsTab(userId: widget.userId, schedule: activeSchedule, progress: progress),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 }

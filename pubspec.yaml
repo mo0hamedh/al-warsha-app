@@ -1,7 +1,7 @@
 name: el_warsha
 description: "تطبيق الورشة لإدارة المهام"
 publish_to: 'none'
-version: 1.0.0+1
+version: 1.1.0+2
 
 environment:
   sdk: ^3.7.0
@@ -36,6 +36,8 @@ dependencies:
   connectivity_plus: ^7.0.0
   cached_network_image: ^3.4.1
   dotted_border: ^2.1.0
+  flutter_timezone: ^5.0.1
+  timezone: ^0.10.1
 
 dev_dependencies:
   flutter_test:
@@ -45,14 +47,19 @@ dev_dependencies:
     sdk: flutter
   flutter_launcher_icons: ^0.13.1
 
-flutter_icons:
-  image_path: "assets/icons/app_logo.png"
+flutter_launcher_icons:
   android: true
   ios: true
+  image_path: "assets/images/app_icon.png"
   web:
     generate: true
+    image_path: "assets/images/app_icon.png"
+  adaptive_icon_background: "#FF6A00"
+  adaptive_icon_foreground: "assets/images/app_icon.png"
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/images/logo.png
 
 

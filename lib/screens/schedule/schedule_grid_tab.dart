@@ -106,6 +106,12 @@ class ScheduleGridTab extends StatelessWidget {
           ...schedule.habits.map((habit) {
              dynamic cellValue = dayProgress[habit.name];
 
+             // Check Lock Status
+             bool isLocked = isPast;
+             if (dayProgress.containsKey('isLocked') && dayProgress['isLocked'] == true) {
+                isLocked = true;
+             }
+
              // UI Logics
              Widget cellContent;
              if (isFuture) {
@@ -113,10 +119,10 @@ class ScheduleGridTab extends StatelessWidget {
              } else {
                 if (habit.type == 'number') {
                    // Number Field
-                   cellContent = _buildNumberInput(cellValue, habit, dayName, isPast, theme, dbService);
+                   cellContent = _buildNumberInput(cellValue, habit, dayName, isPast, theme, dbService, isLocked);
                 } else {
                    // Checkbox
-                   cellContent = _buildCheckboxInput(cellValue, habit, dayName, isPast, theme, dbService);
+                   cellContent = _buildCheckboxInput(cellValue, habit, dayName, isPast, theme, dbService, isLocked);
                 }
              }
 
@@ -124,6 +130,7 @@ class ScheduleGridTab extends StatelessWidget {
              Color cellBgColor = Colors.transparent;
              if (isPast && !completed) cellBgColor = Colors.redAccent.withValues(alpha: 0.1);
              if (completed) cellBgColor = Colors.green.withValues(alpha: 0.1);
+             if (isLocked && !isPast && !completed) cellBgColor = theme.isDarkMode ? Colors.black45 : Colors.grey.shade300;
 
              return Container(
                 height: 70, // Fixed height for alignment across columns
@@ -132,11 +139,27 @@ class ScheduleGridTab extends StatelessWidget {
                    color: cellBgColor,
                    border: Border(bottom: BorderSide(color: theme.isDarkMode ? Colors.white12 : Colors.black12)),
                 ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                child: Stack(
                   children: [
-                     Expanded(child: Text('${habit.icon} ${habit.name}', overflow: TextOverflow.ellipsis, maxLines: 1, style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 11))),
-                     cellContent,
+                    Opacity(
+                      opacity: isLocked ? 0.5 : 1.0,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                           Expanded(child: Text('${habit.icon} ${habit.name}', overflow: TextOverflow.ellipsis, maxLines: 1, style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 11))),
+                           cellContent,
+                        ],
+                      ),
+                    ),
+                    if (isLocked)
+                      Positioned.fill(
+                        child: Container(color: Colors.transparent),
+                      ),
+                    if (isLocked)
+                      Positioned(
+                        top: 0, left: 0,
+                        child: Icon(Icons.lock, color: theme.isDarkMode ? Colors.white38 : Colors.black38, size: 12),
+                      ),
                   ],
                 ),
              );
@@ -152,21 +175,21 @@ class ScheduleGridTab extends StatelessWidget {
     );
   }
 
-  Widget _buildCheckboxInput(dynamic value, ScheduleHabitModel habit, String dayName, bool isPast, ThemeProvider theme, DatabaseService dbService) {
+  Widget _buildCheckboxInput(dynamic value, ScheduleHabitModel habit, String dayName, bool isPast, ThemeProvider theme, DatabaseService dbService, bool isLocked) {
       bool isChecked = value == true;
       return InkWell(
-        onTap: () {
+        onTap: isLocked ? null : () {
            dbService.updateDayProgress(userId, schedule.id, dayName, habit.name, !isChecked, schedule.habits.length);
         },
         child: Icon(
            isChecked ? Icons.check_circle : Icons.circle_outlined,
-           color: isChecked ? Colors.green : theme.textSecondary,
+           color: isChecked ? Colors.green : (isLocked ? theme.textSecondary.withValues(alpha: 0.5) : theme.textSecondary),
            size: 28,
         ),
       );
   }
 
-  Widget _buildNumberInput(dynamic value, ScheduleHabitModel habit, String dayName, bool isPast, ThemeProvider theme, DatabaseService dbService) {
+  Widget _buildNumberInput(dynamic value, ScheduleHabitModel habit, String dayName, bool isPast, ThemeProvider theme, DatabaseService dbService, bool isLocked) {
       TextEditingController ctrl = TextEditingController(text: value != null ? value.toString() : '');
       
       return Container(
@@ -176,16 +199,18 @@ class ScheduleGridTab extends StatelessWidget {
            controller: ctrl,
            keyboardType: TextInputType.number,
            textAlign: TextAlign.center,
-           style: GoogleFonts.tajawal(color: theme.primaryText, fontWeight: FontWeight.bold, fontSize: 14),
+           enabled: !isLocked,
+           style: GoogleFonts.tajawal(color: isLocked ? theme.textSecondary : theme.primaryText, fontWeight: FontWeight.bold, fontSize: 14),
            decoration: InputDecoration(
              contentPadding: EdgeInsets.zero,
              filled: true,
-             fillColor: theme.bg,
-             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: theme.accentOrange)),
+             fillColor: isLocked ? (theme.isDarkMode ? Colors.black12 : Colors.grey.shade200) : theme.bg,
+             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: isLocked ? Colors.transparent : theme.accentOrange)),
+             disabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: const BorderSide(color: Colors.transparent)),
              focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: theme.accentOrange, width: 2)),
            ),
            onSubmitted: (newVal) {
-              if (newVal.isNotEmpty) {
+              if (newVal.isNotEmpty && !isLocked) {
                  dbService.updateDayProgress(userId, schedule.id, dayName, habit.name, int.tryParse(newVal) ?? 0, schedule.habits.length);
               }
            },

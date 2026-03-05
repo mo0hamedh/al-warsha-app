@@ -69,17 +69,33 @@ void main() async {
           create: (context) {
             final auth = context.read<AuthService>();
             if (auth.currentUser == null) return const Stream.empty();
-            return DatabaseService().getUserProfile(auth.currentUser!.uid);
+            return DatabaseService().getUserProfile(auth.currentUser!.uid)
+                .handleError((error) {
+              debugPrint('Error loading user profile: $error');
+              return null;
+            });
           },
           initialData: null,
+          catchError: (context, error) {
+            debugPrint('StreamProvider caught error: $error');
+            return null;
+          },
         ),
         StreamProvider<List<HabitModel>>(
           create: (context) {
             final auth = context.read<AuthService>();
             if (auth.currentUser == null) return const Stream.empty();
-            return DatabaseService().getUserHabits(auth.currentUser!.uid);
+            return DatabaseService().getUserHabits(auth.currentUser!.uid)
+                .handleError((error) {
+              debugPrint('Error loading user habits: $error');
+              return <HabitModel>[];
+            });
           },
           initialData: const [],
+          catchError: (context, error) {
+            debugPrint('StreamProvider caught error loading habits: $error');
+            return <HabitModel>[];
+          },
         ),
       ],
       child: const ElWarshaApp(),

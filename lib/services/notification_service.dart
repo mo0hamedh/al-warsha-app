@@ -2,7 +2,10 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 class NotificationService {
   static final _messaging = FirebaseMessaging.instance;
@@ -46,6 +49,65 @@ class NotificationService {
     FirebaseMessaging.onMessage.listen((message) {
       _showLocalNotification(message);
     });
+
+    tz.initializeTimeZones();
+    await scheduleScheduleReminder();
+    await scheduleMidnightLock();
+  }
+
+  static tz.TZDateTime _nextInstanceOfTime(int hour, int minute) {
+    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+    tz.TZDateTime scheduledDate =
+        tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
+    if (scheduledDate.isBefore(now)) {
+      scheduledDate = scheduledDate.add(const Duration(days: 1));
+    }
+    return scheduledDate;
+  }
+
+  static Future scheduleScheduleReminder() async {
+    await _localNotifications.cancel(10);
+    
+    await _localNotifications.zonedSchedule(
+      10,
+      '📋 جدول الورشة',
+      'لا تنسَ تعليم إنجازاتك في جدول اليوم! 🌙',
+      _nextInstanceOfTime(22, 0), // 10 PM
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'schedule_reminder',
+          'تذكير الجدول',
+          importance: Importance.high,
+          priority: Priority.high,
+          color: Color(0xFFFF6A00),
+        ),
+        iOS: DarwinNotificationDetails(),
+      ),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      matchDateTimeComponents: DateTimeComponents.time,
+    );
+  }
+
+  static Future scheduleMidnightLock() async {
+    await _localNotifications.cancel(11);
+    
+    await _localNotifications.zonedSchedule(
+      11,
+      '🔒 تم حفظ يومك!',
+      'تم حفظ تقدم أمس تلقائياً ✅',
+      _nextInstanceOfTime(0, 0), // 12 AM
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'day_lock',
+          'قفل اليوم',
+          importance: Importance.defaultImportance,
+          color: Color(0xFFFF6A00),
+        ),
+        iOS: DarwinNotificationDetails(),
+      ),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      matchDateTimeComponents: DateTimeComponents.time,
+    );
   }
 
   static Future<void> _updateTokenInFirestore(String token) async {

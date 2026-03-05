@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart' hide TextDirection;
+import 'package:url_launcher/url_launcher.dart';
 import '../../services/auth_service.dart';
 import '../../services/database_service.dart';
 import '../../models/user_model.dart';
@@ -140,6 +142,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   _buildHeader(userProfile, context, themeProvider),
+                  if (userProfile.isPremium) ...[
+                    const SizedBox(height: 20),
+                    _buildPremiumCard(userProfile, context, themeProvider),
+                  ],
                   const SizedBox(height: 28),
                   _buildStatistics(userProfile, themeProvider),
                   const SizedBox(height: 28),
@@ -193,38 +199,127 @@ class _ProfileScreenState extends State<ProfileScreen> {
         const SizedBox(height: 4),
         Text(userProfile.email, style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 13)),
         const SizedBox(height: 12),
-        GestureDetector(
-          onTap: () {
-            Clipboard.setData(ClipboardData(text: userProfile.inviteCode));
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('تم نسخ كود الدعوة!', style: GoogleFonts.cairo()),
-                backgroundColor: Colors.green,
-                behavior: SnackBarBehavior.floating,
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+          decoration: BoxDecoration(
+            color: theme.card,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: theme.accentOrange.withOpacity(0.3)),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'كود الدعوة: ${userProfile.inviteCode}',
+                style: GoogleFonts.tajawal(color: theme.accentOrange, fontWeight: FontWeight.w600, fontSize: 16),
               ),
-            );
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-            decoration: BoxDecoration(
-              color: theme.card,
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: theme.accentOrange.withOpacity(0.3)),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.copy, size: 14, color: theme.accentOrange),
-                const SizedBox(width: 8),
-                Text(
-                  'كود الدعوة: ${userProfile.inviteCode}',
-                  style: GoogleFonts.tajawal(color: theme.accentOrange, fontWeight: FontWeight.w600),
-                ),
-              ],
-            ),
+              const SizedBox(width: 12),
+              IconButton(
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                icon: const Icon(Icons.copy, size: 18),
+                color: theme.accentOrange,
+                onPressed: () {
+                  Clipboard.setData(ClipboardData(text: userProfile.inviteCode));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('تم النسخ ✅', style: GoogleFonts.cairo()),
+                      backgroundColor: Colors.green,
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(width: 8),
+              IconButton(
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                icon: const Icon(Icons.edit, size: 18),
+                color: theme.accentOrange,
+                onPressed: () => _showEditInviteCodeDialog(context, userProfile, theme),
+              ),
+            ],
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildPremiumCard(UserModel user, BuildContext context, ThemeProvider theme) {
+    final expiry = user.premiumEndDate;
+    final daysLeft = expiry != null ? expiry.difference(DateTime.now()).inDays : 0;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1E1E1E),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFFFD700)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                colors: [Color(0xFFFFD700), Color(0xFFFF8C00)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            child: const Icon(Icons.workspace_premium, color: Colors.white, size: 20),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "اشتراكك المميز ⭐",
+                  style: GoogleFonts.cairo(color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+                if (expiry != null)
+                  Text(
+                    "ينتهي في: ${DateFormat('dd/MM/yyyy').format(expiry)}",
+                    style: GoogleFonts.cairo(color: Colors.grey, fontSize: 12),
+                  ),
+                Text(
+                  daysLeft > 0 ? "متبقي $daysLeft يوم 🕐" : "⚠️ انتهى اشتراكك",
+                  style: GoogleFonts.cairo(
+                    color: daysLeft > 7
+                        ? const Color(0xFF66BB6A)
+                        : daysLeft > 0
+                            ? const Color(0xFFFFD700)
+                            : const Color(0xFFFF5252),
+                    fontSize: 12,
+                  ),
+                ),
+                if (daysLeft <= 3) ...[
+                  const SizedBox(height: 8),
+                  GestureDetector(
+                    onTap: () => launchUrl(Uri.parse('https://forms.gle/6SwS2vwRQAtzrEeX7')),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFFFF6A00), Color(0xFFFF8C00)],
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        "جدد اشتراكك 🚀",
+                        style: GoogleFonts.cairo(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 11),
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -235,24 +330,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
       stream: _dbService.getCompletedTasksCount(userProfile.id),
       builder: (context, snapshot) {
         final completedCount = snapshot.data ?? 0;
-        return Row(
+        return Column(
           children: [
-            Expanded(
-              child: _buildStatCard(
-                title: 'المهام المنجزة',
-                value: '$completedCount',
-                icon: Icons.check_circle_outline,
-                theme: theme,
-              ),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildStatCard(
+                    title: 'المهام المنجزة',
+                    value: '$completedCount',
+                    icon: Icons.check_circle_outline,
+                    theme: theme,
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: _buildStatCard(
+                    title: 'ساعات التركيز',
+                    value: focusHours,
+                    icon: Icons.timer_outlined,
+                    theme: theme,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: _buildStatCard(
-                title: 'ساعات التركيز',
-                value: focusHours,
-                icon: Icons.timer_outlined,
-                theme: theme,
-              ),
+            const SizedBox(height: 14),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildPointsCard(
+                    title: 'نقاط الشهر',
+                    value: '${userProfile.monthlyPoints}',
+                    subtitle: 'تتصفر أول كل شهر',
+                    emoji: '🔥',
+                    color: const Color(0xFFFF6A00),
+                    theme: theme,
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: _buildPointsCard(
+                    title: 'إجمالي النقاط',
+                    value: '${userProfile.totalPoints}',
+                    subtitle: 'مجموع كل نقاطك',
+                    emoji: '⭐',
+                    color: const Color(0xFFFFD700),
+                    theme: theme,
+                  ),
+                ),
+              ],
             ),
           ],
         );
@@ -276,6 +401,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Text(value, style: GoogleFonts.tajawal(color: theme.primaryText, fontSize: 22, fontWeight: FontWeight.bold)),
           const SizedBox(height: 4),
           Text(title, style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 13)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPointsCard({required String title, required String value, required String subtitle, required String emoji, required Color color, required ThemeProvider theme}) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: theme.card,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 8, offset: const Offset(0, 4))],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(emoji, style: const TextStyle(fontSize: 24)),
+              const Spacer(),
+              Text(value, style: GoogleFonts.tajawal(color: theme.primaryText, fontSize: 24, fontWeight: FontWeight.bold)),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(title, style: GoogleFonts.cairo(color: color, fontSize: 14, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 4),
+          Text(subtitle, style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 11)),
         ],
       ),
     );
@@ -1003,6 +1155,149 @@ class _ProfileScreenState extends State<ProfileScreen> {
           },
         );
       },
+    );
+  }
+
+  void _showEditInviteCodeDialog(BuildContext context, UserModel userProfile, ThemeProvider theme) {
+    final controller = TextEditingController(text: userProfile.inviteCode);
+    String? errorMsg;
+    bool isChecking = false;
+
+    showDialog(
+      context: context,
+      builder: (_) => StatefulBuilder(
+        builder: (context, setState) => Directionality(
+          textDirection: TextDirection.rtl,
+          child: AlertDialog(
+            backgroundColor: theme.card,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            title: Text("تغيير كود الدعوة",
+              style: GoogleFonts.cairo(color: theme.primaryText, fontWeight: FontWeight.bold)),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "الكود يجب أن يكون 6 أحرف/أرقام إنجليزية كبيرة",
+                  style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 12),
+                  textAlign: TextAlign.center,
+                ),
+                
+                const SizedBox(height: 12),
+                
+                TextField(
+                  controller: controller,
+                  textAlign: TextAlign.center,
+                  textDirection: TextDirection.ltr,
+                  textCapitalization: TextCapitalization.characters,
+                  maxLength: 6,
+                  style: GoogleFonts.tajawal(
+                    color: theme.primaryText,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 4,
+                  ),
+                  decoration: InputDecoration(
+                    counterText: "",
+                    fillColor: theme.bg,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: errorMsg != null ? const Color(0xFFFF5252) : theme.accentOrange,
+                      ),
+                    ),
+                  ),
+                  onChanged: (val) {
+                    setState(() {
+                      controller.text = val.toUpperCase();
+                      controller.selection = TextSelection.fromPosition(
+                          TextPosition(offset: controller.text.length));
+                      errorMsg = null;
+                    });
+                  },
+                ),
+                
+                if (errorMsg != null) ...[
+                  const SizedBox(height: 8),
+                  Text(errorMsg!,
+                    style: GoogleFonts.cairo(color: const Color(0xFFFF5252), fontSize: 12)),
+                ],
+                
+                if (isChecking) ...[
+                  const SizedBox(height: 16),
+                  Center(
+                    child: CircularProgressIndicator(
+                      strokeWidth: 3,
+                      color: theme.accentOrange,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text("إلغاء", style: GoogleFonts.cairo(color: theme.textSecondary)),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.accentOrange,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+                onPressed: isChecking ? null : () async {
+                  final newCode = controller.text.trim().toUpperCase();
+                  
+                  if (newCode.length != 6) {
+                    setState(() => errorMsg = "الكود لازم يكون 6 أحرف بالظبط");
+                    return;
+                  }
+                  
+                  if (!RegExp(r'^[A-Z0-9]+$').hasMatch(newCode)) {
+                    setState(() => errorMsg = "أحرف إنجليزية كبيرة وأرقام فقط");
+                    return;
+                  }
+                  
+                  if (newCode == userProfile.inviteCode) {
+                    setState(() => errorMsg = "الكود ده هو نفس الكود الحالي");
+                    return;
+                  }
+                  
+                  setState(() => isChecking = true);
+                  
+                  final isAvailable = await _dbService.isInviteCodeAvailable(newCode);
+                  
+                  if (!isAvailable) {
+                    setState(() {
+                      isChecking = false;
+                      errorMsg = "الكود ده مستخدم بالفعل ❌";
+                    });
+                    return;
+                  }
+                  
+                  await _dbService.updateInviteCode(userProfile.id, newCode);
+                  
+                  if (context.mounted) {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("تم تغيير الكود إلى $newCode ✅", style: GoogleFonts.cairo()),
+                        backgroundColor: const Color(0xFF66BB6A),
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
+                  }
+                },
+                child: Text("حفظ", style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

@@ -126,47 +126,33 @@ class _LoginScreenState extends State<LoginScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Container(
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              gradient: const LinearGradient(
-                                colors: [Color(0xFFFF6A00), Color(0xFFFF8C00)],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(0xFFFF6A00).withOpacity(0.4),
-                                  blurRadius: 20,
-                                  spreadRadius: 5,
-                                  offset: const Offset(0, 4),
-                                )
-                              ],
-                            ),
-                            child: const Icon(
-                              Icons.construction_rounded,
-                              size: 56,
-                              color: Colors.white,
-                            ),
+                          Image.asset(
+                            'assets/images/logo.png',
+                            width: 180,
+                            height: 180,
                           ),
-                          const SizedBox(height: 24),
+                          const SizedBox(height: 8),
                           Text(
-                            'الـ وَرشة',
+                            "الورشة",
                             textAlign: TextAlign.center,
                             style: GoogleFonts.cairo(
-                              fontSize: 36,
-                              fontWeight: FontWeight.bold,
                               color: Colors.white,
+                              fontSize: 36,
+                              fontWeight: FontWeight.w900,
+                              height: 1,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 6),
                           Text(
-                            'أنجز أكتر. ركّز أعمق.',
+                            "أنجز أكثر. ركز أعمق.",
                             textAlign: TextAlign.center,
-                            style: GoogleFonts.cairo(fontSize: 18, color: theme.textSecondary),
+                            style: GoogleFonts.cairo(
+                              color: const Color(0xFF666666),
+                              fontSize: 13,
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
-                          const SizedBox(height: 48),
+                          const SizedBox(height: 40),
                           TextFormField(
                             controller: _emailController,
                             keyboardType: TextInputType.emailAddress,

@@ -11,6 +11,7 @@ class UserModel {
   final int weeklyFocusMinutes; // دقائق التركيز الأسبوعية
   final List<Map<String, dynamic>> focusSessions; // سجل الجلسات
   final int monthlyPoints; // نقاط الشهر الحالي
+  final int totalPoints; // إجمالي النقاط العام
   final List<String> allTimeBadges; // الأوسمة الدائمة
   final int bestRank; // أفضل مركز وصل إليه
   final bool isAdmin; // صلاحيات المشرف
@@ -31,6 +32,7 @@ class UserModel {
     this.weeklyFocusMinutes = 0,
     this.focusSessions = const [],
     this.monthlyPoints = 0,
+    this.totalPoints = 0,
     this.allTimeBadges = const [],
     this.bestRank = 0,
     this.isAdmin = false,
@@ -55,6 +57,7 @@ class UserModel {
       weeklyFocusMinutes: data['weeklyFocusMinutes'] ?? 0,
       focusSessions: List<Map<String, dynamic>>.from(data['focusSessions'] ?? []),
       monthlyPoints: data['monthlyPoints'] ?? 0,
+      totalPoints: data['totalPoints'] ?? data['monthlyPoints'] ?? 0,
       allTimeBadges: List<String>.from(data['allTimeBadges'] ?? []),
       bestRank: data['bestRank'] ?? 0,
       isAdmin: data['isAdmin'] ?? false,
@@ -77,6 +80,7 @@ class UserModel {
       'weeklyFocusMinutes': weeklyFocusMinutes,
       'focusSessions': focusSessions,
       'monthlyPoints': monthlyPoints,
+      'totalPoints': totalPoints,
       'allTimeBadges': allTimeBadges,
       'bestRank': bestRank,
       'isAdmin': isAdmin,

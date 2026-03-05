@@ -7,6 +7,8 @@ import '../../services/database_service.dart';
 import '../../models/schedule_model.dart';
 import '../../models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart' hide TextDirection;
+import 'package:flutter/services.dart';
 
 class AdminSchedulePanel extends StatefulWidget {
   const AdminSchedulePanel({super.key});
@@ -186,6 +188,100 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                 ),
                 child: Text('إرسال 📢', style: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
               ),
+              ),
+            const SizedBox(height: 32),
+            const Divider(color: Colors.white24),
+            const SizedBox(height: 16),
+            Text(
+              "إدارة النقاط واللعبة",
+              style: GoogleFonts.cairo(
+                color: theme.primaryText,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton.icon(
+                icon: const Icon(Icons.refresh, color: Colors.white),
+                onPressed: () async {
+                  final confirm = await showDialog<bool>(
+                    context: context,
+                    builder: (ctx) => AlertDialog(
+                      backgroundColor: theme.card,
+                      title: Text('تصفير النقاط؟', style: GoogleFonts.cairo(color: theme.primaryText, fontWeight: FontWeight.bold)),
+                      content: Text(
+                        'هل أنت متأكد من تصفير كافة النقاط (الشهرية والإجمالية) لجميع المستخدمين؟ لا يمكن التراجع عن هذا الإجراء.',
+                        style: GoogleFonts.cairo(color: theme.textSecondary),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(ctx, false),
+                          child: Text('إلغاء', style: GoogleFonts.cairo(color: Colors.grey)),
+                        ),
+                        ElevatedButton(
+                          onPressed: () => Navigator.pop(ctx, true),
+                          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFF5252)),
+                          child: Text('تأكيد التصفير', style: GoogleFonts.cairo(color: Colors.white)),
+                        ),
+                      ],
+                    ),
+                  );
+
+                  if (confirm != true) return;
+
+                  if (!mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('جاري تصفير النقاط...', style: GoogleFonts.cairo())));
+
+                  try {
+                    final firestore = FirebaseFirestore.instance;
+                    final usersSnapshot = await firestore.collection('users').get();
+                    
+                    final batch = firestore.batch();
+                    int count = 0;
+
+                    for (var doc in usersSnapshot.docs) {
+                      batch.update(doc.reference, {
+                        'monthlyPoints': 0,
+                        'totalPoints': 0,
+                        'weeklyFocusPoints': 0,
+                      });
+                      count++;
+                      
+                      // Firestore batches support up to 500 operations
+                      if (count % 400 == 0) {
+                        await batch.commit();
+                      }
+                    }
+
+                    if (count % 400 != 0) {
+                      await batch.commit();
+                    }
+
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text('تم تصفير النقاط لـ $count مستخدم بنجاح ✅', style: GoogleFonts.cairo()),
+                        backgroundColor: const Color(0xFF66BB6A),
+                      ));
+                    }
+                  } catch (e) {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text('حدث خطأ أثناء التصفير: $e', style: GoogleFonts.cairo()),
+                        backgroundColor: const Color(0xFFFF5252),
+                      ));
+                    }
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFFF5252),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  elevation: 5,
+                ),
+                label: Text('تصفير نقاط جميع المستخدمين ⚠️', style: GoogleFonts.cairo(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+              ),
             ),
           ],
         ),
@@ -255,24 +351,41 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: theme.accentOrange.withOpacity(0.3)),
               ),
-              child: ListView.builder(
+              child: ReorderableListView(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: _selectedHabits.length,
-                itemBuilder: (context, index) {
-                   final habit = _selectedHabits[index];
-                   return ListTile(
-                     leading: Text(habit.icon, style: const TextStyle(fontSize: 24)),
-                     title: Text(habit.name, style: GoogleFonts.cairo(color: theme.primaryText)),
-                     subtitle: Text(habit.type == 'checkbox' ? 'نوع: علامة صح' : 'نوع: إدخال الرقم', style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 12)),
-                     trailing: IconButton(
-                       icon: const Icon(Icons.remove_circle_outline, color: Colors.redAccent),
-                       onPressed: () {
-                         setState(() => _selectedHabits.removeAt(index));
-                       },
-                     ),
-                   );
-                }
+                onReorder: (oldIndex, newIndex) {
+                  setState(() {
+                    if (newIndex > oldIndex) newIndex--;
+                    final item = _selectedHabits.removeAt(oldIndex);
+                    _selectedHabits.insert(newIndex, item);
+                  });
+                },
+                children: _selectedHabits.map((habit) => 
+                  ListTile(
+                    key: ValueKey(habit.id),
+                    title: Text(habit.name,
+                      style: GoogleFonts.cairo(
+                        color: theme.primaryText)),
+                    subtitle: Text(habit.type == 'checkbox' ? 'نوع: علامة صح' : 'نوع: إدخال الرقم', style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 12)),
+                    leading: Text(habit.icon,
+                      style: const TextStyle(fontSize: 24)),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.remove_circle,
+                            color: Color(0xFFFF5252)),
+                          onPressed: () {
+                            setState(() => _selectedHabits.remove(habit));
+                          },
+                        ),
+                        const Icon(Icons.drag_handle,
+                          color: Colors.grey),
+                      ],
+                    ),
+                  )
+                ).toList(),
               ),
             ),
 
@@ -353,71 +466,219 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                                   ? const Color(0xFFFF6A00) // 50-79% -> برتقالي
                                   : const Color(0xFFFF5252); // أقل -> أحمر
 
-                          return Card(
-                            color: theme.card,
+                          return Container(
                             margin: const EdgeInsets.only(bottom: 12),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          '#${index + 1} ${userMap['name']}',
-                                          style: GoogleFonts.cairo(
-                                            color: theme.primaryText,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF1E1E1E),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: const Color(0xFFFF6A00)),
+                            ),
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // 1. User info & Rate
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Row(
+                                        children: [
+                                          const CircleAvatar(
+                                            backgroundColor: Color(0xFF2A2A2A),
+                                            child: Icon(Icons.person, color: Colors.white),
                                           ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                      Text(
-                                        '${(completionRate * 100).toInt()}%',
-                                        style: GoogleFonts.tajawal(
-                                          color: progressColor,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 12),
-                                  LinearProgressIndicator(
-                                    value: completionRate,
-                                    backgroundColor: const Color(0xFF2A2A2A),
-                                    color: progressColor,
-                                    minHeight: 6,
-                                    borderRadius: BorderRadius.circular(3),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: TextButton.icon(
-                                      onPressed: () => _showUserDetailsSheet(
-                                        context,
-                                        theme,
-                                        userMap,
-                                        activeSchedule,
-                                      ),
-                                      icon: const Icon(Icons.remove_red_eye, size: 16, color: Colors.blueAccent),
-                                      label: Text(
-                                        'تفاصيل',
-                                        style: GoogleFonts.cairo(color: Colors.blueAccent, fontSize: 13),
-                                      ),
-                                      style: TextButton.styleFrom(
-                                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                                        minimumSize: Size.zero,
-                                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                          const SizedBox(width: 12),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  '#${index + 1} ${userMap['name']}',
+                                                  style: GoogleFonts.cairo(
+                                                    color: Colors.white,
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                                if (userMap['email'] != null && userMap['email'].toString().isNotEmpty)
+                                                  Text(
+                                                    userMap['email'],
+                                                    style: GoogleFonts.cairo(
+                                                      color: Colors.grey,
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
+                                    Text(
+                                      '${(completionRate * 100).toInt()}%',
+                                      style: GoogleFonts.tajawal(
+                                        color: progressColor,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                
+                                const SizedBox(height: 16),
+                                LinearProgressIndicator(
+                                  value: completionRate,
+                                  backgroundColor: const Color(0xFF2A2A2A),
+                                  color: progressColor,
+                                  minHeight: 8,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                const SizedBox(height: 16),
+                                const Divider(color: Colors.white12),
+                                const SizedBox(height: 12),
+                                
+                                // 2. Invite code
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(Icons.copy, color: Color(0xFFFF6A00), size: 18),
+                                      onPressed: () {
+                                        Clipboard.setData(ClipboardData(text: userMap['inviteCode'] ?? ''));
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(content: Text("تم نسخ الكود ✅", style: GoogleFonts.cairo())),
+                                        );
+                                      },
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          userMap['inviteCode'] ?? '',
+                                          style: GoogleFonts.tajawal(
+                                            color: const Color(0xFFFF6A00),
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            letterSpacing: 3,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          "كود الدعوة:",
+                                          style: GoogleFonts.cairo(color: Colors.grey, fontSize: 12),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                
+                                const SizedBox(height: 8),
+                                
+                                // 3. Subscription Status
+                                Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF2A2A2A),
+                                    borderRadius: BorderRadius.circular(8),
                                   ),
-                                ],
-                              ),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                            decoration: BoxDecoration(
+                                              color: userMap['isPremium'] == true ? const Color(0xFF1B5E20) : const Color(0xFF3E2723),
+                                              borderRadius: BorderRadius.circular(20),
+                                            ),
+                                            child: Text(
+                                              userMap['isPremium'] == true ? "🟢 مشترك نشط" : "⚪ غير مشترك",
+                                              style: GoogleFonts.cairo(
+                                                fontSize: 12,
+                                                color: userMap['isPremium'] == true ? const Color(0xFF66BB6A) : Colors.grey,
+                                              ),
+                                            ),
+                                          ),
+                                          Text("حالة الاشتراك", style: GoogleFonts.cairo(color: Colors.grey, fontSize: 12)),
+                                        ],
+                                      ),
+                                      
+                                      if (userMap['isPremium'] == true && userMap['premiumEndDate'] != null) ...[
+                                        const SizedBox(height: 8),
+                                        const Divider(color: Colors.white12),
+                                        const SizedBox(height: 8),
+                                        
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              DateFormat('dd/MM/yyyy').format((userMap['premiumEndDate'] as Timestamp).toDate()),
+                                              style: GoogleFonts.tajawal(
+                                                color: Colors.white,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            Text("تاريخ الانتهاء:", style: GoogleFonts.cairo(color: Colors.grey, fontSize: 12)),
+                                          ],
+                                        ),
+                                        
+                                        const SizedBox(height: 4),
+                                        
+                                        Builder(
+                                          builder: (context) {
+                                            final daysLeft = (userMap['premiumEndDate'] as Timestamp).toDate().difference(DateTime.now()).inDays;
+                                            
+                                            return Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Text(
+                                                  daysLeft > 0 ? "متبقي $daysLeft يوم" : "⚠️ منتهي",
+                                                  style: GoogleFonts.cairo(
+                                                    color: daysLeft > 7
+                                                        ? const Color(0xFF66BB6A)
+                                                        : daysLeft > 0
+                                                            ? const Color(0xFFFFD700)
+                                                            : const Color(0xFFFF5252),
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                Text("المدة المتبقية:", style: GoogleFonts.cairo(color: Colors.grey, fontSize: 12)),
+                                              ],
+                                            );
+                                          }
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                ),
+                                
+                                const SizedBox(height: 12),
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: TextButton.icon(
+                                    onPressed: () => _showUserDetailsSheet(
+                                      context,
+                                      theme,
+                                      userMap,
+                                      activeSchedule,
+                                    ),
+                                    icon: const Icon(Icons.remove_red_eye, size: 16, color: Colors.blueAccent),
+                                    label: Text(
+                                      'تفاصيل',
+                                      style: GoogleFonts.cairo(color: Colors.blueAccent, fontSize: 13),
+                                    ),
+                                    style: TextButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                      minimumSize: Size.zero,
+                                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           );
                         },
@@ -563,8 +824,39 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
             if (_searchError != null)
               Text(_searchError!, style: GoogleFonts.cairo(color: const Color(0xFFFF5252), fontSize: 16)),
               
+            // نتيجة السيرش لو فيه
             if (_searchedUser != null)
               _buildUserSubscriptionCard(_searchedUser!, theme),
+
+            // قائمة المشتركين الحاليين (تظهر دايماً لما مفيش سيرش)
+            if (_searchedUser == null) ...[
+              Text(
+                'المشتركون الحاليون 🟢',
+                style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 12),
+              StreamBuilder<List<UserModel>>(
+                stream: _dbService.getAllPremiumUsers(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator(color: Color(0xFFFF6A00)));
+                  }
+                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return Text(
+                      'لا يوجد مشتركين حالياً',
+                      style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 14),
+                    );
+                  }
+                  final premiumUsers = snapshot.data!;
+                  return Column(
+                    children: premiumUsers.map((user) => Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: _buildUserSubscriptionCard(user, theme),
+                    )).toList(),
+                  );
+                },
+              ),
+            ],
           ],
         ),
       ),
@@ -590,84 +882,344 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
   }
 
   Widget _buildUserSubscriptionCard(UserModel user, ThemeProvider theme) {
-    final isActive = user.isPremium;
-    final isExpired = !user.isPremium && user.premiumEndDate != null && user.premiumEndDate!.isBefore(DateTime.now());
-    
-    String badgeText = isActive ? 'نشط' : (isExpired ? 'منتهي' : 'غير مشترك');
-    Color badgeColor = isActive ? Colors.green : (isExpired ? const Color(0xFFFF5252) : Colors.grey);
-    
     return Container(
-      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: theme.card,
+        color: const Color(0xFF1E1E1E),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: theme.accentOrange, width: 1.5),
+        border: Border.all(color: const Color(0xFFFF6A00)),
       ),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // 1. معلومات اليوزر
+          Row(
+            children: [
+              const CircleAvatar(
+                backgroundColor: Color(0xFF2A2A2A),
+                child: Icon(Icons.person, color: Colors.white),
+              ),
+              const SizedBox(width: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    user.name,
+                    style: GoogleFonts.cairo(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    user.email,
+                    style: GoogleFonts.cairo(
+                      color: Colors.grey,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          
+          const SizedBox(height: 12),
+          const Divider(color: Colors.white12),
+          const SizedBox(height: 12),
+          
+          // 2. كود الدعوة
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              // زرار نسخ
+              IconButton(
+                icon: const Icon(Icons.copy, color: Color(0xFFFF6A00), size: 18),
+                onPressed: () {
+                  Clipboard.setData(ClipboardData(text: user.inviteCode));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("تم نسخ الكود ✅", style: GoogleFonts.cairo())),
+                  );
+                },
+              ),
+              Row(
+                children: [
+                  Text(
+                    user.inviteCode,
+                    style: GoogleFonts.tajawal(
+                      color: const Color(0xFFFF6A00),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 3,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    "كود الدعوة:",
+                    style: GoogleFonts.cairo(color: Colors.grey, fontSize: 12),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          
+          const SizedBox(height: 8),
+          
+          // 3. حالة الاشتراك + تاريخ الانتهاء
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: const Color(0xFF2A2A2A),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Column(
+              children: [
+                // Badge الحالة
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(user.name, style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 18, fontWeight: FontWeight.bold)),
-                    Text(user.email, style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 14)),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: user.isPremium ? const Color(0xFF1B5E20) : const Color(0xFF3E2723),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        user.isPremium ? "🟢 مشترك نشط" : "⚪ غير مشترك",
+                        style: GoogleFonts.cairo(
+                          fontSize: 12,
+                          color: user.isPremium ? const Color(0xFF66BB6A) : Colors.grey,
+                        ),
+                      ),
+                    ),
+                    Text("حالة الاشتراك", style: GoogleFonts.cairo(color: Colors.grey, fontSize: 12)),
                   ],
                 ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: badgeColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: badgeColor),
-                ),
-                child: Text(badgeText, style: GoogleFonts.cairo(color: badgeColor, fontWeight: FontWeight.bold)),
-              ),
-            ],
+                
+                // تاريخ الانتهاء لو مشترك
+                if (user.isPremium && user.premiumEndDate != null) ...[
+                  const SizedBox(height: 8),
+                  const Divider(color: Colors.white12),
+                  const SizedBox(height: 8),
+                  
+                  // تاريخ الانتهاء
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        DateFormat('dd/MM/yyyy').format(user.premiumEndDate!),
+                        style: GoogleFonts.tajawal(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text("تاريخ الانتهاء:", style: GoogleFonts.cairo(color: Colors.grey, fontSize: 12)),
+                    ],
+                  ),
+                  
+                  const SizedBox(height: 4),
+                  
+                  // الأيام المتبقية
+                  Builder(
+                    builder: (context) {
+                      final daysLeft = user.premiumEndDate!.difference(DateTime.now()).inDays;
+                      
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            daysLeft > 0 ? "متبقي $daysLeft يوم" : "⚠️ منتهي",
+                            style: GoogleFonts.cairo(
+                              color: daysLeft > 7
+                                  ? const Color(0xFF66BB6A)
+                                  : daysLeft > 0
+                                      ? const Color(0xFFFFD700)
+                                      : const Color(0xFFFF5252),
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text("المدة المتبقية:", style: GoogleFonts.cairo(color: Colors.grey, fontSize: 12)),
+                        ],
+                      );
+                    }
+                  ),
+                ],
+              ],
+            ),
           ),
           
-          if (user.premiumEndDate != null && isActive) ...[
-            const SizedBox(height: 16),
-            Text(
-              'تاريخ الانتهاء: ${user.premiumEndDate!.toLocal().toString().split(' ')[0]}',
-              style: GoogleFonts.cairo(color: theme.textSecondary),
+          const SizedBox(height: 16),
+          
+          // 4. الأزرار
+          if (!user.isPremium) ...[
+            // زرار تجديد 30 يوم
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton.icon(
+                icon: const Icon(Icons.refresh, color: Colors.white),
+                label: Text("تفعيل 30 يوم ✅",
+                  style: GoogleFonts.cairo(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF66BB6A),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                ),
+                onPressed: () async {
+                  // تفعيل 30 يوم من النهارده
+                  final expiry = DateTime.now().add(const Duration(days: 30));
+                  await _dbService.activatePremiumWithDate(user.id, expiry);
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text("تم التفعيل لمدة 30 يوم ✅"),
+                      backgroundColor: Color(0xFF66BB6A)));
+                    _searchUser(); // refresh النتيجة
+                  }
+                },
+              ),
+            ),
+
+            const SizedBox(height: 8),
+
+            // زرار تحديد تاريخ مخصص
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: OutlinedButton.icon(
+                icon: const Icon(Icons.calendar_today, color: Color(0xFFFF6A00)),
+                label: Text("تحديد تاريخ انتهاء 📅",
+                  style: GoogleFonts.cairo(
+                    color: const Color(0xFFFF6A00),
+                    fontWeight: FontWeight.bold)),
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: Color(0xFFFF6A00)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                ),
+                onPressed: () async {
+                  // فتح Date Picker
+                  final picked = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now().add(const Duration(days: 30)),
+                    firstDate: DateTime.now(),
+                    lastDate: DateTime.now().add(const Duration(days: 365)),
+                    builder: (context, child) => Theme(
+                      data: ThemeData.dark().copyWith(
+                        colorScheme: const ColorScheme.dark(
+                          primary: Color(0xFFFF6A00),
+                          surface: Color(0xFF1E1E1E),
+                        ),
+                      ),
+                      child: child!,
+                    ),
+                  );
+                  
+                  if (picked != null) {
+                    await _dbService.activatePremiumWithDate(user.id, picked);
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text("تم التفعيل حتى ${DateFormat('dd/MM/yyyy').format(picked)} ✅"),
+                        backgroundColor: const Color(0xFF66BB6A)));
+                      _searchUser(); // refresh النتيجة
+                    }
+                  }
+                },
+              ),
+            )
+          ] else ...[
+            // زرار تجديد 30 يوم إضافية
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton.icon(
+                icon: const Icon(Icons.add_circle, color: Colors.white),
+                label: Text("تجديد 30 يوم إضافية 🔄",
+                  style: GoogleFonts.cairo(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF1565C0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                ),
+                onPressed: () async {
+                  // أضف 30 يوم على تاريخ الانتهاء الحالي
+                  final currentExpiry = user.premiumEndDate ?? DateTime.now();
+                  final newExpiry = currentExpiry.add(const Duration(days: 30));
+                  await _dbService.activatePremiumWithDate(user.id, newExpiry);
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text("تم التجديد حتى ${DateFormat('dd/MM/yyyy').format(newExpiry)} ✅"),
+                      backgroundColor: const Color(0xFF1565C0)));
+                    _searchUser();
+                  }
+                },
+              ),
+            ),
+
+            const SizedBox(height: 8),
+
+            // زرار تغيير التاريخ
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: OutlinedButton.icon(
+                icon: const Icon(Icons.edit_calendar, color: Color(0xFFFF6A00)),
+                label: Text("تغيير تاريخ الانتهاء 📅", style: GoogleFonts.cairo(color: const Color(0xFFFF6A00))),
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: Color(0xFFFF6A00)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                ),
+                onPressed: () async {
+                  final picked = await showDatePicker(
+                    context: context,
+                    initialDate: user.premiumEndDate ?? DateTime.now().add(const Duration(days: 30)),
+                    firstDate: DateTime.now(),
+                    lastDate: DateTime.now().add(const Duration(days: 365)),
+                    builder: (context, child) => Theme(
+                      data: ThemeData.dark().copyWith(
+                        colorScheme: const ColorScheme.dark(
+                          primary: Color(0xFFFF6A00),
+                          surface: Color(0xFF1E1E1E),
+                        ),
+                      ),
+                      child: child!,
+                    ),
+                  );
+                  
+                  if (picked != null) {
+                    await _dbService.activatePremiumWithDate(user.id, picked);
+                    _searchUser();
+                  }
+                },
+              ),
+            ),
+
+            const SizedBox(height: 8),
+
+            // زرار إلغاء
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton.icon(
+                icon: const Icon(Icons.cancel, color: Colors.white),
+                label: Text("إلغاء الاشتراك ❌",
+                  style: GoogleFonts.cairo(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFFF5252),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                ),
+                onPressed: () => _handleSubscriptionAction(user, false, theme),
+              ),
             ),
           ],
-          
-          const SizedBox(height: 24),
-          Row(
-            children: [
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () => _handleSubscriptionAction(user, true, theme),
-                  icon: const Icon(Icons.check, color: Colors.white, size: 18),
-                  label: Text('تفعيل 30 يوم', style: GoogleFonts.cairo(color: Colors.white, fontWeight: FontWeight.bold)),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () => _handleSubscriptionAction(user, false, theme),
-                  icon: const Icon(Icons.close, color: Colors.white, size: 18),
-                  label: Text('إلغاء', style: GoogleFonts.cairo(color: Colors.white, fontWeight: FontWeight.bold)),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFFF5252),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  ),
-                ),
-              ),
-            ],
-          ),
         ],
       ),
     );

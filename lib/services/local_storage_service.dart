@@ -29,4 +29,15 @@ class LocalStorageService {
     if (data == null) return [];
     return jsonDecode(data);
   }
+
+  // Auto-lock last check
+  static Future<void> setLastLockCheck(DateTime date) async {
+    await settingsBox.put('lastLockCheck', date.toIso8601String());
+  }
+
+  static Future<DateTime?> getLastLockCheck() async {
+    final data = settingsBox.get('lastLockCheck');
+    if (data == null) return null;
+    return DateTime.tryParse(data.toString());
+  }
 }

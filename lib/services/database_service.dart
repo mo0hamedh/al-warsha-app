@@ -105,6 +105,7 @@ class DatabaseService {
       if (isFocus) 'weeklyFocusMinutes': FieldValue.increment(duration),
       if (isFocus) 'weeklyFocusPoints': FieldValue.increment(duration),
       if (isFocus) 'monthlyPoints': FieldValue.increment(duration),
+      if (isFocus) 'totalPoints': FieldValue.increment(duration),
       'focusSessions': FieldValue.arrayUnion([sessionData]),
     });
   }
@@ -128,6 +129,22 @@ class DatabaseService {
     });
   }
 
+  Future<bool> isInviteCodeAvailable(String code) async {
+    final result = await _db
+      .collection('users')
+      .where('inviteCode', isEqualTo: code)
+      .limit(1)
+      .get();
+    return result.docs.isEmpty;
+  }
+
+  Future<void> updateInviteCode(String userId, String newCode) async {
+    await _db
+      .collection('users')
+      .doc(userId)
+      .update({'inviteCode': newCode});
+  }
+
   // ── البحث عن مستخدم بكود الدعوة ───────────────────────────────────────
   Future<UserModel?> searchByInviteCode(String inviteCode) async {
     final trimmed = inviteCode.trim().toUpperCase();
@@ -149,6 +166,17 @@ class DatabaseService {
     }
   }
 
+  // ── جلب كل المستخدمين المشتركين (stream) ──────────────────────────────
+  Stream<List<UserModel>> getAllPremiumUsers() {
+    return _db
+        .collection('users')
+        .where('isPremium', isEqualTo: true)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) => UserModel.fromMap(doc.data(), doc.id))
+            .toList());
+  }
+
   // ── تفعيل وإلغاء الاشتراك المميز ──────────────────────────────────────
   Future<void> activatePremium(String uid) async {
     try {
@@ -161,6 +189,20 @@ class DatabaseService {
       debugPrint('Error activating premium: $e');
     }
   }
+
+  Future<void> activatePremiumWithDate(String userId, DateTime expiryDate) async {
+    try {
+      await _db.collection('users').doc(userId).update({
+        'isPremium': true,
+        'subscriptionStatus': 'active',
+        'premiumSince': FieldValue.serverTimestamp(),
+        'premiumEndDate': Timestamp.fromDate(expiryDate), // user requested premiumExpiry, but Model uses premiumEndDate
+      });
+    } catch (e) {
+      debugPrint('Error activating premium with date: $e');
+    }
+  }
+
 
   Future<void> deactivatePremium(String uid) async {
     try {
@@ -351,18 +393,17 @@ class DatabaseService {
     }
   }
 
-  // ── Monthly Leaderboard System ───────────────────────────────────────────
-  Stream<List<Map<String, dynamic>>> getMonthlyLeaderboard(String monthKey) {
+  // ── Leaderboard System ───────────────────────────────────────────
+  Stream<List<UserModel>> getTopUsersByField(String field, {int limit = 10}) {
     return _db
-        .collection('monthlyLeaderboard')
-        .doc(monthKey)
+        .collection('users')
+        .orderBy(field, descending: true)
+        .limit(limit)
         .snapshots()
-        .map((snapshot) {
-      if (!snapshot.exists || snapshot.data() == null) return [];
-      final data = snapshot.data()!;
-      final List<dynamic> topUsers = data['topUsers'] ?? [];
-      return List<Map<String, dynamic>>.from(topUsers);
-    });
+        .map((snapshot) => snapshot.docs
+            .map((doc) => UserModel.fromMap(doc.data(), doc.id))
+            .where((u) => field == 'monthlyPoints' ? u.monthlyPoints > 0 : u.totalPoints > 0)
+            .toList());
   }
 
   // Cloud Function Replacement (Mock for client-side testing)
@@ -569,6 +610,7 @@ class DatabaseService {
       
       if (pointsEarned > 0) {
         userUpdates['monthlyPoints'] = FieldValue.increment(pointsEarned);
+        userUpdates['totalPoints'] = FieldValue.increment(pointsEarned);
       }
       if (newBadges.isNotEmpty) {
         userUpdates['allTimeBadges'] = FieldValue.arrayUnion(newBadges);
@@ -653,6 +695,45 @@ class DatabaseService {
     });
   }
 
+  Future<void> lockPreviousDay(String userId, String weekId) async {
+    try {
+      final now = DateTime.now();
+      final yesterday = now.subtract(const Duration(days: 1));
+      
+      final days = [
+        'الاثنين', 'الثلاثاء', 'الاربعاء',
+        'الخميس', 'الجمعة', 'السبت', 'الاحد'
+      ];
+      final yesterdayName = days[yesterday.weekday - 1];
+      
+      final progressRef = _db
+        .collection('users')
+        .doc(userId)
+        .collection('scheduleProgress')
+        .doc(weekId);
+      
+      final doc = await progressRef.get();
+      if (!doc.exists) return;
+      
+      final data = doc.data()!;
+      final daysData = Map<String, dynamic>.from(data['days'] ?? {});
+      
+      if (daysData.containsKey(yesterdayName)) {
+        daysData[yesterdayName]['isLocked'] = true;
+        daysData[yesterdayName]['lockedAt'] = FieldValue.serverTimestamp();
+      } else {
+        daysData[yesterdayName] = {
+           'isLocked': true,
+           'lockedAt': FieldValue.serverTimestamp(),
+        };
+      }
+      
+      await progressRef.update({'days': daysData});
+    } catch (e) {
+      debugPrint('Error locking previous day: $e');
+    }
+  }
+
   Future<void> updateDayProgress(
     String userId, 
     String weekId, 
@@ -713,7 +794,8 @@ class DatabaseService {
           // Increment global points
           if (addedPoints > 0) {
              transaction.update(_db.collection('users').doc(userId), {
-                'monthlyPoints': FieldValue.increment(addedPoints)
+                'monthlyPoints': FieldValue.increment(addedPoints),
+                'totalPoints': FieldValue.increment(addedPoints)
              });
           }
        });
@@ -738,6 +820,9 @@ class DatabaseService {
       final userId = doc.id;
       final userName = doc.data()['name'] ?? '';
       final photoUrl = doc.data()['photoUrl'] ?? '';
+      final email = doc.data()['email'] ?? '';
+      final inviteCode = doc.data()['inviteCode'] ?? '';
+      final premiumEndDate = doc.data()['premiumEndDate'];
       
       final progressDoc = await _db
         .collection('users')
@@ -755,6 +840,10 @@ class DatabaseService {
         'userId': userId,
         'name': userName,
         'photoUrl': photoUrl,
+        'email': email,
+        'inviteCode': inviteCode,
+        'premiumEndDate': premiumEndDate,
+        'isPremium': true, // Because we filtered by isPremium: true
         'completionRate': completionRate,
         'progress': progressDoc.data()?['days'] ?? {},
       });
@@ -782,6 +871,39 @@ class DatabaseService {
         debugPrint('Error fetching weekly leaderboard: $e');
         return [];
      }
+  }
+
+  Future<List<Map>> getUserWeeksArchive(String userId) async {
+    final progressDocs = await _db
+      .collection('users')
+      .doc(userId)
+      .collection('scheduleProgress')
+      .orderBy('lastUpdated', descending: true)
+      .get();
+    
+    List<Map> archive = [];
+    
+    for (var doc in progressDocs.docs) {
+      final data = doc.data();
+      
+      final scheduleDoc = await _db
+        .collection('weeklySchedule')
+        .doc(doc.id)
+        .get();
+      
+      if (scheduleDoc.exists) {
+        archive.add({
+          'weekId': doc.id,
+          'month': scheduleDoc.data()?['month'],
+          'weekNumber': scheduleDoc.data()?['weekNumber'],
+          'completionRate': data['completionRate'] != null ? data['completionRate'] * 100 : 0.0,
+          'days': data['days'] ?? {},
+          'createdAt': data['lastUpdated'],
+        });
+      }
+    }
+    
+    return archive;
   }
 
   // ── الإشعارات (Notifications) ──────────────────────────────────────

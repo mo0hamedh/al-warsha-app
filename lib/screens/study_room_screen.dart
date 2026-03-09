@@ -72,15 +72,15 @@ class _StudyRoomScreenState extends State<StudyRoomScreen> {
           textDirection: TextDirection.rtl,
           child: AlertDialog(
             backgroundColor: theme.card,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             title: Text(
               'أحسنتم! انتهت الجلسة 🎉',
-              style: GoogleFonts.cairo(color: theme.primaryText, fontWeight: FontWeight.bold),
+              style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             content: Text(
               '$names أكملوا جلسة تركيز بنجاح!',
-              style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 16),
+              style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary, fontSize: 16),
               textAlign: TextAlign.center,
             ),
             actions: [
@@ -90,7 +90,7 @@ class _StudyRoomScreenState extends State<StudyRoomScreen> {
                   await _db.leaveRoom(widget.roomCode, context.read<AuthService>().currentUser?.uid ?? '');
                   if (mounted) Navigator.pop(context); // close screen
                 },
-                child: Text('إنهاء 👋', style: GoogleFonts.cairo(color: Colors.redAccent)),
+                child: Text('إنهاء 👋', style: GoogleFonts.ibmPlexSansArabic(color: Colors.redAccent)),
               ),
               if (widget.isHost)
                 ElevatedButton(
@@ -103,7 +103,7 @@ class _StudyRoomScreenState extends State<StudyRoomScreen> {
                     backgroundColor: theme.accentOrange,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
-                  child: Text('جلسة جديدة 🔄', style: GoogleFonts.cairo(color: Colors.white, fontWeight: FontWeight.bold)),
+                  child: Text('جلسة جديدة 🔄', style: GoogleFonts.ibmPlexSansArabic(color: Colors.white, fontWeight: FontWeight.bold)),
                 ),
             ],
           ),
@@ -145,12 +145,12 @@ class _StudyRoomScreenState extends State<StudyRoomScreen> {
                         children: [
                           Icon(Icons.broken_image, size: 60, color: theme.textSecondary),
                           const SizedBox(height: 16),
-                          Text('الغرفة غير موجودة أو تم إغلاقها', style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 18)),
+                          Text('الغرفة غير موجودة أو تم إغلاقها', style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 18)),
                           const SizedBox(height: 16),
                           ElevatedButton(
                             onPressed: () => Navigator.pop(context),
                             style: ElevatedButton.styleFrom(backgroundColor: theme.card),
-                            child: Text('عودة', style: GoogleFonts.cairo(color: Colors.white)),
+                            child: Text('عودة', style: GoogleFonts.ibmPlexSansArabic(color: Colors.white)),
                           )
                         ],
                       ),
@@ -203,7 +203,7 @@ class _StudyRoomScreenState extends State<StudyRoomScreen> {
                             ),
                             Text(
                               'غرفة الدراسة 📚',
-                              style: GoogleFonts.cairo(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                              style: GoogleFonts.ibmPlexSansArabic(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(width: 40), // dummy spacer for symmetry
                           ],
@@ -216,7 +216,7 @@ class _StudyRoomScreenState extends State<StudyRoomScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                         decoration: BoxDecoration(
                           color: const Color(0xFF1E1E1E),
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(8),
                           border: Border.all(color: Colors.white.withOpacity(0.05)),
                         ),
                         child: Row(
@@ -224,12 +224,12 @@ class _StudyRoomScreenState extends State<StudyRoomScreen> {
                           children: [
                             Text(
                               'كود الغرفة:',
-                              style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 16),
+                              style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary, fontSize: 16),
                             ),
                             const SizedBox(width: 16),
                             Text(
                               '# ${room.roomCode}',
-                              style: GoogleFonts.tajawal(
+                              style: GoogleFonts.ibmPlexSansArabic(
                                 color: const Color(0xFFFF6A00),
                                 fontSize: 32,
                                 fontWeight: FontWeight.bold,
@@ -275,7 +275,7 @@ class _StudyRoomScreenState extends State<StudyRoomScreen> {
                         width: double.infinity,
                         decoration: BoxDecoration(
                           color: const Color(0xFF1E1E1E),
-                          borderRadius: BorderRadius.circular(24),
+                          borderRadius: BorderRadius.circular(8),
                           border: Border.all(color: Colors.white.withOpacity(0.05)),
                         ),
                         child: Column(
@@ -283,12 +283,12 @@ class _StudyRoomScreenState extends State<StudyRoomScreen> {
                             if (room.status == 'waiting') ...[
                               Text(
                                 room.members.length == 2 ? 'الجميع جاهز! ابدأ الجلسة' : 'في انتظار انضمام الجميع...',
-                                style: GoogleFonts.cairo(color: Colors.white70, fontSize: 16),
+                                style: GoogleFonts.ibmPlexSansArabic(color: Colors.white70, fontSize: 16),
                               ),
                             ] else if (room.status == 'studying') ...[
                               Text(
                                 timeDisplay,
-                                style: GoogleFonts.tajawal(
+                                style: GoogleFonts.ibmPlexSansArabic(
                                   color: Colors.white,
                                   fontSize: 64,
                                   fontWeight: FontWeight.bold,
@@ -322,7 +322,7 @@ class _StudyRoomScreenState extends State<StudyRoomScreen> {
                                 ? Text(
                                     'في انتظار ${room.hostName} ليبدأ...',
                                     textAlign: TextAlign.center,
-                                    style: GoogleFonts.cairo(color: theme.accentOrange, fontSize: 16, fontWeight: FontWeight.bold),
+                                    style: GoogleFonts.ibmPlexSansArabic(color: theme.accentOrange, fontSize: 16, fontWeight: FontWeight.bold),
                                   )
                                 : widget.isHost && room.status == 'studying'
                                     ? ElevatedButton(
@@ -330,9 +330,9 @@ class _StudyRoomScreenState extends State<StudyRoomScreen> {
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: Colors.redAccent,
                                           minimumSize: const Size(double.infinity, 56),
-                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                                         ),
-                                        child: Text('إنهاء الجلسة', style: GoogleFonts.cairo(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                                        child: Text('إنهاء الجلسة', style: GoogleFonts.ibmPlexSansArabic(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
                                       )
                                     : const SizedBox.shrink(),
                       ),
@@ -382,11 +382,11 @@ class _StudyRoomScreenState extends State<StudyRoomScreen> {
             backgroundColor: const Color(0xFFFF6A00),
             disabledBackgroundColor: Colors.grey.withOpacity(0.3),
             minimumSize: const Size(double.infinity, 56),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             elevation: 8,
             shadowColor: const Color(0xFFFF6A00).withOpacity(0.5),
           ),
-          child: Text('ابدأ الجلسة 🚀', style: GoogleFonts.cairo(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+          child: Text('ابدأ الجلسة 🚀', style: GoogleFonts.ibmPlexSansArabic(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
         ),
       ],
     );
@@ -414,7 +414,7 @@ class _StudyRoomScreenState extends State<StudyRoomScreen> {
           child: Text(
             title,
             textAlign: TextAlign.center,
-            style: GoogleFonts.cairo(
+            style: GoogleFonts.ibmPlexSansArabic(
               color: isSelected ? const Color(0xFFFF6A00) : Colors.white54,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               fontSize: 13,
@@ -443,7 +443,7 @@ class _StudyRoomScreenState extends State<StudyRoomScreen> {
               color: isReady ? Colors.greenAccent : Colors.grey,
               width: 3,
             ),
-            boxShadow: isReady ? [BoxShadow(color: Colors.greenAccent.withOpacity(0.4), blurRadius: 15)] : [],
+            
           ),
           child: const Padding(
             padding: EdgeInsets.all(4.0),
@@ -454,7 +454,7 @@ class _StudyRoomScreenState extends State<StudyRoomScreen> {
           ),
         ),
         const SizedBox(height: 12),
-        Text(member.name, style: GoogleFonts.cairo(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+        Text(member.name, style: GoogleFonts.ibmPlexSansArabic(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
         const SizedBox(height: 4),
         if (!widget.isHost && isMe) // let member click to ready
           GestureDetector(
@@ -466,11 +466,11 @@ class _StudyRoomScreenState extends State<StudyRoomScreen> {
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: isReady ? Colors.greenAccent : Colors.grey),
               ),
-              child: Text(isReady ? 'جاهز ✅' : 'انقر للجاهزية', style: GoogleFonts.cairo(color: isReady ? Colors.greenAccent : Colors.grey, fontSize: 12)),
+              child: Text(isReady ? 'جاهز ✅' : 'انقر للجاهزية', style: GoogleFonts.ibmPlexSansArabic(color: isReady ? Colors.greenAccent : Colors.grey, fontSize: 12)),
             )
           )
         else 
-          Text(isReady ? 'جاهز ✅' : 'في الانتظار ⏳', style: GoogleFonts.cairo(color: isReady ? Colors.greenAccent : Colors.grey, fontSize: 14)),
+          Text(isReady ? 'جاهز ✅' : 'في الانتظار ⏳', style: GoogleFonts.ibmPlexSansArabic(color: isReady ? Colors.greenAccent : Colors.grey, fontSize: 14)),
       ],
     );
   }
@@ -491,9 +491,9 @@ class _StudyRoomScreenState extends State<StudyRoomScreen> {
           ),
         ),
         const SizedBox(height: 12),
-        Text('في انتظار صديقك...', style: GoogleFonts.cairo(color: Colors.grey, fontSize: 14)),
+        Text('في انتظار صديقك...', style: GoogleFonts.ibmPlexSansArabic(color: Colors.grey, fontSize: 14)),
         const SizedBox(height: 4),
-        Text('كود الغرفة: $code', style: GoogleFonts.tajawal(color: Colors.white54, fontSize: 12)),
+        Text('كود الغرفة: $code', style: GoogleFonts.ibmPlexSansArabic(color: Colors.white54, fontSize: 12)),
       ],
     );
   }

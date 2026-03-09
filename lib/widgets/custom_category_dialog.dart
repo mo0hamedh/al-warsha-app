@@ -78,7 +78,7 @@ class _CustomCategoryDialogState extends State<CustomCategoryDialog> {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('حدث خطأ أثناء الحفظ', style: GoogleFonts.cairo()),
+            content: Text('حدث خطأ أثناء الحفظ', style: GoogleFonts.ibmPlexSansArabic()),
             backgroundColor: Colors.redAccent,
             behavior: SnackBarBehavior.floating,
           ),
@@ -96,12 +96,12 @@ class _CustomCategoryDialogState extends State<CustomCategoryDialog> {
       child: AlertDialog(
         backgroundColor: theme.card,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(8),
           side: BorderSide(
             color: theme.isDarkMode ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05),
           ),
         ),
-        title: Text('تصنيف جديد ✨', style: GoogleFonts.cairo(color: theme.primaryText, fontWeight: FontWeight.bold)),
+        title: Text('تصنيف جديد ✨', style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontWeight: FontWeight.bold)),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -109,16 +109,16 @@ class _CustomCategoryDialogState extends State<CustomCategoryDialog> {
             children: [
               TextField(
                 controller: _nameController,
-                style: GoogleFonts.cairo(color: theme.primaryText),
+                style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText),
                 decoration: InputDecoration(
                   labelText: 'اسم التصنيف',
-                  labelStyle: GoogleFonts.cairo(color: theme.textSecondary),
+                  labelStyle: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary),
                   focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: theme.accentOrange, width: 2)),
                   enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: theme.isDarkMode ? Colors.white.withOpacity(0.2) : Colors.black.withOpacity(0.1))),
                 ),
               ),
               const SizedBox(height: 24),
-              Text('اختر اللون', style: GoogleFonts.cairo(color: theme.textSecondary, fontWeight: FontWeight.bold)),
+              Text('اختر اللون', style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary, fontWeight: FontWeight.bold)),
               const SizedBox(height: 12),
               Wrap(
                 spacing: 12,
@@ -134,7 +134,7 @@ class _CustomCategoryDialogState extends State<CustomCategoryDialog> {
                         color: color,
                         shape: BoxShape.circle,
                         border: isSelected ? Border.all(color: Colors.white, width: 2) : Border.all(color: Colors.transparent),
-                        boxShadow: isSelected ? [BoxShadow(color: color.withOpacity(0.6), blurRadius: 8)] : [],
+                        
                       ),
                       child: isSelected ? const Icon(Icons.check, size: 18, color: Colors.white) : null,
                     ),
@@ -142,7 +142,7 @@ class _CustomCategoryDialogState extends State<CustomCategoryDialog> {
                 }).toList(),
               ),
               const SizedBox(height: 24),
-              Text('اختر أيقونة', style: GoogleFonts.cairo(color: theme.textSecondary, fontWeight: FontWeight.bold)),
+              Text('اختر أيقونة', style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary, fontWeight: FontWeight.bold)),
               const SizedBox(height: 12),
               Wrap(
                 spacing: 12,
@@ -174,7 +174,7 @@ class _CustomCategoryDialogState extends State<CustomCategoryDialog> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('إلغاء', style: GoogleFonts.cairo(color: Colors.grey)),
+            child: Text('إلغاء', style: GoogleFonts.ibmPlexSansArabic(color: Colors.grey)),
           ),
           ElevatedButton(
             onPressed: _isLoading ? null : _saveCategory,
@@ -185,7 +185,7 @@ class _CustomCategoryDialogState extends State<CustomCategoryDialog> {
             ),
             child: _isLoading
                 ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                : Text('حفظ', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                : Text('حفظ', style: GoogleFonts.ibmPlexSansArabic(fontWeight: FontWeight.bold)),
           ),
         ],
       ),

@@ -89,13 +89,13 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          title: Text('لوحة الإدارة', style: GoogleFonts.cairo(color: theme.primaryText, fontWeight: FontWeight.bold)),
+          title: Text('لوحة الإدارة', style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontWeight: FontWeight.bold)),
           leading: IconButton(icon: Icon(Icons.arrow_back, color: theme.primaryText), onPressed: () => Navigator.pop(context)),
           bottom: TabBar(
             labelColor: theme.accentOrange,
             unselectedLabelColor: theme.textSecondary,
             indicatorColor: theme.accentOrange,
-            labelStyle: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+            labelStyle: GoogleFonts.ibmPlexSansArabic(fontWeight: FontWeight.bold),
             tabs: const [
               Tab(text: 'الجداول', icon: Icon(Icons.calendar_month)),
               Tab(text: 'الاشتراكات', icon: Icon(Icons.workspace_premium)),
@@ -122,7 +122,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('📢 إرسال إشعار جديد', style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 22, fontWeight: FontWeight.bold)),
+            Text('📢 إرسال إشعار جديد', style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 22, fontWeight: FontWeight.bold)),
             const SizedBox(height: 24),
             TextField(
               controller: _notifTitleController,
@@ -151,12 +151,12 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
             const SizedBox(height: 16),
             Row(
               children: [
-                Text('إرسال إلى:', style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 16)),
+                Text('إرسال إلى:', style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 16)),
                 const SizedBox(width: 16),
                 DropdownButton<String>(
                   value: _notifTargetGroup,
                   dropdownColor: theme.card,
-                  style: GoogleFonts.cairo(color: theme.primaryText, fontWeight: FontWeight.bold),
+                  style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontWeight: FontWeight.bold),
                   items: ['الكل', 'المشتركين فقط', 'غير المشتركين'].map((g) => DropdownMenuItem(value: g, child: Text(g))).toList(),
                   onChanged: (val) {
                     if (val != null) setState(() => _notifTargetGroup = val);
@@ -177,7 +177,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                   await _dbService.sendNotificationToAll(title, body, _notifTargetGroup);
                   
                   if (!mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('تم الإرسال بنجاح', style: GoogleFonts.cairo())));
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('تم الإرسال بنجاح', style: GoogleFonts.ibmPlexSansArabic())));
                   _notifTitleController.clear();
                   _notifBodyController.clear();
                 },
@@ -186,7 +186,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   elevation: 5,
                 ),
-                child: Text('إرسال 📢', style: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+                child: Text('إرسال 📢', style: GoogleFonts.ibmPlexSansArabic(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
               ),
               ),
             const SizedBox(height: 32),
@@ -194,7 +194,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
             const SizedBox(height: 16),
             Text(
               "إدارة النقاط واللعبة",
-              style: GoogleFonts.cairo(
+              style: GoogleFonts.ibmPlexSansArabic(
                 color: theme.primaryText,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -211,20 +211,20 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                     context: context,
                     builder: (ctx) => AlertDialog(
                       backgroundColor: theme.card,
-                      title: Text('تصفير النقاط؟', style: GoogleFonts.cairo(color: theme.primaryText, fontWeight: FontWeight.bold)),
+                      title: Text('تصفير النقاط؟', style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontWeight: FontWeight.bold)),
                       content: Text(
                         'هل أنت متأكد من تصفير كافة النقاط (الشهرية والإجمالية) لجميع المستخدمين؟ لا يمكن التراجع عن هذا الإجراء.',
-                        style: GoogleFonts.cairo(color: theme.textSecondary),
+                        style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary),
                       ),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.pop(ctx, false),
-                          child: Text('إلغاء', style: GoogleFonts.cairo(color: Colors.grey)),
+                          child: Text('إلغاء', style: GoogleFonts.ibmPlexSansArabic(color: Colors.grey)),
                         ),
                         ElevatedButton(
                           onPressed: () => Navigator.pop(ctx, true),
                           style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFF5252)),
-                          child: Text('تأكيد التصفير', style: GoogleFonts.cairo(color: Colors.white)),
+                          child: Text('تأكيد التصفير', style: GoogleFonts.ibmPlexSansArabic(color: Colors.white)),
                         ),
                       ],
                     ),
@@ -233,7 +233,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                   if (confirm != true) return;
 
                   if (!mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('جاري تصفير النقاط...', style: GoogleFonts.cairo())));
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('جاري تصفير النقاط...', style: GoogleFonts.ibmPlexSansArabic())));
 
                   try {
                     final firestore = FirebaseFirestore.instance;
@@ -262,14 +262,14 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
 
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text('تم تصفير النقاط لـ $count مستخدم بنجاح ✅', style: GoogleFonts.cairo()),
+                        content: Text('تم تصفير النقاط لـ $count مستخدم بنجاح ✅', style: GoogleFonts.ibmPlexSansArabic()),
                         backgroundColor: const Color(0xFF66BB6A),
                       ));
                     }
                   } catch (e) {
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text('حدث خطأ أثناء التصفير: $e', style: GoogleFonts.cairo()),
+                        content: Text('حدث خطأ أثناء التصفير: $e', style: GoogleFonts.ibmPlexSansArabic()),
                         backgroundColor: const Color(0xFFFF5252),
                       ));
                     }
@@ -280,7 +280,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   elevation: 5,
                 ),
-                label: Text('تصفير نقاط جميع المستخدمين ⚠️', style: GoogleFonts.cairo(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                label: Text('تصفير نقاط جميع المستخدمين ⚠️', style: GoogleFonts.ibmPlexSansArabic(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
               ),
             ),
           ],
@@ -297,7 +297,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('إنشاء جدول جديد', style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 22, fontWeight: FontWeight.bold)),
+            Text('إنشاء جدول جديد', style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 22, fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
             
             // Month Input
@@ -317,12 +317,12 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
             // Week Selector
             Row(
               children: [
-                Text('رقم الأسبوع:', style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 16)),
+                Text('رقم الأسبوع:', style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 16)),
                 const SizedBox(width: 16),
                 DropdownButton<int>(
                   value: _weekNumber,
                   dropdownColor: theme.card,
-                  style: GoogleFonts.cairo(color: theme.primaryText, fontWeight: FontWeight.bold),
+                  style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontWeight: FontWeight.bold),
                   items: [1, 2, 3, 4, 5].map((w) => DropdownMenuItem(value: w, child: Text('الأسبوع $w'))).toList(),
                   onChanged: (val) {
                     if (val != null) setState(() => _weekNumber = val);
@@ -335,11 +335,11 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('عادات الجدول المستهدفة:', style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 18, fontWeight: FontWeight.bold)),
+                Text('عادات الجدول المستهدفة:', style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 18, fontWeight: FontWeight.bold)),
                 TextButton.icon(
                   onPressed: () => _showAddCustomHabitDialog(context, theme),
                   icon: Icon(Icons.add, color: theme.accentOrange, size: 18),
-                  label: Text('إضافة مخصصة', style: GoogleFonts.cairo(color: theme.accentOrange, fontWeight: FontWeight.bold)),
+                  label: Text('إضافة مخصصة', style: GoogleFonts.ibmPlexSansArabic(color: theme.accentOrange, fontWeight: FontWeight.bold)),
                 ),
               ],
             ),
@@ -348,7 +348,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
             Container(
               decoration: BoxDecoration(
                 color: theme.card,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: theme.accentOrange.withOpacity(0.3)),
               ),
               child: ReorderableListView(
@@ -365,11 +365,11 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                   ListTile(
                     key: ValueKey(habit.id),
                     title: Text(habit.name,
-                      style: GoogleFonts.cairo(
+                      style: GoogleFonts.ibmPlexSansArabic(
                         color: theme.primaryText)),
-                    subtitle: Text(habit.type == 'checkbox' ? 'نوع: علامة صح' : 'نوع: إدخال الرقم', style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 12)),
+                    subtitle: Text(habit.type == 'checkbox' ? 'نوع: علامة صح' : 'نوع: إدخال الرقم', style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary, fontSize: 12)),
                     leading: Text(habit.icon,
-                      style: const TextStyle(fontSize: 24)),
+                      style: const TextStyle(fontSize: 24, fontFamilyFallback: ['NotoColorEmoji'])),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -393,7 +393,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
             ElevatedButton.icon(
               onPressed: _publishSchedule,
               icon: const Icon(Icons.publish),
-              label: Text('نشر الجدول وجعله النشط ✅', style: GoogleFonts.cairo(fontSize: 16, fontWeight: FontWeight.bold)),
+              label: Text('نشر الجدول وجعله النشط ✅', style: GoogleFonts.ibmPlexSansArabic(fontSize: 16, fontWeight: FontWeight.bold)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: theme.accentOrange,
                 foregroundColor: Colors.white,
@@ -429,7 +429,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                         Expanded(
                           child: Text(
                             '👥 تقدم المشتركين - ${activeSchedule.month} أسبوع ${activeSchedule.weekNumber}',
-                            style: GoogleFonts.cairo(
+                            style: GoogleFonts.ibmPlexSansArabic(
                               color: Colors.white,
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -449,7 +449,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                       Center(
                         child: Text(
                           'لا يوجد تقدم للمشتركين بعد.',
-                          style: GoogleFonts.cairo(color: theme.textSecondary),
+                          style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary),
                         ),
                       )
                     else
@@ -470,7 +470,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                             margin: const EdgeInsets.only(bottom: 12),
                             decoration: BoxDecoration(
                               color: const Color(0xFF1E1E1E),
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(8),
                               border: Border.all(color: const Color(0xFFFF6A00)),
                             ),
                             padding: const EdgeInsets.all(16),
@@ -495,7 +495,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                                               children: [
                                                 Text(
                                                   '#${index + 1} ${userMap['name']}',
-                                                  style: GoogleFonts.cairo(
+                                                  style: GoogleFonts.ibmPlexSansArabic(
                                                     color: Colors.white,
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.bold,
@@ -505,7 +505,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                                                 if (userMap['email'] != null && userMap['email'].toString().isNotEmpty)
                                                   Text(
                                                     userMap['email'],
-                                                    style: GoogleFonts.cairo(
+                                                    style: GoogleFonts.ibmPlexSansArabic(
                                                       color: Colors.grey,
                                                       fontSize: 12,
                                                     ),
@@ -518,7 +518,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                                     ),
                                     Text(
                                       '${(completionRate * 100).toInt()}%',
-                                      style: GoogleFonts.tajawal(
+                                      style: GoogleFonts.ibmPlexSansArabic(
                                         color: progressColor,
                                         fontWeight: FontWeight.bold,
                                         fontSize: 18,
@@ -548,7 +548,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                                       onPressed: () {
                                         Clipboard.setData(ClipboardData(text: userMap['inviteCode'] ?? ''));
                                         ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(content: Text("تم نسخ الكود ✅", style: GoogleFonts.cairo())),
+                                          SnackBar(content: Text("تم نسخ الكود ✅", style: GoogleFonts.ibmPlexSansArabic())),
                                         );
                                       },
                                     ),
@@ -556,7 +556,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                                       children: [
                                         Text(
                                           userMap['inviteCode'] ?? '',
-                                          style: GoogleFonts.tajawal(
+                                          style: GoogleFonts.ibmPlexSansArabic(
                                             color: const Color(0xFFFF6A00),
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,
@@ -566,7 +566,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                                         const SizedBox(width: 8),
                                         Text(
                                           "كود الدعوة:",
-                                          style: GoogleFonts.cairo(color: Colors.grey, fontSize: 12),
+                                          style: GoogleFonts.ibmPlexSansArabic(color: Colors.grey, fontSize: 12),
                                         ),
                                       ],
                                     ),
@@ -591,17 +591,17 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                                             decoration: BoxDecoration(
                                               color: userMap['isPremium'] == true ? const Color(0xFF1B5E20) : const Color(0xFF3E2723),
-                                              borderRadius: BorderRadius.circular(20),
+                                              borderRadius: BorderRadius.circular(8),
                                             ),
                                             child: Text(
                                               userMap['isPremium'] == true ? "🟢 مشترك نشط" : "⚪ غير مشترك",
-                                              style: GoogleFonts.cairo(
+                                              style: GoogleFonts.ibmPlexSansArabic(
                                                 fontSize: 12,
                                                 color: userMap['isPremium'] == true ? const Color(0xFF66BB6A) : Colors.grey,
                                               ),
                                             ),
                                           ),
-                                          Text("حالة الاشتراك", style: GoogleFonts.cairo(color: Colors.grey, fontSize: 12)),
+                                          Text("حالة الاشتراك", style: GoogleFonts.ibmPlexSansArabic(color: Colors.grey, fontSize: 12)),
                                         ],
                                       ),
                                       
@@ -615,13 +615,13 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                                           children: [
                                             Text(
                                               DateFormat('dd/MM/yyyy').format((userMap['premiumEndDate'] as Timestamp).toDate()),
-                                              style: GoogleFonts.tajawal(
+                                              style: GoogleFonts.ibmPlexSansArabic(
                                                 color: Colors.white,
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
-                                            Text("تاريخ الانتهاء:", style: GoogleFonts.cairo(color: Colors.grey, fontSize: 12)),
+                                            Text("تاريخ الانتهاء:", style: GoogleFonts.ibmPlexSansArabic(color: Colors.grey, fontSize: 12)),
                                           ],
                                         ),
                                         
@@ -636,7 +636,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                                               children: [
                                                 Text(
                                                   daysLeft > 0 ? "متبقي $daysLeft يوم" : "⚠️ منتهي",
-                                                  style: GoogleFonts.cairo(
+                                                  style: GoogleFonts.ibmPlexSansArabic(
                                                     color: daysLeft > 7
                                                         ? const Color(0xFF66BB6A)
                                                         : daysLeft > 0
@@ -646,7 +646,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
-                                                Text("المدة المتبقية:", style: GoogleFonts.cairo(color: Colors.grey, fontSize: 12)),
+                                                Text("المدة المتبقية:", style: GoogleFonts.ibmPlexSansArabic(color: Colors.grey, fontSize: 12)),
                                               ],
                                             );
                                           }
@@ -669,7 +669,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                                     icon: const Icon(Icons.remove_red_eye, size: 16, color: Colors.blueAccent),
                                     label: Text(
                                       'تفاصيل',
-                                      style: GoogleFonts.cairo(color: Colors.blueAccent, fontSize: 13),
+                                      style: GoogleFonts.ibmPlexSansArabic(color: Colors.blueAccent, fontSize: 13),
                                     ),
                                     style: TextButton.styleFrom(
                                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -716,7 +716,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('تفاصيل تقدم: $userName', style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 20, fontWeight: FontWeight.bold)),
+                    Text('تفاصيل تقدم: $userName', style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 20, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 16),
                     Expanded(
                       child: ListView.builder(
@@ -733,7 +733,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                             child: ExpansionTile(
                               collapsedIconColor: theme.textSecondary,
                               iconColor: theme.accentOrange,
-                              title: Text(currentDayStr, style: GoogleFonts.cairo(color: theme.primaryText, fontWeight: FontWeight.bold)),
+                              title: Text(currentDayStr, style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontWeight: FontWeight.bold)),
                               children: schedule.habits.map((habit) {
                                 final val = todayMap[habit.name];
                                 bool isCompleted = false;
@@ -752,9 +752,9 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                                 }
 
                                 return ListTile(
-                                  leading: Text(habit.icon, style: const TextStyle(fontSize: 20)),
-                                  title: Text(habit.name, style: GoogleFonts.cairo(color: isCompleted ? const Color(0xFF66BB6A) : theme.textSecondary)),
-                                  trailing: Text(displayVal, style: GoogleFonts.tajawal(color: theme.primaryText)),
+                                  leading: Text(habit.icon, style: const TextStyle(fontSize: 20, fontFamilyFallback: ['NotoColorEmoji'])),
+                                  title: Text(habit.name, style: GoogleFonts.ibmPlexSansArabic(color: isCompleted ? const Color(0xFF66BB6A) : theme.textSecondary)),
+                                  trailing: Text(displayVal, style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText)),
                                 );
                               }).toList(),
                             ),
@@ -780,7 +780,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('إدارة الاشتراكات المميزة', style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 22, fontWeight: FontWeight.bold)),
+            Text('إدارة الاشتراكات المميزة', style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 22, fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
             
             // Search Bar
@@ -822,7 +822,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
             
             const SizedBox(height: 24),
             if (_searchError != null)
-              Text(_searchError!, style: GoogleFonts.cairo(color: const Color(0xFFFF5252), fontSize: 16)),
+              Text(_searchError!, style: GoogleFonts.ibmPlexSansArabic(color: const Color(0xFFFF5252), fontSize: 16)),
               
             // نتيجة السيرش لو فيه
             if (_searchedUser != null)
@@ -832,7 +832,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
             if (_searchedUser == null) ...[
               Text(
                 'المشتركون الحاليون 🟢',
-                style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 18, fontWeight: FontWeight.bold),
+                style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 12),
               StreamBuilder<List<UserModel>>(
@@ -844,7 +844,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                   if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return Text(
                       'لا يوجد مشتركين حالياً',
-                      style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 14),
+                      style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary, fontSize: 14),
                     );
                   }
                   final premiumUsers = snapshot.data!;
@@ -885,7 +885,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xFF1E1E1E),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(8),
         border: Border.all(color: const Color(0xFFFF6A00)),
       ),
       padding: const EdgeInsets.all(16),
@@ -905,7 +905,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                 children: [
                   Text(
                     user.name,
-                    style: GoogleFonts.cairo(
+                    style: GoogleFonts.ibmPlexSansArabic(
                       color: Colors.white,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -913,7 +913,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                   ),
                   Text(
                     user.email,
-                    style: GoogleFonts.cairo(
+                    style: GoogleFonts.ibmPlexSansArabic(
                       color: Colors.grey,
                       fontSize: 12,
                     ),
@@ -937,7 +937,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                 onPressed: () {
                   Clipboard.setData(ClipboardData(text: user.inviteCode));
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("تم نسخ الكود ✅", style: GoogleFonts.cairo())),
+                    SnackBar(content: Text("تم نسخ الكود ✅", style: GoogleFonts.ibmPlexSansArabic())),
                   );
                 },
               ),
@@ -945,7 +945,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                 children: [
                   Text(
                     user.inviteCode,
-                    style: GoogleFonts.tajawal(
+                    style: GoogleFonts.ibmPlexSansArabic(
                       color: const Color(0xFFFF6A00),
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -955,7 +955,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                   const SizedBox(width: 8),
                   Text(
                     "كود الدعوة:",
-                    style: GoogleFonts.cairo(color: Colors.grey, fontSize: 12),
+                    style: GoogleFonts.ibmPlexSansArabic(color: Colors.grey, fontSize: 12),
                   ),
                 ],
               ),
@@ -981,17 +981,17 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
                         color: user.isPremium ? const Color(0xFF1B5E20) : const Color(0xFF3E2723),
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
                         user.isPremium ? "🟢 مشترك نشط" : "⚪ غير مشترك",
-                        style: GoogleFonts.cairo(
+                        style: GoogleFonts.ibmPlexSansArabic(
                           fontSize: 12,
                           color: user.isPremium ? const Color(0xFF66BB6A) : Colors.grey,
                         ),
                       ),
                     ),
-                    Text("حالة الاشتراك", style: GoogleFonts.cairo(color: Colors.grey, fontSize: 12)),
+                    Text("حالة الاشتراك", style: GoogleFonts.ibmPlexSansArabic(color: Colors.grey, fontSize: 12)),
                   ],
                 ),
                 
@@ -1007,13 +1007,13 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                     children: [
                       Text(
                         DateFormat('dd/MM/yyyy').format(user.premiumEndDate!),
-                        style: GoogleFonts.tajawal(
+                        style: GoogleFonts.ibmPlexSansArabic(
                           color: Colors.white,
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Text("تاريخ الانتهاء:", style: GoogleFonts.cairo(color: Colors.grey, fontSize: 12)),
+                      Text("تاريخ الانتهاء:", style: GoogleFonts.ibmPlexSansArabic(color: Colors.grey, fontSize: 12)),
                     ],
                   ),
                   
@@ -1029,7 +1029,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                         children: [
                           Text(
                             daysLeft > 0 ? "متبقي $daysLeft يوم" : "⚠️ منتهي",
-                            style: GoogleFonts.cairo(
+                            style: GoogleFonts.ibmPlexSansArabic(
                               color: daysLeft > 7
                                   ? const Color(0xFF66BB6A)
                                   : daysLeft > 0
@@ -1039,7 +1039,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          Text("المدة المتبقية:", style: GoogleFonts.cairo(color: Colors.grey, fontSize: 12)),
+                          Text("المدة المتبقية:", style: GoogleFonts.ibmPlexSansArabic(color: Colors.grey, fontSize: 12)),
                         ],
                       );
                     }
@@ -1060,7 +1060,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
               child: ElevatedButton.icon(
                 icon: const Icon(Icons.refresh, color: Colors.white),
                 label: Text("تفعيل 30 يوم ✅",
-                  style: GoogleFonts.cairo(
+                  style: GoogleFonts.ibmPlexSansArabic(
                     color: Colors.white,
                     fontWeight: FontWeight.bold)),
                 style: ElevatedButton.styleFrom(
@@ -1091,7 +1091,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
               child: OutlinedButton.icon(
                 icon: const Icon(Icons.calendar_today, color: Color(0xFFFF6A00)),
                 label: Text("تحديد تاريخ انتهاء 📅",
-                  style: GoogleFonts.cairo(
+                  style: GoogleFonts.ibmPlexSansArabic(
                     color: const Color(0xFFFF6A00),
                     fontWeight: FontWeight.bold)),
                 style: OutlinedButton.styleFrom(
@@ -1137,7 +1137,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
               child: ElevatedButton.icon(
                 icon: const Icon(Icons.add_circle, color: Colors.white),
                 label: Text("تجديد 30 يوم إضافية 🔄",
-                  style: GoogleFonts.cairo(
+                  style: GoogleFonts.ibmPlexSansArabic(
                     color: Colors.white,
                     fontWeight: FontWeight.bold)),
                 style: ElevatedButton.styleFrom(
@@ -1168,7 +1168,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
               height: 48,
               child: OutlinedButton.icon(
                 icon: const Icon(Icons.edit_calendar, color: Color(0xFFFF6A00)),
-                label: Text("تغيير تاريخ الانتهاء 📅", style: GoogleFonts.cairo(color: const Color(0xFFFF6A00))),
+                label: Text("تغيير تاريخ الانتهاء 📅", style: GoogleFonts.ibmPlexSansArabic(color: const Color(0xFFFF6A00))),
                 style: OutlinedButton.styleFrom(
                   side: const BorderSide(color: Color(0xFFFF6A00)),
                   shape: RoundedRectangleBorder(
@@ -1208,7 +1208,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
               child: ElevatedButton.icon(
                 icon: const Icon(Icons.cancel, color: Colors.white),
                 label: Text("إلغاء الاشتراك ❌",
-                  style: GoogleFonts.cairo(
+                  style: GoogleFonts.ibmPlexSansArabic(
                     color: Colors.white,
                     fontWeight: FontWeight.bold)),
                 style: ElevatedButton.styleFrom(
@@ -1230,23 +1230,23 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: theme.card,
-        title: Text(activate ? 'تفعيل الاشتراك؟' : 'إلغاء الاشتراك؟', style: GoogleFonts.cairo(color: theme.primaryText, fontWeight: FontWeight.bold)),
+        title: Text(activate ? 'تفعيل الاشتراك؟' : 'إلغاء الاشتراك؟', style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontWeight: FontWeight.bold)),
         content: Text(
           activate 
             ? 'سيتم تفعيل الاشتراك المميز للمستخدم لمدة 30 يوماً.' 
             : 'سيتم إلغاء الاشتراك المميز فوراً.',
-          style: GoogleFonts.cairo(color: theme.textSecondary),
+          style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary),
         ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: Text('إلغاء', style: GoogleFonts.cairo(color: Colors.grey)),
+            child: Text('إلغاء', style: GoogleFonts.ibmPlexSansArabic(color: Colors.grey)),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: ElevatedButton.styleFrom(backgroundColor: activate ? Colors.green : const Color(0xFFFF5252)),
-            child: Text('تأكيد', style: GoogleFonts.cairo(color: Colors.white)),
+            child: Text('تأكيد', style: GoogleFonts.ibmPlexSansArabic(color: Colors.white)),
           ),
         ],
       ),
@@ -1261,7 +1261,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(activate ? 'تم التفعيل' : 'تم الإلغاء', style: GoogleFonts.cairo()),
+          content: Text(activate ? 'تم التفعيل' : 'تم الإلغاء', style: GoogleFonts.ibmPlexSansArabic()),
           backgroundColor: activate ? Colors.green : const Color(0xFFFF5252),
         ));
         _searchUser(); // Refresh user data
@@ -1316,7 +1316,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('إضافة عادة مخصصة للجدول', style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 18, fontWeight: FontWeight.bold)),
+                    Text('إضافة عادة مخصصة للجدول', style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 18, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 16),
                     TextField(
                       controller: nameCtrl,
@@ -1342,13 +1342,13 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    Text('نوع التتبع:', style: GoogleFonts.cairo(color: theme.primaryText, fontWeight: FontWeight.bold)),
+                    Text('نوع التتبع:', style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontWeight: FontWeight.bold)),
                     Row(
                       children: [
                         Expanded(
                           child: RadioListTile<String>(
                             contentPadding: EdgeInsets.zero,
-                            title: Text('علامة صح (✅)', style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 14)),
+                            title: Text('علامة صح (✅)', style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 14)),
                             value: 'checkbox',
                             groupValue: type,
                             activeColor: theme.accentOrange,
@@ -1358,7 +1358,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                         Expanded(
                           child: RadioListTile<String>(
                             contentPadding: EdgeInsets.zero,
-                            title: Text('رقم (إدخال يدوي)', style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 14)),
+                            title: Text('رقم (إدخال يدوي)', style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 14)),
                             value: 'number',
                             groupValue: type,
                             activeColor: theme.accentOrange,
@@ -1386,7 +1386,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                         });
                         Navigator.pop(ctx);
                       },
-                      child: Text('إضافة العادة', style: GoogleFonts.cairo(color: Colors.white, fontWeight: FontWeight.bold)),
+                      child: Text('إضافة العادة', style: GoogleFonts.ibmPlexSansArabic(color: Colors.white, fontWeight: FontWeight.bold)),
                     ),
                   ],
                 ),

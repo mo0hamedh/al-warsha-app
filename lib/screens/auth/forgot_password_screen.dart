@@ -26,7 +26,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         SnackBar(
           content: Text(
             error ?? 'تم إرسال رابط استعادة كلمة المرور إلى بريدك الإلكتروني',
-            style: GoogleFonts.cairo(),
+            style: GoogleFonts.ibmPlexSansArabic(),
           ),
           backgroundColor: error == null ? Colors.green : Colors.redAccent,
           behavior: SnackBarBehavior.floating,
@@ -47,7 +47,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     return Scaffold(
       backgroundColor: theme.bg,
       appBar: AppBar(
-        title: Text('إستعادة كلمة المرور', style: GoogleFonts.cairo(color: theme.primaryText, fontWeight: FontWeight.bold)),
+        title: Text('إستعادة كلمة المرور', style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
         elevation: 0,
         iconTheme: IconThemeData(color: theme.primaryText),
@@ -76,7 +76,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     Text(
                       'نسيت كلمة المرور؟',
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.cairo(
+                      style: GoogleFonts.ibmPlexSansArabic(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
                         color: theme.primaryText,
@@ -87,16 +87,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     Text(
                       'أدخل بريدك الإلكتروني وسنرسل لك رابطاً لتعيين كلمة مرور جديدة',
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.cairo(fontSize: 16, color: theme.textSecondary),
+                      style: GoogleFonts.ibmPlexSansArabic(fontSize: 16, color: theme.textSecondary),
                     ),
                     const SizedBox(height: 48),
                     TextFormField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
-                      style: GoogleFonts.tajawal(color: theme.primaryText),
+                      style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText),
                       decoration: InputDecoration(
                         labelText: 'البريد الإلكتروني',
-                        labelStyle: GoogleFonts.cairo(color: theme.textSecondary),
+                        labelStyle: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary),
                         prefixIcon: Icon(Icons.email_outlined, color: theme.textSecondary),
                         filled: true,
                         fillColor: theme.card,
@@ -118,12 +118,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       ),
                       child: auth.isLoading
                           ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                          : Text('إرسال الرابط', style: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.bold)),
+                          : Text('إرسال الرابط', style: GoogleFonts.ibmPlexSansArabic(fontSize: 18, fontWeight: FontWeight.bold)),
                     ),
                     const SizedBox(height: 16),
                     TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: Text('العودة لتسجيل الدخول', style: GoogleFonts.cairo(color: theme.accentOrange)),
+                      child: Text('العودة لتسجيل الدخول', style: GoogleFonts.ibmPlexSansArabic(color: theme.accentOrange)),
                     ),
                   ],
                 ),

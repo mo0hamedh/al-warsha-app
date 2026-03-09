@@ -42,7 +42,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
       if (error != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(error, style: GoogleFonts.cairo()),
+            content: Text(error, style: GoogleFonts.ibmPlexSansArabic()),
             backgroundColor: Colors.redAccent,
             behavior: SnackBarBehavior.floating,
           ),
@@ -61,17 +61,17 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
       textDirection: TextDirection.rtl,
       child: AlertDialog(
         backgroundColor: theme.card,
-        title: Text('مهمة جديدة', style: GoogleFonts.cairo(color: theme.primaryText, fontWeight: FontWeight.bold)),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16), side: BorderSide(color: theme.isDarkMode ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05))),
+        title: Text('مهمة جديدة', style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontWeight: FontWeight.bold)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8), side: BorderSide(color: theme.isDarkMode ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05))),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: _titleController,
-              style: GoogleFonts.cairo(color: theme.primaryText),
+              style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText),
               decoration: InputDecoration(
                 labelText: 'العنوان',
-                labelStyle: GoogleFonts.cairo(color: theme.textSecondary),
+                labelStyle: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary),
                 focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: theme.accentOrange, width: 2)),
                 enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: theme.isDarkMode ? Colors.white.withOpacity(0.2) : Colors.black.withOpacity(0.1))),
               ),
@@ -79,10 +79,10 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
             const SizedBox(height: 12),
             TextField(
               controller: _descController,
-              style: GoogleFonts.cairo(color: theme.primaryText),
+              style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText),
               decoration: InputDecoration(
                 labelText: 'الوصف (اختياري)',
-                labelStyle: GoogleFonts.cairo(color: theme.textSecondary),
+                labelStyle: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary),
                 focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: theme.accentOrange, width: 2)),
                 enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: theme.isDarkMode ? Colors.white.withOpacity(0.2) : Colors.black.withOpacity(0.1))),
               ),
@@ -92,14 +92,14 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
             TextField(
               controller: _timeController,
               keyboardType: TextInputType.number,
-              style: GoogleFonts.cairo(color: theme.primaryText),
+              style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText),
               decoration: InputDecoration(
                 labelText: 'الوقت المقدر (بالدقائق) - اختياري',
-                labelStyle: GoogleFonts.cairo(color: theme.textSecondary),
+                labelStyle: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary),
                 focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: theme.accentOrange, width: 2)),
                 enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: theme.isDarkMode ? Colors.white.withOpacity(0.2) : Colors.black.withOpacity(0.1))),
                 suffixText: 'دقيقة',
-                suffixStyle: GoogleFonts.cairo(color: theme.textSecondary),
+                suffixStyle: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary),
               ),
             ),
             const SizedBox(height: 16),
@@ -107,7 +107,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
               alignment: Alignment.centerRight,
               child: Text(
                 'التصنيف',
-                style: GoogleFonts.cairo(
+                style: GoogleFonts.ibmPlexSansArabic(
                   color: theme.primaryText,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
@@ -137,8 +137,8 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                                 context: context,
                                 builder: (_) => AlertDialog(
                                   backgroundColor: theme.card,
-                                  title: Text('حذف التصنيف؟', style: GoogleFonts.cairo(color: theme.primaryText, fontWeight: FontWeight.bold)),
-                                  content: Text('هل أنت متأكد من حذف تصنيف "${cat.name}"؟', style: GoogleFonts.cairo(color: theme.textSecondary)),
+                                  title: Text('حذف التصنيف؟', style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontWeight: FontWeight.bold)),
+                                  content: Text('هل أنت متأكد من حذف تصنيف "${cat.name}"؟', style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary)),
                                   actions: [
                                     TextButton(onPressed: () => Navigator.pop(context, false), child: Text('إلغاء')),
                                     ElevatedButton(
@@ -160,7 +160,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                             child: ChoiceChip(
                               label: Text(
                                 cat.name,
-                                style: GoogleFonts.cairo(
+                                style: GoogleFonts.ibmPlexSansArabic(
                                   color: isSelected ? Colors.white : theme.textSecondary,
                                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                                   fontSize: 12,
@@ -174,7 +174,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                               selectedColor: cat.color,
                               backgroundColor: theme.isDarkMode ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(8),
                                 side: BorderSide(color: isSelected ? cat.color : Colors.transparent),
                               ),
                               showCheckmark: false,
@@ -186,10 +186,10 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                         padding: const EdgeInsets.only(left: 8.0, right: 8.0),
                         child: ActionChip(
                           avatar: Icon(Icons.add, size: 16, color: theme.accentOrange),
-                          label: Text('+ تصنيف جديد', style: GoogleFonts.cairo(fontSize: 12, color: theme.accentOrange, fontWeight: FontWeight.bold)),
+                          label: Text('+ تصنيف جديد', style: GoogleFonts.ibmPlexSansArabic(fontSize: 12, color: theme.accentOrange, fontWeight: FontWeight.bold)),
                           backgroundColor: theme.accentOrange.withOpacity(0.1),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(8),
                             side: BorderSide(color: theme.accentOrange.withOpacity(0.5)),
                           ),
                           onPressed: () async {
@@ -213,7 +213,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('إلغاء', style: GoogleFonts.cairo(color: Colors.grey)),
+            child: Text('إلغاء', style: GoogleFonts.ibmPlexSansArabic(color: Colors.grey)),
           ),
           ElevatedButton(
             onPressed: _isLoading ? null : _submit,
@@ -228,7 +228,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                     width: 20, 
                     child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
                   )
-                : Text('إضافة', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                : Text('إضافة', style: GoogleFonts.ibmPlexSansArabic(fontWeight: FontWeight.bold)),
           ),
         ],
       ),

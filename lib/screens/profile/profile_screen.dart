@@ -34,7 +34,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (user == null) {
       return Scaffold(
         backgroundColor: themeProvider.bg,
-        body: Center(child: Text('يجب تسجيل الدخول', style: GoogleFonts.cairo(color: themeProvider.primaryText))),
+        body: Center(child: Text('يجب تسجيل الدخول', style: GoogleFonts.ibmPlexSansArabic(color: themeProvider.primaryText))),
       );
     }
 
@@ -45,7 +45,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         elevation: 0,
         iconTheme: IconThemeData(color: themeProvider.primaryText),
         title: Text('الملف الشخصي', 
-          style: GoogleFonts.cairo(
+          style: GoogleFonts.ibmPlexSansArabic(
             color: themeProvider.primaryText, 
             fontWeight: FontWeight.bold,
             shadows: [Shadow(color: themeProvider.primaryText.withOpacity(0.5), blurRadius: 8)],
@@ -93,7 +93,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   padding: const EdgeInsets.all(24),
                   child: Text(
                     'خطأ في جلب البيانات:\n${snapshot.error}\n\nتحقق من Firestore Rules.',
-                    style: GoogleFonts.cairo(color: Colors.redAccent, fontSize: 15),
+                    style: GoogleFonts.ibmPlexSansArabic(color: Colors.redAccent, fontSize: 15),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -114,7 +114,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const SizedBox(height: 16),
                     Text(
                       'لم يتم العثور على بيانات المستخدم',
-                      style: GoogleFonts.cairo(color: themeProvider.primaryText, fontSize: 16),
+                      style: GoogleFonts.ibmPlexSansArabic(color: themeProvider.primaryText, fontSize: 16),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 24),
@@ -128,7 +128,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                       icon: const Icon(Icons.refresh),
-                      label: Text('إنشاء الملف', style: GoogleFonts.cairo()),
+                      label: Text('إنشاء الملف', style: GoogleFonts.ibmPlexSansArabic()),
                       style: ElevatedButton.styleFrom(backgroundColor: themeProvider.accentOrange, foregroundColor: Colors.white),
                     ),
                   ],
@@ -188,7 +188,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         const SizedBox(height: 16),
         Text(
           userProfile.name,
-          style: GoogleFonts.cairo(
+          style: GoogleFonts.ibmPlexSansArabic(
             color: theme.primaryText, 
             fontSize: 22, 
             fontWeight: FontWeight.bold,
@@ -197,13 +197,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: 4),
-        Text(userProfile.email, style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 13)),
+        Text(userProfile.email, style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary, fontSize: 13)),
         const SizedBox(height: 12),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
           decoration: BoxDecoration(
             color: theme.card,
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(8),
             border: Border.all(color: theme.accentOrange.withOpacity(0.3)),
           ),
           child: Row(
@@ -211,7 +211,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               Text(
                 'كود الدعوة: ${userProfile.inviteCode}',
-                style: GoogleFonts.tajawal(color: theme.accentOrange, fontWeight: FontWeight.w600, fontSize: 16),
+                style: GoogleFonts.ibmPlexSansArabic(color: theme.accentOrange, fontWeight: FontWeight.w600, fontSize: 16),
               ),
               const SizedBox(width: 12),
               IconButton(
@@ -223,7 +223,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Clipboard.setData(ClipboardData(text: userProfile.inviteCode));
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('تم النسخ ✅', style: GoogleFonts.cairo()),
+                      content: Text('تم النسخ ✅', style: GoogleFonts.ibmPlexSansArabic()),
                       backgroundColor: Colors.green,
                       behavior: SnackBarBehavior.floating,
                     ),
@@ -263,11 +263,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             padding: const EdgeInsets.all(8),
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
-              gradient: LinearGradient(
-                colors: [Color(0xFFFFD700), Color(0xFFFF8C00)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+              
             ),
             child: const Icon(Icons.workspace_premium, color: Colors.white, size: 20),
           ),
@@ -278,16 +274,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 Text(
                   "اشتراكك المميز ⭐",
-                  style: GoogleFonts.cairo(color: Colors.white, fontWeight: FontWeight.bold),
+                  style: GoogleFonts.ibmPlexSansArabic(color: Colors.white, fontWeight: FontWeight.bold),
                 ),
                 if (expiry != null)
                   Text(
                     "ينتهي في: ${DateFormat('dd/MM/yyyy').format(expiry)}",
-                    style: GoogleFonts.cairo(color: Colors.grey, fontSize: 12),
+                    style: GoogleFonts.ibmPlexSansArabic(color: Colors.grey, fontSize: 12),
                   ),
                 Text(
                   daysLeft > 0 ? "متبقي $daysLeft يوم 🕐" : "⚠️ انتهى اشتراكك",
-                  style: GoogleFonts.cairo(
+                  style: GoogleFonts.ibmPlexSansArabic(
                     color: daysLeft > 7
                         ? const Color(0xFF66BB6A)
                         : daysLeft > 0
@@ -303,14 +299,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFFFF6A00), Color(0xFFFF8C00)],
-                        ),
-                        borderRadius: BorderRadius.circular(20),
+                        
+                        borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
                         "جدد اشتراكك 🚀",
-                        style: GoogleFonts.cairo(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 11),
+                        style: GoogleFonts.ibmPlexSansArabic(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 11),
                       ),
                     ),
                   ),
@@ -390,17 +384,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: theme.card,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 8, offset: const Offset(0, 4))],
+        borderRadius: BorderRadius.circular(8),
+        
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(icon, color: theme.accentOrange, size: 26),
           const SizedBox(height: 10),
-          Text(value, style: GoogleFonts.tajawal(color: theme.primaryText, fontSize: 22, fontWeight: FontWeight.bold)),
+          Text(value, style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 22, fontWeight: FontWeight.bold)),
           const SizedBox(height: 4),
-          Text(title, style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 13)),
+          Text(title, style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary, fontSize: 13)),
         ],
       ),
     );
@@ -411,8 +405,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: theme.card,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 8, offset: const Offset(0, 4))],
+        borderRadius: BorderRadius.circular(8),
+        
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -421,13 +415,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               Text(emoji, style: const TextStyle(fontSize: 24)),
               const Spacer(),
-              Text(value, style: GoogleFonts.tajawal(color: theme.primaryText, fontSize: 24, fontWeight: FontWeight.bold)),
+              Text(value, style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 24, fontWeight: FontWeight.bold)),
             ],
           ),
           const SizedBox(height: 12),
-          Text(title, style: GoogleFonts.cairo(color: color, fontSize: 14, fontWeight: FontWeight.bold)),
+          Text(title, style: GoogleFonts.ibmPlexSansArabic(color: color, fontSize: 14, fontWeight: FontWeight.bold)),
           const SizedBox(height: 4),
-          Text(subtitle, style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 11)),
+          Text(subtitle, style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary, fontSize: 11)),
         ],
       ),
     );
@@ -442,7 +436,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             Row(
               children: [
-                Text('لوحة الشرف', style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 18, fontWeight: FontWeight.bold)),
+                Text('لوحة الشرف', style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 18, fontWeight: FontWeight.bold)),
                 const SizedBox(width: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -458,7 +452,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       const SizedBox(width: 4),
                       Text(
                         '${userProfile.friends.length}',
-                        style: GoogleFonts.cairo(color: Colors.blueAccent, fontWeight: FontWeight.bold, fontSize: 11),
+                        style: GoogleFonts.ibmPlexSansArabic(color: Colors.blueAccent, fontWeight: FontWeight.bold, fontSize: 11),
                       ),
                     ],
                   ),
@@ -483,19 +477,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle),
                               child: Text(
                                 '${userProfile.friendRequests.length}',
-                                style: GoogleFonts.tajawal(color: Colors.white, fontSize: 8, fontWeight: FontWeight.bold),
+                                style: GoogleFonts.ibmPlexSansArabic(color: Colors.white, fontSize: 8, fontWeight: FontWeight.bold),
                               ),
                             ),
                           ),
                         ],
                       ),
-                      label: Text('طلبات الصداقة', style: GoogleFonts.cairo(color: Colors.amber, fontSize: 13, fontWeight: FontWeight.bold)),
+                      label: Text('طلبات الصداقة', style: GoogleFonts.ibmPlexSansArabic(color: Colors.amber, fontSize: 13, fontWeight: FontWeight.bold)),
                     ),
                   ),
                 TextButton.icon(
                   onPressed: () => _showAddFriendDialog(context, userProfile.id, theme),
                   icon: Icon(Icons.person_add_outlined, color: theme.accentOrange, size: 16),
-                  label: Text('إضافة صديق', style: GoogleFonts.cairo(color: theme.accentOrange, fontSize: 13)),
+                  label: Text('إضافة صديق', style: GoogleFonts.ibmPlexSansArabic(color: theme.accentOrange, fontSize: 13)),
                 ),
               ],
             ),
@@ -516,7 +510,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 20),
                   child: Text(
                     'لا يوجد أصدقاء بعد. قم بدعوة أصدقائك!',
-                    style: GoogleFonts.cairo(color: theme.textSecondary),
+                    style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary),
                   ),
                 ),
               );
@@ -532,14 +526,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   margin: const EdgeInsets.only(bottom: 10),
                   decoration: BoxDecoration(
                     color: isMe ? theme.accentOrange.withOpacity(0.1) : theme.card,
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(8),
                     border: isMe ? Border.all(color: theme.accentOrange, width: 1.5) : Border.all(color: theme.isDarkMode ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05)),
                   ),
                   child: ListTile(
                     contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
                     leading: Text(
                       '#${index + 1}',
-                      style: GoogleFonts.tajawal(
+                      style: GoogleFonts.ibmPlexSansArabic(
                         color: index == 0 ? Colors.amber : theme.textSecondary,
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
@@ -547,12 +541,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     title: Text(
                       isMe ? '${boardUser.name} (أنت)' : boardUser.name,
-                      style: GoogleFonts.cairo(color: theme.primaryText, fontWeight: isMe ? FontWeight.bold : FontWeight.normal),
+                      style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontWeight: isMe ? FontWeight.bold : FontWeight.normal),
                     ),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text('${boardUser.weeklyFocusPoints}', style: GoogleFonts.tajawal(color: theme.accentOrange, fontSize: 18, fontWeight: FontWeight.bold)),
+                        Text('${boardUser.weeklyFocusPoints}', style: GoogleFonts.ibmPlexSansArabic(color: theme.accentOrange, fontSize: 18, fontWeight: FontWeight.bold)),
                         const SizedBox(width: 4),
                         Icon(Icons.local_fire_department, color: theme.accentOrange, size: 18),
                         if (!isMe) ...[
@@ -563,16 +557,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 context: context,
                                 builder: (ctx) => AlertDialog(
                                   backgroundColor: theme.card,
-                                  title: Text('إزالة صديق؟', style: GoogleFonts.cairo(color: theme.primaryText, fontWeight: FontWeight.bold)),
+                                  title: Text('إزالة صديق؟', style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontWeight: FontWeight.bold)),
                                   content: Text(
                                     'هل تريد إزالة \'${boardUser.name}\'\nمن قائمة أصدقائك؟',
-                                    style: GoogleFonts.cairo(color: theme.textSecondary),
+                                    style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary),
                                   ),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                                   actions: [
                                     TextButton(
                                       onPressed: () => Navigator.pop(ctx),
-                                      child: Text('إلغاء', style: GoogleFonts.cairo(color: Colors.grey)),
+                                      child: Text('إلغاء', style: GoogleFonts.ibmPlexSansArabic(color: Colors.grey)),
                                     ),
                                     ElevatedButton(
                                       onPressed: () async {
@@ -581,14 +575,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         if (context.mounted) {
                                           ScaffoldMessenger.of(context).showSnackBar(
                                             SnackBar(
-                                              content: Text('تم إزالة الصديق', style: GoogleFonts.cairo()),
+                                              content: Text('تم إزالة الصديق', style: GoogleFonts.ibmPlexSansArabic()),
                                               backgroundColor: Colors.green,
                                             ),
                                           );
                                         }
                                       },
                                       style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFF5252)),
-                                      child: Text('إزالة', style: GoogleFonts.cairo(color: Colors.white)),
+                                      child: Text('إزالة', style: GoogleFonts.ibmPlexSansArabic(color: Colors.white)),
                                     ),
                                   ],
                                 ),
@@ -630,7 +624,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('طلبات الصداقة الموجهة إليك', style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 18, fontWeight: FontWeight.bold)),
+                    Text('طلبات الصداقة الموجهة إليك', style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 18, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 16),
                     Expanded(
                       child: StreamBuilder<List<UserModel>>(
@@ -641,7 +635,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           }
                           final requests = snapshot.data ?? [];
                           if (requests.isEmpty) {
-                             return Center(child: Text('لا توجد طلبات صداقة معلقة', style: GoogleFonts.cairo(color: theme.textSecondary)));
+                             return Center(child: Text('لا توجد طلبات صداقة معلقة', style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary)));
                           }
                           return ListView.builder(
                             controller: controller,
@@ -658,8 +652,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     backgroundImage: reqUser.photoUrl.isNotEmpty ? NetworkImage(reqUser.photoUrl) : null,
                                     child: reqUser.photoUrl.isEmpty ? Icon(Icons.person, color: theme.isDarkMode ? Colors.white54 : Colors.black54) : null,
                                   ),
-                                  title: Text(reqUser.name, style: GoogleFonts.cairo(color: theme.primaryText, fontWeight: FontWeight.bold)),
-                                  subtitle: Text('يريد إضافتك كصديق', style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 12)),
+                                  title: Text(reqUser.name, style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontWeight: FontWeight.bold)),
+                                  subtitle: Text('يريد إضافتك كصديق', style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary, fontSize: 12)),
                                   trailing: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
@@ -731,7 +725,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Icon(Icons.person_add_alt_1, color: theme.accentOrange),
                         const SizedBox(width: 10),
                         Text('إضافة صديق',
-                            style: GoogleFonts.cairo(
+                            style: GoogleFonts.ibmPlexSansArabic(
                                 color: theme.primaryText,
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold)),
@@ -743,7 +737,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     TextField(
                       controller: codeCtrl,
                       textCapitalization: TextCapitalization.characters,
-                      style: GoogleFonts.tajawal(
+                      style: GoogleFonts.ibmPlexSansArabic(
                           color: theme.primaryText,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -751,16 +745,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       decoration: InputDecoration(
                         hintText: 'ادخل كود الدعوة (مثال: AB12CD)',
                         hintStyle:
-                            GoogleFonts.cairo(color: theme.textSecondary, fontSize: 13),
+                            GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary, fontSize: 13),
                         filled: true,
                         fillColor: theme.bg,
                         contentPadding: const EdgeInsets.all(14),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
+                          borderRadius: BorderRadius.circular(8),
                           borderSide: BorderSide.none,
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
+                          borderRadius: BorderRadius.circular(8),
                           borderSide: BorderSide(color: theme.accentOrange, width: 1.5),
                         ),
                       ),
@@ -810,13 +804,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               )
                             : const Icon(Icons.search, size: 18),
                         label: Text('بحث',
-                            style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                            style: GoogleFonts.ibmPlexSansArabic(fontWeight: FontWeight.bold)),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: theme.accentOrange,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14)),
+                              borderRadius: BorderRadius.circular(8)),
                         ),
                       ),
                     ),
@@ -832,7 +826,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             const SizedBox(width: 6),
                             Expanded(
                               child: Text(errorMsg!,
-                                  style: GoogleFonts.cairo(
+                                  style: GoogleFonts.ibmPlexSansArabic(
                                       color: Colors.redAccent, fontSize: 13)),
                             ),
                           ],
@@ -846,7 +840,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
                           color: theme.accentOrange.withOpacity(0.08),
-                          borderRadius: BorderRadius.circular(14),
+                          borderRadius: BorderRadius.circular(8),
                           border:
                               Border.all(color: theme.accentOrange.withOpacity(0.4)),
                         ),
@@ -870,12 +864,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(foundUser!.name,
-                                      style: GoogleFonts.cairo(
+                                      style: GoogleFonts.ibmPlexSansArabic(
                                           color: theme.primaryText,
                                           fontWeight: FontWeight.bold)),
                                   Text(
                                     'كود: ${foundUser!.inviteCode}',
-                                    style: GoogleFonts.tajawal(
+                                    style: GoogleFonts.ibmPlexSansArabic(
                                         color: theme.accentOrange, fontSize: 12),
                                   ),
                                 ],
@@ -891,7 +885,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   SnackBar(
                                     content: Text(
                                       err ?? 'تم إرسال طلب الصداقة إلى ${foundUser!.name}! 📨',
-                                      style: GoogleFonts.cairo(),
+                                      style: GoogleFonts.ibmPlexSansArabic(),
                                     ),
                                     backgroundColor:
                                         err == null ? Colors.green : Colors.redAccent,
@@ -908,7 +902,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     borderRadius: BorderRadius.circular(10)),
                               ),
                               child:
-                                  Text('إضافة', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                                  Text('إضافة', style: GoogleFonts.ibmPlexSansArabic(fontWeight: FontWeight.bold)),
                             ),
                           ],
                         ),
@@ -949,7 +943,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Icon(Icons.move_to_inbox, color: theme.accentOrange),
                     const SizedBox(width: 10),
                     Text('طلبات الصداقة',
-                        style: GoogleFonts.cairo(
+                        style: GoogleFonts.ibmPlexSansArabic(
                             color: theme.primaryText,
                             fontSize: 18,
                             fontWeight: FontWeight.bold)),
@@ -969,7 +963,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         return Center(
                           child: Text(
                             'لا توجد طلبات صداقة حالياً.',
-                            style: GoogleFonts.cairo(color: theme.textSecondary),
+                            style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary),
                           ),
                         );
                       }
@@ -984,7 +978,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
                               color: theme.bg,
-                              borderRadius: BorderRadius.circular(14),
+                              borderRadius: BorderRadius.circular(8),
                               border: Border.all(color: theme.isDarkMode ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05)),
                             ),
                             child: Row(
@@ -1000,8 +994,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text(senderUser.name, style: GoogleFonts.cairo(color: theme.primaryText, fontWeight: FontWeight.bold)),
-                                      Text('نقاط التركيز: ${senderUser.weeklyFocusPoints}', style: GoogleFonts.tajawal(color: theme.textSecondary, fontSize: 12)),
+                                      Text(senderUser.name, style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontWeight: FontWeight.bold)),
+                                      Text('نقاط التركيز: ${senderUser.weeklyFocusPoints}', style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary, fontSize: 12)),
                                     ],
                                   ),
                                 ),
@@ -1065,7 +1059,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         Icon(Icons.settings, color: theme.accentOrange),
                         const SizedBox(width: 10),
-                        Text('الإعدادات', style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 18, fontWeight: FontWeight.bold)),
+                        Text('الإعدادات', style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 18, fontWeight: FontWeight.bold)),
                       ],
                     ),
                     const SizedBox(height: 24),
@@ -1074,43 +1068,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Container(
                       decoration: BoxDecoration(
                         color: theme.bg,
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius: BorderRadius.circular(8),
                         border: Border.all(color: theme.isDarkMode ? Colors.white12 : Colors.black12),
                       ),
                       child: SwitchListTile(
                         value: theme.isDarkMode,
                         onChanged: (val) => theme.toggleTheme(),
                         activeColor: theme.accentOrange,
-                        title: Text('الوضع الداكن (Dark Mode)', style: GoogleFonts.cairo(color: theme.primaryText, fontWeight: FontWeight.bold)),
+                        title: Text('الوضع الداكن (Dark Mode)', style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontWeight: FontWeight.bold)),
                         secondary: Icon(theme.isDarkMode ? Icons.dark_mode : Icons.light_mode, color: theme.accentOrange),
                       ),
                     ),
                     const SizedBox(height: 20),
 
                     // Edit Form
-                    Text('تعديل البيانات', style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 14)),
+                    Text('تعديل البيانات', style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary, fontSize: 14)),
                     const SizedBox(height: 10),
                     TextField(
                       controller: nameCtrl,
-                      style: GoogleFonts.cairo(color: theme.primaryText),
+                      style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText),
                       decoration: InputDecoration(
                         labelText: 'الاسم',
-                        labelStyle: GoogleFonts.cairo(color: theme.textSecondary),
+                        labelStyle: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary),
                         filled: true,
                         fillColor: theme.bg,
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide.none),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
                       ),
                     ),
                     const SizedBox(height: 12),
                     TextField(
                       controller: photoCtrl,
-                      style: GoogleFonts.cairo(color: theme.primaryText),
+                      style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText),
                       decoration: InputDecoration(
                         labelText: 'رابط الصورة (Photo URL)',
-                        labelStyle: GoogleFonts.cairo(color: theme.textSecondary),
+                        labelStyle: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary),
                         filled: true,
                         fillColor: theme.bg,
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide.none),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -1141,11 +1135,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           backgroundColor: theme.accentOrange,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                         ),
                         child: isSaving 
                             ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                            : Text('حفظ التعديلات', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                            : Text('حفظ التعديلات', style: GoogleFonts.ibmPlexSansArabic(fontWeight: FontWeight.bold)),
                       ),
                     ),
                   ],
@@ -1170,15 +1164,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
           textDirection: TextDirection.rtl,
           child: AlertDialog(
             backgroundColor: theme.card,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             title: Text("تغيير كود الدعوة",
-              style: GoogleFonts.cairo(color: theme.primaryText, fontWeight: FontWeight.bold)),
+              style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontWeight: FontWeight.bold)),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   "الكود يجب أن يكون 6 أحرف/أرقام إنجليزية كبيرة",
-                  style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 12),
+                  style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary, fontSize: 12),
                   textAlign: TextAlign.center,
                 ),
                 
@@ -1190,7 +1184,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   textDirection: TextDirection.ltr,
                   textCapitalization: TextCapitalization.characters,
                   maxLength: 6,
-                  style: GoogleFonts.tajawal(
+                  style: GoogleFonts.ibmPlexSansArabic(
                     color: theme.primaryText,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -1224,7 +1218,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 if (errorMsg != null) ...[
                   const SizedBox(height: 8),
                   Text(errorMsg!,
-                    style: GoogleFonts.cairo(color: const Color(0xFFFF5252), fontSize: 12)),
+                    style: GoogleFonts.ibmPlexSansArabic(color: const Color(0xFFFF5252), fontSize: 12)),
                 ],
                 
                 if (isChecking) ...[
@@ -1241,7 +1235,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text("إلغاء", style: GoogleFonts.cairo(color: theme.textSecondary)),
+                child: Text("إلغاء", style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary)),
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -1285,14 +1279,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text("تم تغيير الكود إلى $newCode ✅", style: GoogleFonts.cairo()),
+                        content: Text("تم تغيير الكود إلى $newCode ✅", style: GoogleFonts.ibmPlexSansArabic()),
                         backgroundColor: const Color(0xFF66BB6A),
                         behavior: SnackBarBehavior.floating,
                       ),
                     );
                   }
                 },
-                child: Text("حفظ", style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                child: Text("حفظ", style: GoogleFonts.ibmPlexSansArabic(fontWeight: FontWeight.bold)),
               ),
             ],
           ),

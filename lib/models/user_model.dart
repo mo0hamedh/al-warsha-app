@@ -18,6 +18,7 @@ class UserModel {
   final bool isPremium; // مشترك في الخطة المميزة
   final DateTime? premiumEndDate; // تاريخ انتهاء الاشتراك
   final String? fcmToken; // توكن الإشعارات
+  final bool hasSeenOnboarding; // هل رأى شاشة الترحيب؟
 
   UserModel({
     required this.id,
@@ -39,6 +40,7 @@ class UserModel {
     this.isPremium = false,
     this.premiumEndDate,
     this.fcmToken,
+    this.hasSeenOnboarding = false,
   });
 
   factory UserModel.fromMap(Map<String, dynamic> data, String id) {
@@ -64,6 +66,7 @@ class UserModel {
       isPremium: data['isPremium'] ?? false,
       premiumEndDate: data['premiumEndDate'] != null ? (data['premiumEndDate'] as dynamic).toDate() : null,
       fcmToken: data['fcmToken'],
+      hasSeenOnboarding: data['hasSeenOnboarding'] ?? false,
     );
   }
 
@@ -87,6 +90,7 @@ class UserModel {
       'isPremium': isPremium,
       'premiumEndDate': premiumEndDate,
       'fcmToken': fcmToken,
+      'hasSeenOnboarding': hasSeenOnboarding,
     };
   }
 }

@@ -84,16 +84,16 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                     CircleAvatar(
                       radius: 50,
                       backgroundColor: color.withValues(alpha: 0.2),
-                      child: Text(widget.habit.icon, style: const TextStyle(fontSize: 50)),
+                      child: Text(widget.habit.icon, style: const TextStyle(fontSize: 50, fontFamilyFallback: ['NotoColorEmoji'])),
                     ),
                     const SizedBox(height: 16),
                     Text(
                       widget.habit.name,
-                      style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 28, fontWeight: FontWeight.bold),
+                      style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 28, fontWeight: FontWeight.bold),
                     ),
                     Text(
                       widget.habit.category,
-                      style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 16),
+                      style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary, fontSize: 16),
                     ),
                   ],
                 ),
@@ -117,7 +117,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
                 Text(
                   'تقويم الشهر الحالي',
                   textAlign: TextAlign.right,
-                  style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 20, fontWeight: FontWeight.bold),
+                  style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
                 _buildCalendar(theme),
@@ -132,14 +132,14 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
       decoration: BoxDecoration(
         color: theme.card,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(8),
         border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
-          Text(value, style: GoogleFonts.tajawal(color: color, fontSize: 20, fontWeight: FontWeight.bold)),
+          Text(value, style: GoogleFonts.ibmPlexSansArabic(color: color, fontSize: 20, fontWeight: FontWeight.bold)),
           const SizedBox(height: 4),
-          Text(label, style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 12), textAlign: TextAlign.center),
+          Text(label, style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary, fontSize: 12), textAlign: TextAlign.center),
         ],
       ),
     );
@@ -200,7 +200,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
           child: Center(
             child: Text(
               day.toString(),
-              style: GoogleFonts.tajawal(color: textColor, fontWeight: FontWeight.bold),
+              style: GoogleFonts.ibmPlexSansArabic(color: textColor, fontWeight: FontWeight.bold),
             ),
           ),
         );
@@ -213,8 +213,8 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
        context: context,
        builder: (ctx) => AlertDialog(
          backgroundColor: theme.card,
-         title: Text('حذف العادة', style: GoogleFonts.cairo(color: theme.primaryText)),
-         content: Text('هل أنت متأكد أنك تريد حذف هذه العادة وسجلها بالكامل؟', style: GoogleFonts.cairo(color: theme.textSecondary)),
+         title: Text('حذف العادة', style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText)),
+         content: Text('هل أنت متأكد أنك تريد حذف هذه العادة وسجلها بالكامل؟', style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary)),
          actions: [
            TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text('إلغاء')),
            TextButton(

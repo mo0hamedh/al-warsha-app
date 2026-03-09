@@ -52,7 +52,7 @@ class _MonthlyLeaderboardScreenState extends State<MonthlyLeaderboardScreen> wit
         ),
         title: Text(
           'متصدرو التطبيق 🏆',
-          style: GoogleFonts.cairo(
+          style: GoogleFonts.ibmPlexSansArabic(
             color: theme.primaryText,
             fontSize: 22,
             fontWeight: FontWeight.bold,
@@ -64,7 +64,7 @@ class _MonthlyLeaderboardScreenState extends State<MonthlyLeaderboardScreen> wit
           indicatorColor: theme.accentOrange,
           labelColor: theme.accentOrange,
           unselectedLabelColor: theme.textSecondary,
-          labelStyle: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 16),
+          labelStyle: GoogleFonts.ibmPlexSansArabic(fontWeight: FontWeight.bold, fontSize: 16),
           tabs: const [
             Tab(text: 'شهري 🔥'),
             Tab(text: 'إجمالي ⭐'),
@@ -92,7 +92,7 @@ class _MonthlyLeaderboardScreenState extends State<MonthlyLeaderboardScreen> wit
             child: Text(
               'يتجدد الترتيب بعد ${_getDaysRemaining()} يوم',
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(
+              style: GoogleFonts.ibmPlexSansArabic(
                 color: theme.textSecondary,
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
@@ -114,7 +114,7 @@ class _MonthlyLeaderboardScreenState extends State<MonthlyLeaderboardScreen> wit
                   child: Text(
                     'لا يوجد متصدرين حتى الآن.\nكن أول مبادر! 💪',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 16),
+                    style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary, fontSize: 16),
                   ),
                 );
               }
@@ -162,7 +162,6 @@ class _MonthlyLeaderboardScreenState extends State<MonthlyLeaderboardScreen> wit
 
   Widget _buildPodiumCard(UserModel user, int rank, ThemeProvider theme, String field) {
     final bool isFirst = rank == 1;
-    final double height = isFirst ? 160 : 130;
     
     final goldGradient = const LinearGradient(colors: [Color(0xFFFFD700), Color(0xFFFFA500)], begin: Alignment.topLeft, end: Alignment.bottomRight);
     final silverGradient = const LinearGradient(colors: [Color(0xFFE0E0E0), Color(0xFF9E9E9E)], begin: Alignment.topLeft, end: Alignment.bottomRight);
@@ -177,14 +176,13 @@ class _MonthlyLeaderboardScreenState extends State<MonthlyLeaderboardScreen> wit
     else { gradient = bronzeGradient; glowColor = const Color(0xFFCD7F32); crownIcon = '🥉'; }
 
     return Container(
-      height: height,
       margin: const EdgeInsets.symmetric(horizontal: 4),
-      padding: const EdgeInsets.all(8),
+      padding: EdgeInsets.symmetric(horizontal: 4, vertical: isFirst ? 20 : 12),
       decoration: BoxDecoration(
         color: theme.card,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(8),
         border: Border.all(color: glowColor.withOpacity(0.5), width: isFirst ? 2 : 1),
-        boxShadow: isFirst ? [BoxShadow(color: glowColor.withOpacity(0.3), blurRadius: 15, spreadRadius: 2)] : [],
+        
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -200,7 +198,7 @@ class _MonthlyLeaderboardScreenState extends State<MonthlyLeaderboardScreen> wit
           const SizedBox(height: 8),
           Text(
             user.name,
-            style: GoogleFonts.cairo(color: theme.primaryText, fontSize: isFirst ? 14 : 12, fontWeight: FontWeight.bold),
+            style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: isFirst ? 14 : 12, fontWeight: FontWeight.bold),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -208,7 +206,7 @@ class _MonthlyLeaderboardScreenState extends State<MonthlyLeaderboardScreen> wit
              shaderCallback: (bounds) => gradient.createShader(bounds),
              child: Text(
                '${field == 'monthlyPoints' ? user.monthlyPoints : user.totalPoints} نقطة',
-               style: GoogleFonts.tajawal(color: Colors.white, fontSize: isFirst ? 16 : 14, fontWeight: FontWeight.w900),
+               style: GoogleFonts.ibmPlexSansArabic(color: Colors.white, fontSize: isFirst ? 16 : 14, fontWeight: FontWeight.w900),
              ),
           ),
         ],
@@ -242,7 +240,7 @@ class _MonthlyLeaderboardScreenState extends State<MonthlyLeaderboardScreen> wit
             children: [
                SizedBox(
                  width: 30,
-                 child: Text('#$rank', style: GoogleFonts.tajawal(color: theme.textSecondary, fontSize: 16, fontWeight: FontWeight.bold)),
+                 child: Text('#$rank', style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary, fontSize: 16, fontWeight: FontWeight.bold)),
                ),
                CircleAvatar(
                  radius: 18,
@@ -254,14 +252,14 @@ class _MonthlyLeaderboardScreenState extends State<MonthlyLeaderboardScreen> wit
                Expanded(
                  child: Text(
                    user.name,
-                   style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 15),
+                   style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 15),
                    maxLines: 1,
                    overflow: TextOverflow.ellipsis,
                  ),
                ),
                Text(
                  '${field == 'monthlyPoints' ? user.monthlyPoints : user.totalPoints} pt',
-                 style: GoogleFonts.tajawal(color: theme.accentOrange, fontSize: 16, fontWeight: FontWeight.bold),
+                 style: GoogleFonts.ibmPlexSansArabic(color: theme.accentOrange, fontSize: 16, fontWeight: FontWeight.bold),
                  textDirection: TextDirection.ltr,
                ),
             ],
@@ -311,7 +309,7 @@ class _MonthlyLeaderboardScreenState extends State<MonthlyLeaderboardScreen> wit
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           decoration: BoxDecoration(
              color: theme.bg, 
-             boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), offset: const Offset(0, -4), blurRadius: 10)],
+             
           ),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -328,7 +326,7 @@ class _MonthlyLeaderboardScreenState extends State<MonthlyLeaderboardScreen> wit
                 Expanded(
                   child: Text(
                     message,
-                    style: GoogleFonts.cairo(
+                    style: GoogleFonts.ibmPlexSansArabic(
                       color: bannerColor == theme.card ? theme.primaryText : theme.accentOrange,
                       fontSize: 14,
                       fontWeight: FontWeight.bold,

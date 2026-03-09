@@ -20,7 +20,7 @@ class SplashScreen extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               "الـ وَرشة",
-              style: GoogleFonts.cairo(
+              style: GoogleFonts.ibmPlexSansArabic(
                 color: Colors.white,
                 fontSize: 26,
                 fontWeight: FontWeight.w900,
@@ -29,7 +29,7 @@ class SplashScreen extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               "أنجز أكثر. ركز أعمق.",
-              style: GoogleFonts.cairo(
+              style: GoogleFonts.ibmPlexSansArabic(
                 color: const Color(0xFF555555),
                 fontSize: 12,
               ),

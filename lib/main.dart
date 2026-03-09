@@ -32,8 +32,7 @@ void main() async {
   // تحميل الخطوط مسبقاً للويب لتحسين الأداء
   if (kIsWeb) {
     await GoogleFonts.pendingFonts([
-      GoogleFonts.cairo(),
-      GoogleFonts.tajawal(),
+      GoogleFonts.ibmPlexSansArabic(),
     ]);
   }
   

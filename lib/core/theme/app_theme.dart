@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  // ── Dark Neon Theme Colors ──
-  static const Color darkBg = Color(0xFF121212); // Deep Dark Grey
-  static const Color darkCard = Color(0xFF1E1E1E); // Secondary Dark
+  // ── Dark Theme Colors ──
+  static const Color darkBg = Color(0xFF0D0D0D); // Deep Dark Theme
+  static const Color darkCard = Color(0xFF1A1A1A); // Secondary Dark
   static const Color darkPrimaryText = Color(0xFFFFFFFF); // Glowing White
   static const Color accentOrange = Color(0xFFFF6A00); // Bright Orange
+  static const Color darkBorder = Color(0xFF2A2A2A); // Border
   static const Color darkTextSecondary = Color(0xFFB3B3B3); // Light Grey
 
   // ── Light Theme Colors ──
@@ -20,6 +22,7 @@ class AppTheme {
     return ThemeData(
       brightness: Brightness.dark,
       scaffoldBackgroundColor: darkBg,
+      textTheme: GoogleFonts.ibmPlexSansArabicTextTheme(ThemeData.dark().textTheme),
       colorScheme: const ColorScheme.dark(
         primary: darkPrimaryText,
         secondary: accentOrange,
@@ -39,6 +42,7 @@ class AppTheme {
     return ThemeData(
       brightness: Brightness.light,
       scaffoldBackgroundColor: lightBg,
+      textTheme: GoogleFonts.ibmPlexSansArabicTextTheme(ThemeData.light().textTheme),
       colorScheme: const ColorScheme.light(
         primary: lightPrimaryText,
         secondary: accentOrange,

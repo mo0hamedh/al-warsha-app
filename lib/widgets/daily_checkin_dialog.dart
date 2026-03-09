@@ -88,7 +88,7 @@ class _DailyCheckInDialogState extends State<DailyCheckInDialog> {
 
     return Dialog(
       backgroundColor: theme.card,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       child: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(
@@ -96,18 +96,18 @@ class _DailyCheckInDialogState extends State<DailyCheckInDialog> {
           children: [
             Text(
               'كيف كان يومك؟', 
-              style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 24, fontWeight: FontWeight.bold)
+              style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 24, fontWeight: FontWeight.bold)
             ),
             const SizedBox(height: 8),
             Text(
               '(${_currentIndex + 1} من ${widget.unloggedHabits.length})', 
-              style: GoogleFonts.tajawal(color: theme.textSecondary, fontSize: 14)
+              style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary, fontSize: 14)
             ),
             
             const SizedBox(height: 24),
             CircleAvatar(backgroundColor: color.withValues(alpha: 0.2), radius: 40, child: Text(habit.icon, style: const TextStyle(fontSize: 40))),
             const SizedBox(height: 16),
-            Text(habit.name, style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 22, fontWeight: FontWeight.bold)),
+            Text(habit.name, style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 22, fontWeight: FontWeight.bold)),
             
             const SizedBox(height: 32),
             
@@ -144,7 +144,7 @@ class _DailyCheckInDialogState extends State<DailyCheckInDialog> {
           children: [
             Text(icon, style: const TextStyle(fontSize: 24)),
             const SizedBox(height: 4),
-            Text(label, style: GoogleFonts.cairo(color: color, fontWeight: FontWeight.bold, fontSize: 14)),
+            Text(label, style: GoogleFonts.ibmPlexSansArabic(color: color, fontWeight: FontWeight.bold, fontSize: 14)),
           ],
         ),
       ),

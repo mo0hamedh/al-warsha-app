@@ -68,7 +68,7 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
         ),
         title: Text(
           'إضافة عادة جديدة',
-          style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 20, fontWeight: FontWeight.bold),
+          style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 20, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
@@ -114,7 +114,7 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('اختر نوع العادة', style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 24, fontWeight: FontWeight.bold)),
+          Text('اختر نوع العادة', style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 24, fontWeight: FontWeight.bold)),
           const SizedBox(height: 40),
           _typeCard(
              title: 'بناء عادة إيجابية',
@@ -153,9 +153,9 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
           color: isSelected ? color.withValues(alpha: 0.15) : theme.card,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(8),
           border: Border.all(color: isSelected ? color : (theme.isDarkMode ? Colors.white12 : Colors.black12), width: isSelected ? 2 : 1),
-          boxShadow: isSelected ? [BoxShadow(color: color.withValues(alpha: 0.2), blurRadius: 15)] : [],
+          
         ),
         child: Row(
           textDirection: TextDirection.rtl,
@@ -166,8 +166,8 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 20, fontWeight: FontWeight.bold)),
-                  Text(subtitle, style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 13)),
+                  Text(title, style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 20, fontWeight: FontWeight.bold)),
+                  Text(subtitle, style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary, fontSize: 13)),
                 ],
               ),
             )
@@ -189,7 +189,7 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
       children: [
         Padding(
           padding: const EdgeInsets.all(24.0).copyWith(bottom: 0),
-          child: Text('اختر العادة', style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 24, fontWeight: FontWeight.bold)),
+          child: Text('اختر العادة', style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 24, fontWeight: FontWeight.bold)),
         ),
         Expanded(
           child: GridView.builder(
@@ -215,16 +215,16 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
                   duration: const Duration(milliseconds: 200),
                   decoration: BoxDecoration(
                     color: isSelected ? accentColor.withValues(alpha: 0.15) : theme.card,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(8),
                     border: Border.all(color: isSelected ? accentColor : (theme.isDarkMode ? Colors.white12 : Colors.black12), width: isSelected ? 2 : 1),
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(habit.icon, style: const TextStyle(fontSize: 40)),
+                      Text(habit.icon, style: const TextStyle(fontSize: 40, fontFamilyFallback: ['NotoColorEmoji'])),
                       const SizedBox(height: 12),
-                      Text(habit.name, style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 18, fontWeight: FontWeight.bold)),
-                      Text(habit.category, style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 12)),
+                      Text(habit.name, style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 18, fontWeight: FontWeight.bold)),
+                      Text(habit.category, style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary, fontSize: 12)),
                     ],
                   ),
                 ),
@@ -242,9 +242,9 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
       padding: const EdgeInsets.all(24.0),
       child: Column(
         children: [
-           Text('ما هو هدفك؟', style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 24, fontWeight: FontWeight.bold)),
+           Text('ما هو هدفك؟', style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 24, fontWeight: FontWeight.bold)),
            const SizedBox(height: 8),
-           Text('اختر مدة التحدي لتعويد عقلك', style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 16)),
+           Text('اختر مدة التحدي لتعويد عقلك', style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary, fontSize: 16)),
            const SizedBox(height: 40),
            
            _durationTile(21, '21 يوم', 'الوقت الكافي لتكوين مسار عصبي جديد 🧠', theme),
@@ -263,7 +263,7 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
                minimumSize: const Size(double.infinity, 54),
                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
              ),
-             child: Text('التالي', style: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+             child: Text('التالي', style: GoogleFonts.ibmPlexSansArabic(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
            )
         ],
       ),
@@ -279,7 +279,7 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: isSelected ? theme.accentOrange.withValues(alpha: 0.1) : theme.card,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(8),
           border: Border.all(color: isSelected ? theme.accentOrange : (theme.isDarkMode ? Colors.white12 : Colors.black12), width: isSelected ? 2 : 1),
         ),
         child: Row(
@@ -289,8 +289,8 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                   Text(title, style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 18, fontWeight: FontWeight.bold)),
-                   Text(subtitle, style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 13)),
+                   Text(title, style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 18, fontWeight: FontWeight.bold)),
+                   Text(subtitle, style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary, fontSize: 13)),
                 ],
               ),
             ),
@@ -315,7 +315,7 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: isSelected ? theme.accentOrange.withValues(alpha: 0.1) : theme.card,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(8),
           border: Border.all(color: isSelected ? theme.accentOrange : (theme.isDarkMode ? Colors.white12 : Colors.black12), width: isSelected ? 2 : 1),
         ),
         child: Row(
@@ -325,7 +325,7 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                   Text('مدة مخصصة', style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 18, fontWeight: FontWeight.bold)),
+                   Text('مدة مخصصة', style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 18, fontWeight: FontWeight.bold)),
                    if (isSelected)
                      Padding(
                        padding: const EdgeInsets.only(top: 8.0),
@@ -369,15 +369,15 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircleAvatar(backgroundColor: color.withValues(alpha: 0.2), radius: 60, child: Text(_selectedHabit!.icon, style: const TextStyle(fontSize: 60))),
+          CircleAvatar(backgroundColor: color.withValues(alpha: 0.2), radius: 60, child: Text(_selectedHabit!.icon, style: const TextStyle(fontSize: 60, fontFamilyFallback: ['NotoColorEmoji']))),
           const SizedBox(height: 24),
-          Text(typeText, style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 18)),
-          Text(_selectedHabit!.name, style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 32, fontWeight: FontWeight.bold)),
+          Text(typeText, style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary, fontSize: 18)),
+          Text(_selectedHabit!.name, style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 32, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           Container(
              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-             decoration: BoxDecoration(color: theme.card, borderRadius: BorderRadius.circular(20), border: Border.all(color: color)),
-             child: Text('الهدف: $_selectedTargetDays يوم', style: GoogleFonts.cairo(color: color, fontSize: 18, fontWeight: FontWeight.bold)),
+             decoration: BoxDecoration(color: theme.card, borderRadius: BorderRadius.circular(8), border: Border.all(color: color)),
+             child: Text('الهدف: $_selectedTargetDays يوم', style: GoogleFonts.ibmPlexSansArabic(color: color, fontSize: 18, fontWeight: FontWeight.bold)),
           ),
           
           const Spacer(),
@@ -390,7 +390,7 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
               elevation: 8,
               shadowColor: theme.accentOrange.withValues(alpha: 0.5),
             ),
-            child: Text('ابدأ التحدي 🚀', style: GoogleFonts.cairo(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
+            child: Text('ابدأ التحدي 🚀', style: GoogleFonts.ibmPlexSansArabic(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
           ),
           const SizedBox(height: 20),
         ],

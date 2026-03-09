@@ -33,7 +33,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(error, style: GoogleFonts.cairo()),
+            content: Text(error, style: GoogleFonts.ibmPlexSansArabic()),
             backgroundColor: Colors.redAccent,
             behavior: SnackBarBehavior.floating,
           ),
@@ -57,7 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(error, style: GoogleFonts.cairo()),
+            content: Text(error, style: GoogleFonts.ibmPlexSansArabic()),
             backgroundColor: Colors.redAccent,
             behavior: SnackBarBehavior.floating,
           ),
@@ -104,11 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
       backgroundColor: const Color(0xFF0D0D0D),
       body: Container(
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF0D0D0D), Color(0xFF1A1A1A)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
+          
         ),
         child: Stack(
           children: [
@@ -135,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           Text(
                             "الورشة",
                             textAlign: TextAlign.center,
-                            style: GoogleFonts.cairo(
+                            style: GoogleFonts.ibmPlexSansArabic(
                               color: Colors.white,
                               fontSize: 36,
                               fontWeight: FontWeight.w900,
@@ -146,7 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           Text(
                             "أنجز أكثر. ركز أعمق.",
                             textAlign: TextAlign.center,
-                            style: GoogleFonts.cairo(
+                            style: GoogleFonts.ibmPlexSansArabic(
                               color: const Color(0xFF666666),
                               fontSize: 13,
                               fontWeight: FontWeight.w400,
@@ -156,15 +152,15 @@ class _LoginScreenState extends State<LoginScreen> {
                           TextFormField(
                             controller: _emailController,
                             keyboardType: TextInputType.emailAddress,
-                            style: GoogleFonts.tajawal(color: Colors.white),
+                            style: GoogleFonts.ibmPlexSansArabic(color: Colors.white),
                             decoration: InputDecoration(
                               labelText: 'البريد الإلكتروني',
-                              labelStyle: GoogleFonts.cairo(color: theme.textSecondary),
+                              labelStyle: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary),
                               prefixIcon: Icon(Icons.email_outlined, color: theme.accentOrange),
                               filled: true,
                               fillColor: theme.card,
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
-                              focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: theme.accentOrange, width: 2)),
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+                              focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: theme.accentOrange, width: 2)),
                             ),
                             validator: (val) => val != null && val.contains('@') ? null : 'يرجى إدخال بريد إلكتروني صحيح',
                           ),
@@ -172,15 +168,15 @@ class _LoginScreenState extends State<LoginScreen> {
                           TextFormField(
                             controller: _passwordController,
                             obscureText: true,
-                            style: GoogleFonts.tajawal(color: Colors.white),
+                            style: GoogleFonts.ibmPlexSansArabic(color: Colors.white),
                             decoration: InputDecoration(
                               labelText: 'كلمة المرور',
-                              labelStyle: GoogleFonts.cairo(color: theme.textSecondary),
+                              labelStyle: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary),
                               prefixIcon: Icon(Icons.lock_outline, color: theme.accentOrange),
                               filled: true,
                               fillColor: theme.card,
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
-                              focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: theme.accentOrange, width: 2)),
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+                              focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: theme.accentOrange, width: 2)),
                             ),
                             validator: (val) => val != null && val.length > 5 ? null : 'كلمة المرور ضعيفة جداً',
                           ),
@@ -193,23 +189,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                   MaterialPageRoute(builder: (_) => const ForgotPasswordScreen()),
                                 );
                               },
-                              child: Text('نسيت كلمة المرور؟', style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 13)),
+                              child: Text('نسيت كلمة المرور؟', style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary, fontSize: 13)),
                             ),
                           ),
                           const SizedBox(height: 16),
                           Container(
                             decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                colors: [Color(0xFFFF6A00), Color(0xFFFF4500)],
-                              ),
-                              borderRadius: BorderRadius.circular(16),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(0xFFFF6A00).withOpacity(0.4),
-                                  blurRadius: 15,
-                                  offset: const Offset(0, 4),
-                                )
-                              ],
+                              
+                              borderRadius: BorderRadius.circular(8),
+                              
                             ),
                             child: ElevatedButton(
                               onPressed: auth.isLoading ? null : _login,
@@ -217,11 +205,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                 padding: const EdgeInsets.symmetric(vertical: 16),
                                 backgroundColor: Colors.transparent,
                                 shadowColor: Colors.transparent,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                               ),
                               child: auth.isLoading
                                   ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                                  : Text('دخول', style: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+                                  : Text('دخول', style: GoogleFonts.ibmPlexSansArabic(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -229,7 +217,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             onPressed: auth.isLoading ? null : _loginWithGoogle,
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 14),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                               side: BorderSide(color: Colors.white.withOpacity(0.1)),
                               backgroundColor: Colors.white.withOpacity(0.02),
                               foregroundColor: Colors.white,
@@ -239,7 +227,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               width: 24,
                               height: 24,
                             ),
-                            label: Text('المتابعة بحساب جوجل', style: GoogleFonts.cairo(fontSize: 16)),
+                            label: Text('المتابعة بحساب جوجل', style: GoogleFonts.ibmPlexSansArabic(fontSize: 16)),
                           ),
                           const SizedBox(height: 24),
                           TextButton(
@@ -249,7 +237,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 MaterialPageRoute(builder: (_) => const SignUpScreen()),
                               );
                             },
-                            child: Text('ليس لديك حساب؟ إنشاء حساب جديد', style: GoogleFonts.cairo(color: theme.accentOrange, fontWeight: FontWeight.bold)),
+                            child: Text('ليس لديك حساب؟ إنشاء حساب جديد', style: GoogleFonts.ibmPlexSansArabic(color: theme.accentOrange, fontWeight: FontWeight.bold)),
                           ),
 
                           // ━━━━━━━━━━━━━━━━━━━━
@@ -261,7 +249,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           Text(
                             "تطوير: Mohamed Hosam",
                             textAlign: TextAlign.center,
-                            style: GoogleFonts.cairo(
+                            style: GoogleFonts.ibmPlexSansArabic(
                               color: Colors.grey,
                               fontSize: 12,
                             ),
@@ -270,7 +258,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           Text(
                             "الإصدار 1.0.0",
                             textAlign: TextAlign.center,
-                            style: GoogleFonts.cairo(
+                            style: GoogleFonts.ibmPlexSansArabic(
                               color: Colors.grey.withOpacity(0.6),
                               fontSize: 11,
                             ),
@@ -312,14 +300,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     color: const Color(0xFF1E1E1E),
                                     borderRadius: BorderRadius.circular(8),
                                     border: Border.all(color: Colors.white12),
-                                    gradient: const LinearGradient(
-                                      colors: [
-                                        Color(0xFF833AB4),
-                                        Color(0xFFF77737),
-                                      ],
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                    ),
+                                    
                                   ),
                                   child: const Icon(
                                     Icons.camera_alt,

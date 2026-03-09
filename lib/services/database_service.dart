@@ -6,6 +6,7 @@ import '../models/category_data.dart';
 import '../models/habit_model.dart';
 import '../models/schedule_model.dart';
 import '../models/study_room_model.dart';
+import '../models/admin_task.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
 
@@ -52,6 +53,7 @@ class DatabaseService {
           'bestRank': 0,
           'isAdmin': false,
           'isPremium': false,
+          'hasSeenOnboarding': false,
         });
       }
     } catch (e) {
@@ -76,6 +78,17 @@ class DatabaseService {
     } catch (e) {
       debugPrint('Error updating profile: $e');
       return 'حدث خطأ أثناء تحديث البيانات.';
+    }
+  }
+
+  // ── تحديث حالة مشاهدة الشاشة الترحيبية ────────────────────────────
+  Future<void> markOnboardingDone(String uid) async {
+    try {
+      await _db.collection('users').doc(uid).update({
+        'hasSeenOnboarding': true,
+      });
+    } catch (e) {
+      debugPrint('Error marking onboarding done: $e');
     }
   }
 
@@ -1144,5 +1157,81 @@ class DatabaseService {
     }).toList();
 
     await docRef.update({'members': updatedMembers});
+  }
+
+  // ── Admin Tasks Feature ───────────────────────────────────────────
+
+  /// Adds a new Admin Task to Firestore
+  Future<void> addAdminTask({
+    required String title,
+    String? description,
+    required dynamic assignedTo, // 'all' or List<userId>
+    required String currentUserId,
+    DateTime? dueDate,
+    int points = 10,
+  }) async {
+    try {
+      await _db.collection('adminTasks').add({
+        'title': title,
+        'description': description,
+        'assignedTo': assignedTo,
+        'createdBy': currentUserId,
+        'createdAt': FieldValue.serverTimestamp(),
+        'dueDate': dueDate != null ? Timestamp.fromDate(dueDate) : null,
+        'points': points,
+        'isActive': true,
+      });
+    } catch (e) {
+      debugPrint('Error adding admin task: $e');
+    }
+  }
+
+  /// Streams active Admin Tasks applicable to the given user
+  Stream<List<AdminTask>> getAdminTasksForUser(String userId) {
+    return _db
+        .collection('adminTasks')
+        .where('isActive', isEqualTo: true)
+        .snapshots()
+        .map((snap) => snap.docs.map((d) => AdminTask.fromMap(d.data(), d.id)).where((task) {
+              return task.assignedTo == 'all' ||
+                  (task.assignedTo is List &&
+                      (task.assignedTo as List).contains(userId));
+            }).toList());
+  }
+
+  /// Streams the IDs of all Admin Tasks completed by the user
+  Stream<List<String>> getCompletedAdminTasks(String userId) {
+    return _db
+        .collection('users')
+        .doc(userId)
+        .collection('completedAdminTasks')
+        .snapshots()
+        .map((snap) => snap.docs.map((doc) => doc.id).toList());
+  }
+
+  /// Marks an Admin Task as completed and awards points to the user
+  Future<void> completeAdminTask(String userId, AdminTask task) async {
+    try {
+      final batch = _db.batch();
+
+      // Record completion
+      final completionRef = _db
+          .collection('users')
+          .doc(userId)
+          .collection('completedAdminTasks')
+          .doc(task.id);
+      batch.set(completionRef, {'completedAt': FieldValue.serverTimestamp()});
+
+      // Award points
+      final userRef = _db.collection('users').doc(userId);
+      batch.update(userRef, {
+        'monthlyPoints': FieldValue.increment(task.points),
+        'totalPoints': FieldValue.increment(task.points),
+      });
+
+      await batch.commit();
+    } catch (e) {
+      debugPrint('Error completing admin task: $e');
+    }
   }
 }

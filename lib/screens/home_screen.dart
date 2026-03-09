@@ -5,7 +5,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
+import '../widgets/admin_task_card.dart';
 import '../models/task_model.dart';
+import '../models/admin_task.dart';
 import '../models/user_model.dart';
 import '../providers/task_provider.dart';
 import '../providers/pomodoro_provider.dart';
@@ -95,10 +97,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       context: context,
                       builder: (_) => const AddTaskDialog(),
                     ),
-                backgroundColor: themeProvider.accentOrange,
+                backgroundColor: const Color(0xFFFF6A00),
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18),
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 elevation: 8,
                 child: const Icon(Icons.add, size: 28),
@@ -108,18 +110,21 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: themeProvider.card,
         selectedItemColor: themeProvider.accentOrange,
         unselectedItemColor: themeProvider.textSecondary,
-        selectedLabelStyle: GoogleFonts.cairo(fontWeight: FontWeight.bold),
-        unselectedLabelStyle: GoogleFonts.cairo(),
+        selectedLabelStyle: GoogleFonts.ibmPlexSansArabic(fontWeight: FontWeight.bold),
+        unselectedLabelStyle: GoogleFonts.ibmPlexSansArabic(),
         currentIndex: _selectedIndex,
         onTap: (index) => setState(() => _selectedIndex = index),
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.task_alt), label: 'المهام'),
           BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_month),
+            icon: Text("📋", style: TextStyle(fontSize: 20), textAlign: TextAlign.center),
+            label: 'المهام',
+          ),
+          BottomNavigationBarItem(
+            icon: Text("📅", style: TextStyle(fontSize: 20), textAlign: TextAlign.center),
             label: 'الجدول',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.track_changes),
+            icon: Text("🎯", style: TextStyle(fontSize: 20), textAlign: TextAlign.center),
             label: 'العادات',
           ),
         ],
@@ -146,7 +151,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(width: 8),
                     Text(
                       "أنت غير متصل - جارِ الحفظ محلياً",
-                      style: GoogleFonts.cairo(
+                      style: GoogleFonts.ibmPlexSansArabic(
                         color: Colors.white,
                         fontSize: 12,
                       ),
@@ -296,7 +301,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Text(
                 'الـ وَرشة',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.cairo(
+                style: GoogleFonts.ibmPlexSansArabic(
                   color: theme.primaryText,
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
@@ -346,24 +351,24 @@ class _HomeScreenState extends State<HomeScreen> {
                         backgroundColor: theme.card,
                         title: Text(
                           'تسجيل خروج؟',
-                          style: GoogleFonts.cairo(
+                          style: GoogleFonts.ibmPlexSansArabic(
                             color: theme.primaryText,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         content: Text(
                           'هل أنت متأكد؟',
-                          style: GoogleFonts.cairo(color: theme.textSecondary),
+                          style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary),
                         ),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(8),
                         ),
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(context, false),
                             child: Text(
                               'إلغاء',
-                              style: GoogleFonts.cairo(color: Colors.grey),
+                              style: GoogleFonts.ibmPlexSansArabic(color: Colors.grey),
                             ),
                           ),
                           ElevatedButton(
@@ -373,7 +378,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             child: Text(
                               'خروج',
-                              style: GoogleFonts.cairo(color: Colors.white),
+                              style: GoogleFonts.ibmPlexSansArabic(color: Colors.white),
                             ),
                           ),
                         ],
@@ -417,7 +422,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     Text(
                       'الإشعارات',
-                      style: GoogleFonts.cairo(
+                      style: GoogleFonts.ibmPlexSansArabic(
                         color: theme.primaryText,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -430,7 +435,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ? Center(
                                 child: Text(
                                   'لا توجد إشعارات حالياً',
-                                  style: GoogleFonts.cairo(
+                                  style: GoogleFonts.ibmPlexSansArabic(
                                     color: theme.textSecondary,
                                   ),
                                 ),
@@ -520,7 +525,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                         title: Text(
                                           notif['title'] ?? '',
-                                          style: GoogleFonts.cairo(
+                                          style: GoogleFonts.ibmPlexSansArabic(
                                             color: theme.primaryText,
                                             fontWeight:
                                                 isRead
@@ -530,7 +535,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                         subtitle: Text(
                                           notif['body'] ?? '',
-                                          style: GoogleFonts.cairo(
+                                          style: GoogleFonts.ibmPlexSansArabic(
                                             color: theme.textSecondary,
                                             fontSize: 12,
                                           ),
@@ -559,22 +564,9 @@ class _HomeScreenState extends State<HomeScreen> {
         return Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                theme.card,
-                theme.isDarkMode ? const Color(0xFF252525) : Colors.grey[200]!,
-              ],
-              begin: Alignment.topRight,
-              end: Alignment.bottomLeft,
-            ),
-            borderRadius: BorderRadius.circular(18),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
+            
+            borderRadius: BorderRadius.circular(8),
+            
           ),
           child: Row(
             children: [
@@ -634,7 +626,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         Text(
                           'أهلاً،',
-                          style: GoogleFonts.cairo(
+                          style: GoogleFonts.ibmPlexSansArabic(
                             color: theme.textSecondary,
                             fontSize: 13,
                           ),
@@ -655,7 +647,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             child: Text(
                               'مشرف',
-                              style: GoogleFonts.cairo(
+                              style: GoogleFonts.ibmPlexSansArabic(
                                 color: Colors.redAccent,
                                 fontSize: 9,
                                 fontWeight: FontWeight.bold,
@@ -670,7 +662,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Flexible(
                           child: Text(
                             profile?.name ?? 'مستخدم',
-                            style: GoogleFonts.cairo(
+                            style: GoogleFonts.ibmPlexSansArabic(
                               color: theme.primaryText,
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -702,13 +694,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                gradient: const LinearGradient(
-                                  colors: [
-                                    Color(0xFFFFD700),
-                                    Color(0xFFFFA500),
-                                  ],
-                                ),
-                                borderRadius: BorderRadius.circular(20),
+                                
+                                borderRadius: BorderRadius.circular(8),
                               ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -721,7 +708,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   const SizedBox(width: 4),
                                   Text(
                                     "مشترك",
-                                    style: GoogleFonts.cairo(
+                                    style: GoogleFonts.ibmPlexSansArabic(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 10,
                                       color: Colors.black,
@@ -751,7 +738,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 border: Border.all(
                                   color: const Color(0xFFFF6A00),
                                 ),
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(8),
                               ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -764,7 +751,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   const SizedBox(width: 4),
                                   Text(
                                     "غير مشترك",
-                                    style: GoogleFonts.cairo(
+                                    style: GoogleFonts.ibmPlexSansArabic(
                                       fontSize: 10,
                                       color: const Color(0xFFFF6A00),
                                     ),
@@ -803,7 +790,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(width: 4),
                     Text(
                       '${profile?.weeklyFocusPoints ?? 0} نقطة',
-                      style: GoogleFonts.tajawal(
+                      style: GoogleFonts.ibmPlexSansArabic(
                         color: theme.accentOrange,
                         fontWeight: FontWeight.bold,
                         fontSize: 13,
@@ -821,202 +808,286 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildTaskSection(ThemeProvider theme, String uid) {
     final taskProvider = context.watch<TaskProvider>();
-    return StreamBuilder<List<TaskCategory>>(
-      stream: _dbService.getCustomCategories(uid),
-      builder: (context, catSnapshot) {
-        final customCategories = catSnapshot.data ?? [];
-        final allCategories = [...taskCategories, ...customCategories];
-        final currentFilters = [
-          'الكل',
-          'المهام',
-          'المكتملة',
-          ...allCategories.map((c) => c.name),
-        ];
 
-        return StreamBuilder<List<TaskModel>>(
-          stream: taskProvider.tasksStream,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(40),
-                  child: CircularProgressIndicator(color: theme.accentOrange),
-                ),
-              );
-            }
-            if (snapshot.hasError) {
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Text(
-                    'خطأ: ${snapshot.error}',
-                    style: GoogleFonts.cairo(color: Colors.redAccent),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              );
-            }
+    return StreamBuilder<List<String>>(
+      stream: _dbService.getCompletedAdminTasks(uid),
+      builder: (context, completedDocsSnap) {
+        final completedAdminIds = completedDocsSnap.data ?? [];
 
-            final allTasks = snapshot.data ?? [];
-            final completed = allTasks.where((t) => t.isCompleted).length;
-            final total = allTasks.length;
+        return StreamBuilder<List<AdminTask>>(
+          stream: _dbService.getAdminTasksForUser(uid),
+          builder: (context, adminTasksSnap) {
+            final adminTasks = adminTasksSnap.data ?? [];
 
-            final filtered =
-                _selectedFilter == 'المكتملة'
-                    ? allTasks.where((t) => t.isCompleted).toList()
-                    : _selectedFilter == 'المهام'
-                    ? allTasks.where((t) => !t.isCompleted).toList()
-                    : _selectedFilter == 'الكل'
-                    ? allTasks
-                    : allTasks.where((t) {
-                      final catName =
-                          allCategories
-                              .firstWhere(
-                                (c) => c.id == t.category,
-                                orElse: () => taskCategories.last,
-                              )
-                              .name;
-                      return catName == _selectedFilter;
-                    }).toList();
+            return StreamBuilder<List<TaskModel>>(
+              stream: taskProvider.tasksStream,
+              builder: (context, userTasksSnap) {
+                if (userTasksSnap.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(40),
+                      child: CircularProgressIndicator(color: theme.accentOrange),
+                    ),
+                  );
+                }
 
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Section title + counter
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'المهام',
-                      style: GoogleFonts.cairo(
-                        color: theme.primaryText,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: theme.accentOrange.withOpacity(0.15),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        '$completed / $total',
-                        style: GoogleFonts.tajawal(
-                          color: theme.accentOrange,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 13,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                // Progress bar
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: LinearProgressIndicator(
-                    value: total > 0 ? completed / total : 0.0,
-                    backgroundColor:
-                        theme.isDarkMode
-                            ? Colors.white.withOpacity(0.1)
-                            : Colors.black.withOpacity(
-                              0.05,
-                            ), // faded grey/white
-                    color: theme.accentOrange,
-                    minHeight: 7,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                // Custom filter chips
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  reverse: true,
-                  child: Row(
-                    children: [
-                      ...currentFilters.map((f) {
-                        TaskCategory? customCat;
-                        try {
-                          customCat = customCategories.firstWhere(
-                            (c) => c.name == f,
-                          );
-                        } catch (_) {}
-                        return Padding(
-                          padding: const EdgeInsets.only(left: 10),
-                          child: HomeFilterChipsWidget(
-                            label: f,
-                            selected: _selectedFilter == f,
-                            customCategory: customCat,
-                            uid: uid,
-                            onFilterSelected:
-                                (val) =>
-                                    setState(() => _selectedFilter = val),
-                          ),
-                        );
-                      }),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10),
-                        child: GestureDetector(
-                          onTap: () => _showAddCategoryDialog(context, uid),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: const Color(0xFFFF6A00)),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(Icons.add, 
-                                  color: Color(0xFFFF6A00), size: 16),
-                                const SizedBox(width: 4),
-                                Text("إضافة",
-                                  style: GoogleFonts.cairo(
-                                    color: const Color(0xFFFF6A00),
-                                    fontSize: 13,
-                                  )),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
-                // Task list
-                if (filtered.isEmpty)
-                  Expanded(
-                    child: SingleChildScrollView(
-                      physics: const BouncingScrollPhysics(),
-                      child: _buildEmptyState(theme),
-                    ),
-                  )
-                else
-                  Expanded(
-                    child: ListView.builder(
-                      padding: const EdgeInsets.only(top: 8, bottom: 80),
-                      cacheExtent: 500,
-                      addRepaintBoundaries: true,
-                      itemCount: filtered.length,
-                      itemBuilder: (context, index) {
-                        return TaskCardWidget(
-                          task: filtered[index],
-                          allCategories: allCategories,
-                        );
-                      },
-                    ),
-                  ),
-              ],
+                final userTasks = userTasksSnap.data ?? [];
+
+                // 1. مهام الأدمن غير مكتملة
+                // 2. مهام المستخدم غير مكتملة
+                // 3. مهام مكتملة (أدمن ثم مستخدم)
+                List<dynamic> sortedTasks = [
+                  ...adminTasks.where((t) => !completedAdminIds.contains(t.id)),
+                  ...userTasks.where((t) => !t.isCompleted),
+                  ...adminTasks.where((t) => completedAdminIds.contains(t.id)),
+                  ...userTasks.where((t) => t.isCompleted),
+                ];
+
+                if (sortedTasks.isEmpty) {
+                  return SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: _buildEmptyState(theme),
+                  );
+                }
+
+                return ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  itemCount: sortedTasks.length,
+                  itemBuilder: (context, index) {
+                      final task = sortedTasks[index];
+                      // Determine completion based on list check for AdminTasks
+                      bool isCompleted = false;
+                      if (task is AdminTask) {
+                        isCompleted = completedAdminIds.contains(task.id);
+                      } else {
+                        isCompleted = task.isCompleted;
+                      }
+
+                      return _buildTaskRow(task, isCompleted, uid, taskProvider);
+                    },
+                  );
+              },
             );
           },
         );
       },
     );
+  }
+
+  Widget _buildTaskRow(dynamic task, bool isCompleted, String uid, TaskProvider taskProvider) {
+    bool isAdminTask = task is AdminTask;
+    String title = task.title;
+
+    void toggleTask() {
+      if (isAdminTask) {
+        if (!isCompleted) {
+          _dbService.completeAdminTask(uid, task);
+        }
+      } else {
+        taskProvider.toggleTaskStatus(task);
+      }
+    }
+
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 6),
+          child: Row(
+            children: [
+              // Checkbox دائري
+              GestureDetector(
+                onTap: toggleTask,
+                child: Container(
+                  width: 26, 
+                  height: 26,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: isCompleted
+                      ? const Color(0xFFFF6A00)
+                      : Colors.transparent,
+                    border: Border.all(
+                      color: isCompleted
+                        ? const Color(0xFFFF6A00)
+                        : const Color(0xFF444444),
+                      width: 2)
+                  ),
+                  child: isCompleted
+                    ? const Center(
+                        child: Text("✓",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            height: 1.1)))
+                    : null
+                ),
+              ),
+              
+              const SizedBox(width: 14),
+              
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        // لو مهمة أدمن: badge صغيرة
+                        if (isAdminTask && !isCompleted)
+                          Container(
+                            margin: const EdgeInsets.only(left: 6),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 1),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFFF6A00).withOpacity(0.15),
+                              borderRadius: BorderRadius.circular(4)),
+                            child: Text("ورشة",
+                              style: GoogleFonts.ibmPlexSansArabic(
+                                color: const Color(0xFFFF6A00),
+                                fontSize: 10))),
+                        
+                        Expanded(
+                          child: Text(
+                            title,
+                            textAlign: TextAlign.right,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.ibmPlexSansArabic(
+                              color: isCompleted
+                                ? const Color(0xFF444444)
+                                : const Color(0xFFEBEBEB),
+                              fontSize: 15,
+                              decoration: isCompleted
+                                ? TextDecoration.lineThrough
+                                : TextDecoration.none,
+                              decorationColor: const Color(0xFF444444)))),
+                      ]),
+                    
+                    // الوصف - يظهر بس لو مش null أو فاضي
+                    if (task.description != null && 
+                        task.description.toString().isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 3),
+                        child: Text(
+                          task.description,
+                          textAlign: TextAlign.right,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.ibmPlexSansArabic(
+                            color: const Color(0xFF666666),
+                            fontSize: 12))),
+
+                    // الوقت والتصنيف في Row
+                    if ((!isAdminTask && task.estimatedMinutes != null && task.estimatedMinutes > 0) || 
+                        (!isAdminTask && task.category != null && task.category != 'other' && task.category != 'الكل') ||
+                        (isAdminTask && !isCompleted && task.points != null))
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            // التصنيف - لو موجود (للمهام الشخصية)
+                            if (!isAdminTask && task.category != null && task.category != 'other' && task.category != 'الكل')
+                              Container(
+                                margin: const EdgeInsets.only(left: 6),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 7, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF2A2A2A),
+                                  borderRadius: BorderRadius.circular(6)),
+                                child: Text(
+                                  task.category,
+                                  style: GoogleFonts.ibmPlexSansArabic(
+                                    color: const Color(0xFF888888),
+                                    fontSize: 11))),
+                            
+                            // الوقت - لو موجود (للمهام الشخصية)
+                            if (!isAdminTask && task.estimatedMinutes != null && task.estimatedMinutes > 0)
+                              Row(children: [
+                                Text(
+                                  "${task.estimatedMinutes} د",
+                                  style: GoogleFonts.ibmPlexSansArabic(
+                                    color: const Color(0xFF888888),
+                                    fontSize: 11)),
+                                const SizedBox(width: 3),
+                                const Text("⏱️", style: TextStyle(fontSize: 11))
+                              ]),
+
+                            // النقاط - لو مهمة أدمن
+                            if (isAdminTask && !isCompleted && task.points != null)
+                              Text("+${task.points} نقطة",
+                                textAlign: TextAlign.right,
+                                style: GoogleFonts.ibmPlexSansArabic(
+                                  color: const Color(0xFF666666),
+                                  fontSize: 11))
+                          ]))
+                  ]
+                )
+              ),
+              
+              // زرار الحذف (على اليسار)
+              if (!isAdminTask) ...[
+                const SizedBox(width: 10),
+                GestureDetector(
+                  onTap: () => _showDeleteConfirm(context, task, taskProvider),
+                  child: Container(
+                    width: 32, 
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF2A2A2A),
+                      borderRadius: BorderRadius.circular(8)),
+                    child: const Center(
+                      child: Text("🗑",
+                        style: TextStyle(fontSize: 14))))),
+              ],
+            ]
+          )
+        ),
+        
+        // Divider خفيف
+        const Divider(
+          color: Color(0xFF1E1E1E),
+          height: 1,
+          indent: 40)
+      ]
+    );
+  }
+
+  void _showDeleteConfirm(BuildContext context, dynamic task, TaskProvider taskProvider) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1E1E1E),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8)),
+        title: Text("حذف المهمة؟",
+          textAlign: TextAlign.right,
+          style: GoogleFonts.ibmPlexSansArabic(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold)),
+        content: Text(
+          task.title,
+          textAlign: TextAlign.right,
+          style: GoogleFonts.ibmPlexSansArabic(
+            color: const Color(0xFF888888),
+            fontSize: 13)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text("إلغاء",
+              style: GoogleFonts.ibmPlexSansArabic(
+                color: const Color(0xFF666666)))),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              taskProvider.deleteTask(task.id);
+            },
+            child: Text("حذف",
+              style: GoogleFonts.ibmPlexSansArabic(
+                color: Colors.red,
+                fontWeight: FontWeight.bold)))
+        ]));
   }
 
   Widget _buildEmptyState(ThemeProvider theme) {
@@ -1039,7 +1110,7 @@ class _HomeScreenState extends State<HomeScreen> {
               _selectedFilter == 'المكتملة'
                   ? 'لا توجد مهام مكتملة'
                   : 'لا توجد مهام حالياً، اضغط + لإضافة مهمة',
-              style: GoogleFonts.cairo(
+              style: GoogleFonts.ibmPlexSansArabic(
                 color: theme.textSecondary,
                 fontSize: 15,
               ),
@@ -1074,7 +1145,7 @@ class _HomeScreenState extends State<HomeScreen> {
         builder: (context, setStateBuilder) => AlertDialog(
           backgroundColor: const Color(0xFF1E1E1E),
           title: Text("تصنيف جديد ✨",
-            style: GoogleFonts.cairo(
+            style: GoogleFonts.ibmPlexSansArabic(
               color: Colors.white,
               fontWeight: FontWeight.bold,
             )),
@@ -1084,11 +1155,11 @@ class _HomeScreenState extends State<HomeScreen> {
               TextField(
                 controller: nameController,
                 textDirection: TextDirection.rtl,
-                style: GoogleFonts.cairo(
+                style: GoogleFonts.ibmPlexSansArabic(
                   color: Colors.white),
                 decoration: InputDecoration(
                   hintText: "اسم التصنيف",
-                  hintStyle: GoogleFonts.cairo(
+                  hintStyle: GoogleFonts.ibmPlexSansArabic(
                     color: Colors.grey),
                   fillColor: const Color(0xFF2A2A2A),
                   filled: true,
@@ -1107,7 +1178,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 16),
               
               Text("اختر أيقونة:",
-                style: GoogleFonts.cairo(
+                style: GoogleFonts.ibmPlexSansArabic(
                   color: Colors.grey, fontSize: 12)),
               const SizedBox(height: 8),
               Wrap(
@@ -1139,7 +1210,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 16),
               
               Text("اختر لون:",
-                style: GoogleFonts.cairo(
+                style: GoogleFonts.ibmPlexSansArabic(
                   color: Colors.grey, fontSize: 12)),
               const SizedBox(height: 8),
               Row(
@@ -1172,7 +1243,7 @@ class _HomeScreenState extends State<HomeScreen> {
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: Text("إلغاء",
-                style: GoogleFonts.cairo(
+                style: GoogleFonts.ibmPlexSansArabic(
                   color: Colors.grey)),
             ),
             ElevatedButton(
@@ -1197,7 +1268,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (context.mounted) Navigator.pop(context);
               },
               child: Text("حفظ ✅",
-                style: GoogleFonts.cairo(
+                style: GoogleFonts.ibmPlexSansArabic(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                 )),
@@ -1226,22 +1297,9 @@ class HomeHeaderWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            theme.card,
-            theme.isDarkMode ? const Color(0xFF252525) : Colors.grey[200]!,
-          ],
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-        ),
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        
+        borderRadius: BorderRadius.circular(8),
+        
       ),
       child: Row(
         children: [
@@ -1305,7 +1363,7 @@ class HomeHeaderWidget extends StatelessWidget {
               children: [
                 Text(
                   'أهلاً،',
-                  style: GoogleFonts.cairo(
+                  style: GoogleFonts.ibmPlexSansArabic(
                     color: theme.textSecondary,
                     fontSize: 14,
                   ),
@@ -1314,7 +1372,7 @@ class HomeHeaderWidget extends StatelessWidget {
                   children: [
                     Text(
                       profile?.name ?? '...',
-                      style: GoogleFonts.cairo(
+                      style: GoogleFonts.ibmPlexSansArabic(
                         color: theme.primaryText,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -1350,7 +1408,7 @@ class HomeHeaderWidget extends StatelessWidget {
                                   const SizedBox(width: 4),
                                   Text(
                                     "مشرف",
-                                    style: GoogleFonts.cairo(
+                                    style: GoogleFonts.ibmPlexSansArabic(
                                       color: Colors.white,
                                       fontSize: 10,
                                       fontWeight: FontWeight.bold,
@@ -1373,7 +1431,7 @@ class HomeHeaderWidget extends StatelessWidget {
                                   const SizedBox(width: 4),
                                   Text(
                                     "مشترك",
-                                    style: GoogleFonts.cairo(
+                                    style: GoogleFonts.ibmPlexSansArabic(
                                       color: Colors.black,
                                       fontSize: 10,
                                       fontWeight: FontWeight.bold,
@@ -1400,7 +1458,7 @@ class HomeHeaderWidget extends StatelessWidget {
                                     const SizedBox(width: 4),
                                     Text(
                                       "غير مشترك",
-                                      style: GoogleFonts.cairo(
+                                      style: GoogleFonts.ibmPlexSansArabic(
                                         color: const Color(0xFFFF6A00),
                                         fontSize: 10,
                                       ),
@@ -1426,9 +1484,9 @@ class HomeHeaderWidget extends StatelessWidget {
                 // تم زيادة الحشوة من اليسار (left: 14) لمنع حرف "ي" من التداخل مع الإطار
                 padding: const EdgeInsets.only(right: 10, left: 14, top: 6, bottom: 6),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1E1E1E),
+                  color: const Color(0xFFFF6A00).withOpacity(0.15),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: const Color(0xFFFF6A00), width: 1.5),
+                  border: Border.all(color: const Color(0xFFFF6A00)),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -1437,7 +1495,7 @@ class HomeHeaderWidget extends StatelessWidget {
                     const SizedBox(width: 6),
                     Text(
                       '${profile?.monthlyPoints ?? 0} شهري',
-                      style: GoogleFonts.cairo(
+                      style: GoogleFonts.ibmPlexSansArabic(
                         color: const Color(0xFFFF6A00),
                         fontWeight: FontWeight.bold,
                         fontSize: 11,
@@ -1451,9 +1509,9 @@ class HomeHeaderWidget extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.only(right: 10, left: 14, top: 6, bottom: 6),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1E1E1E),
+                  color: const Color(0xFFFFD700).withOpacity(0.15),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: const Color(0xFFFFD700), width: 1.5),
+                  border: Border.all(color: const Color(0xFFFFD700)),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -1462,7 +1520,7 @@ class HomeHeaderWidget extends StatelessWidget {
                     const SizedBox(width: 6),
                     Text(
                       '${profile?.totalPoints ?? 0} إجمالي',
-                      style: GoogleFonts.cairo(
+                      style: GoogleFonts.ibmPlexSansArabic(
                         color: const Color(0xFFFFD700),
                         fontWeight: FontWeight.bold,
                         fontSize: 11,
@@ -1488,7 +1546,7 @@ class PomodoroCardWidget extends StatelessWidget {
     final theme = context.watch<ThemeProvider>();
     final pomodoro = context.watch<PomodoroProvider>();
     return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(8),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
         child: Container(
@@ -1498,7 +1556,7 @@ class PomodoroCardWidget extends StatelessWidget {
                 theme.isDarkMode
                     ? Colors.white.withOpacity(0.04)
                     : Colors.black.withOpacity(0.04), // Glassmorphism base
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(8),
             border: Border.all(
               color:
                   theme.isDarkMode
@@ -1518,7 +1576,7 @@ class PomodoroCardWidget extends StatelessWidget {
                     children: [
                       Text(
                         pomodoro.isRestMode ? '☕ استراحة' : '⏱ جلسة تركيز',
-                        style: GoogleFonts.cairo(
+                        style: GoogleFonts.ibmPlexSansArabic(
                           color:
                               pomodoro.isRestMode
                                   ? Colors.cyan
@@ -1533,7 +1591,7 @@ class PomodoroCardWidget extends StatelessWidget {
                       const SizedBox(height: 6),
                       Text(
                         pomodoro.timeDisplay,
-                        style: GoogleFonts.tajawal(
+                        style: GoogleFonts.ibmPlexSansArabic(
                           color: theme.primaryText,
                           fontSize: 40,
                           fontWeight: FontWeight.bold,
@@ -1585,7 +1643,7 @@ class PomodoroCardWidget extends StatelessWidget {
                               const SizedBox(width: 6),
                               Text(
                                 'ادرس مع صديق 👥',
-                                style: GoogleFonts.cairo(
+                                style: GoogleFonts.ibmPlexSansArabic(
                                   color: theme.accentOrange,
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
@@ -1633,17 +1691,7 @@ class PomodoroCardWidget extends StatelessWidget {
                       child: Container(
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          boxShadow:
-                              pomodoro.isRunning
-                                  ? [
-                                    BoxShadow(
-                                      color: theme.accentOrange.withOpacity(
-                                        0.4,
-                                      ),
-                                      blurRadius: 12,
-                                    ),
-                                  ]
-                                  : [],
+                          
                         ),
                         child: Icon(
                           pomodoro.isRunning
@@ -1704,24 +1752,24 @@ class HomeFilterChipsWidget extends StatelessWidget {
                         backgroundColor: theme.card,
                         title: Text(
                           'حذف التصنيف؟',
-                          style: GoogleFonts.cairo(
+                          style: GoogleFonts.ibmPlexSansArabic(
                             color: theme.primaryText,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         content: Text(
                           'هل تريد حذف تصنيف \'$label\'؟\nسيتم إزالته من جميع المهام',
-                          style: GoogleFonts.cairo(color: theme.textSecondary),
+                          style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary),
                         ),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(8),
                         ),
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(ctx),
                             child: Text(
                               'إلغاء',
-                              style: GoogleFonts.cairo(color: Colors.grey),
+                              style: GoogleFonts.ibmPlexSansArabic(color: Colors.grey),
                             ),
                           ),
                           ElevatedButton(
@@ -1737,7 +1785,7 @@ class HomeFilterChipsWidget extends StatelessWidget {
                                   SnackBar(
                                     content: Text(
                                       'تم حذف التصنيف وتحديث المهام',
-                                      style: GoogleFonts.cairo(),
+                                      style: GoogleFonts.ibmPlexSansArabic(),
                                     ),
                                     backgroundColor: Colors.green,
                                   ),
@@ -1749,7 +1797,7 @@ class HomeFilterChipsWidget extends StatelessWidget {
                             ),
                             child: Text(
                               'حذف',
-                              style: GoogleFonts.cairo(color: Colors.white),
+                              style: GoogleFonts.ibmPlexSansArabic(color: Colors.white),
                             ),
                           ),
                         ],
@@ -1762,27 +1810,18 @@ class HomeFilterChipsWidget extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color: selected ? theme.accentOrange : theme.card,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color:
                 selected
                     ? theme.accentOrange
                     : (theme.isDarkMode ? Colors.white12 : Colors.black12),
           ),
-          boxShadow:
-              selected
-                  ? [
-                    BoxShadow(
-                      color: theme.accentOrange.withOpacity(0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ]
-                  : [],
+          
         ),
         child: Text(
           label,
-          style: GoogleFonts.cairo(
+          style: GoogleFonts.ibmPlexSansArabic(
             color: selected ? Colors.white : theme.textSecondary,
             fontWeight: selected ? FontWeight.bold : FontWeight.normal,
             fontSize: 13,
@@ -1829,7 +1868,7 @@ class TaskCardWidget extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 12),
       child: IntrinsicHeight(
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(8),
           child: Container(
             color: theme.card,
             child: Row(
@@ -1844,12 +1883,7 @@ class TaskCardWidget extends StatelessWidget {
                           ? null
                           : Container(
                             decoration: BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                  color: theme.accentOrange.withOpacity(0.5),
-                                  blurRadius: 4,
-                                ),
-                              ],
+                              
                             ),
                           ),
                 ),
@@ -1912,7 +1946,7 @@ class TaskCardWidget extends StatelessWidget {
                                       textAlign: TextAlign.right,
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 2,
-                                      style: GoogleFonts.cairo(
+                                      style: GoogleFonts.ibmPlexSansArabic(
                                         color:
                                             task.isCompleted
                                                 ? Colors.grey[600]
@@ -1934,7 +1968,7 @@ class TaskCardWidget extends StatelessWidget {
                                 Text(
                                   task.description,
                                   textAlign: TextAlign.right,
-                                  style: GoogleFonts.cairo(
+                                  style: GoogleFonts.ibmPlexSansArabic(
                                     color: theme.textSecondary,
                                     fontSize: 12,
                                   ),
@@ -1972,7 +2006,7 @@ class TaskCardWidget extends StatelessWidget {
                                       const SizedBox(width: 4),
                                       Text(
                                         '${task.estimatedMinutes} دقيقة',
-                                        style: GoogleFonts.cairo(
+                                        style: GoogleFonts.ibmPlexSansArabic(
                                           color:
                                               task.isCompleted
                                                   ? Colors.grey
@@ -2044,17 +2078,14 @@ class HomePomodoroHelper {
                 decoration: BoxDecoration(
                   color: theme.bg,
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-                  boxShadow: [
-                    BoxShadow(color: activeColor.withOpacity(0.1), blurRadius: 20, spreadRadius: 5)
-                  ]
-                ),
+                  ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
                       'إعداد الجلسة',
-                      style: GoogleFonts.cairo(
+                      style: GoogleFonts.ibmPlexSansArabic(
                         color: theme.primaryText,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -2077,7 +2108,7 @@ class HomePomodoroHelper {
                               alignment: Alignment.center,
                               child: Text(
                                 'تركيز 🧠',
-                                style: GoogleFonts.cairo(
+                                style: GoogleFonts.ibmPlexSansArabic(
                                   color: isFocus ? theme.accentOrange : theme.textSecondary,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -2099,7 +2130,7 @@ class HomePomodoroHelper {
                               alignment: Alignment.center,
                               child: Text(
                                 'استراحة ☕',
-                                style: GoogleFonts.cairo(
+                                style: GoogleFonts.ibmPlexSansArabic(
                                   color: !isFocus ? Colors.cyan : theme.textSecondary,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -2112,7 +2143,7 @@ class HomePomodoroHelper {
                     const SizedBox(height: 24),
                     Text(
                       'المدة (بالدقائق)',
-                      style: GoogleFonts.cairo(color: theme.primaryText),
+                      style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText),
                     ),
                     const SizedBox(height: 12),
                     Wrap(
@@ -2131,7 +2162,7 @@ class HomePomodoroHelper {
                             ),
                             child: Text(
                               '$mins',
-                              style: GoogleFonts.tajawal(
+                              style: GoogleFonts.ibmPlexSansArabic(
                                 color: isSelected ? activeColor : theme.textSecondary,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
@@ -2156,7 +2187,7 @@ class HomePomodoroHelper {
                         elevation: 8,
                         shadowColor: theme.accentOrange.withOpacity(0.5),
                       ),
-                      child: Text('ابدأ', style: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.bold)),
+                      child: Text('ابدأ', style: GoogleFonts.ibmPlexSansArabic(fontSize: 18, fontWeight: FontWeight.bold)),
                     ),
                     const SizedBox(height: 16),
                   ],
@@ -2184,17 +2215,14 @@ class StudyRoomHelper {
             decoration: BoxDecoration(
               color: theme.bg,
               borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-              boxShadow: [
-                BoxShadow(color: theme.accentOrange.withOpacity(0.1), blurRadius: 20, spreadRadius: 5)
-              ]
-            ),
+              ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
                   'غرفة الدراسة 📚',
-                  style: GoogleFonts.cairo(
+                  style: GoogleFonts.ibmPlexSansArabic(
                     color: theme.primaryText,
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -2233,7 +2261,7 @@ class StudyRoomHelper {
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       color: theme.card,
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: theme.accentOrange),
                     ),
                     child: Row(
@@ -2243,7 +2271,7 @@ class StudyRoomHelper {
                         Expanded(
                           child: Text(
                             'إنشاء غرفة جديدة\nابدأ جلسة وادعو صديقك',
-                            style: GoogleFonts.cairo(
+                            style: GoogleFonts.ibmPlexSansArabic(
                               color: theme.primaryText,
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -2265,7 +2293,7 @@ class StudyRoomHelper {
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       color: theme.card,
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: Colors.grey.withOpacity(0.3)),
                     ),
                     child: Row(
@@ -2275,7 +2303,7 @@ class StudyRoomHelper {
                         Expanded(
                           child: Text(
                             'انضم لغرفة\nأدخل كود الغرفة المكون من 4 أرقام',
-                            style: GoogleFonts.cairo(
+                            style: GoogleFonts.ibmPlexSansArabic(
                               color: theme.primaryText,
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -2304,16 +2332,16 @@ class StudyRoomHelper {
           textDirection: TextDirection.rtl,
           child: AlertDialog(
             backgroundColor: theme.card,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             title: Text(
               'الانضمام لغرفة',
-              style: GoogleFonts.cairo(color: theme.primaryText, fontWeight: FontWeight.bold),
+              style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontWeight: FontWeight.bold),
             ),
             content: TextField(
               controller: controller,
               keyboardType: TextInputType.number,
               maxLength: 4,
-              style: GoogleFonts.tajawal(color: theme.primaryText, fontSize: 24, letterSpacing: 8, fontWeight: FontWeight.bold),
+              style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 24, letterSpacing: 8, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
               decoration: InputDecoration(
                 hintText: '----',
@@ -2326,7 +2354,7 @@ class StudyRoomHelper {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(ctx),
-                child: Text('إلغاء', style: GoogleFonts.cairo(color: Colors.grey)),
+                child: Text('إلغاء', style: GoogleFonts.ibmPlexSansArabic(color: Colors.grey)),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -2364,7 +2392,7 @@ class StudyRoomHelper {
                   backgroundColor: theme.accentOrange,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
-                child: Text('انضمام', style: GoogleFonts.cairo(color: Colors.white, fontWeight: FontWeight.bold)),
+                child: Text('انضمام', style: GoogleFonts.ibmPlexSansArabic(color: Colors.white, fontWeight: FontWeight.bold)),
               ),
             ],
           ),

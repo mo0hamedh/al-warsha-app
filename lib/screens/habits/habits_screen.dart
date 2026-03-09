@@ -58,7 +58,7 @@ class _HabitsScreenState extends State<HabitsScreen> with SingleTickerProviderSt
         centerTitle: true,
         title: Text(
           'العادات 🌱',
-          style: GoogleFonts.cairo(
+          style: GoogleFonts.ibmPlexSansArabic(
             color: theme.primaryText,
             fontSize: 22,
             fontWeight: FontWeight.bold,
@@ -80,7 +80,7 @@ class _HabitsScreenState extends State<HabitsScreen> with SingleTickerProviderSt
           indicatorColor: theme.accentOrange,
           labelColor: theme.accentOrange,
           unselectedLabelColor: theme.textSecondary,
-          labelStyle: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 16),
+          labelStyle: GoogleFonts.ibmPlexSansArabic(fontWeight: FontWeight.bold, fontSize: 16),
           tabs: const [
             Tab(text: 'عاداتي'),
             Tab(text: 'سلبية'),
@@ -140,16 +140,9 @@ class _HabitsScreenState extends State<HabitsScreen> with SingleTickerProviderSt
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
       decoration: BoxDecoration(
         color: theme.card,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(8),
         border: Border.all(color: theme.accentOrange.withValues(alpha: 0.3)),
-        boxShadow: [
-          BoxShadow(
-            color: theme.accentOrange.withValues(alpha: 0.1),
-            blurRadius: 20,
-            spreadRadius: 2,
-            offset: const Offset(0, 4),
-          )
-        ],
+        
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -160,12 +153,12 @@ class _HabitsScreenState extends State<HabitsScreen> with SingleTickerProviderSt
              children: [
                Text(
                  'أطول سلسلة استمرار 🔥',
-                 style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 16, fontWeight: FontWeight.bold),
+                 style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary, fontSize: 16, fontWeight: FontWeight.bold),
                ),
                const SizedBox(height: 8),
                Text(
                  longestStreak.toString(),
-                 style: GoogleFonts.tajawal(
+                 style: GoogleFonts.ibmPlexSansArabic(
                    color: theme.accentOrange,
                    fontSize: 48,
                    fontWeight: FontWeight.w900,
@@ -174,7 +167,7 @@ class _HabitsScreenState extends State<HabitsScreen> with SingleTickerProviderSt
                ),
                Text(
                  'يوم',
-                 style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 16),
+                 style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary, fontSize: 16),
                ),
              ],
            )
@@ -191,7 +184,7 @@ class _HabitsScreenState extends State<HabitsScreen> with SingleTickerProviderSt
           children: [
             Icon(Icons.spa_outlined, size: 80, color: theme.textSecondary.withValues(alpha: 0.5)),
             const SizedBox(height: 16),
-            Text(emptyMsg, style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 18)),
+            Text(emptyMsg, style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary, fontSize: 18)),
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AddHabitScreen())),
@@ -200,7 +193,7 @@ class _HabitsScreenState extends State<HabitsScreen> with SingleTickerProviderSt
                 padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              child: Text('ابدأ رحلتك', style: GoogleFonts.cairo(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+              child: Text('ابدأ رحلتك', style: GoogleFonts.ibmPlexSansArabic(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
             ),
           ],
         ),
@@ -242,9 +235,9 @@ class _HabitsScreenState extends State<HabitsScreen> with SingleTickerProviderSt
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: theme.card,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(8),
           border: Border.all(color: checkedInToday ? accentColor.withValues(alpha: 0.3) : theme.isDarkMode ? Colors.white12 : Colors.black12),
-          boxShadow: checkedInToday ? [BoxShadow(color: accentColor.withValues(alpha: 0.1), blurRadius: 10)] : [],
+          
         ),
         child: Column(
           children: [
@@ -252,22 +245,22 @@ class _HabitsScreenState extends State<HabitsScreen> with SingleTickerProviderSt
             Row(
               textDirection: TextDirection.rtl,
               children: [
-                CircleAvatar(backgroundColor: accentColor.withValues(alpha: 0.2), radius: 24, child: Text(habit.icon, style: const TextStyle(fontSize: 24))),
+                CircleAvatar(backgroundColor: accentColor.withValues(alpha: 0.2), radius: 24, child: Text(habit.icon, style: const TextStyle(fontSize: 24, fontFamilyFallback: ['NotoColorEmoji']))),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(habit.name, style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 18, fontWeight: FontWeight.bold)),
-                      Text(habit.category, style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 12)),
+                      Text(habit.name, style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 18, fontWeight: FontWeight.bold)),
+                      Text(habit.category, style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary, fontSize: 12)),
                     ],
                   ),
                 ),
                 Row(
                   children: [
-                    Text(habit.currentStreak.toString(), style: GoogleFonts.tajawal(color: accentColor, fontSize: 24, fontWeight: FontWeight.bold)),
+                    Text(habit.currentStreak.toString(), style: GoogleFonts.ibmPlexSansArabic(color: accentColor, fontSize: 24, fontWeight: FontWeight.bold)),
                     const SizedBox(width: 4),
-                    Text('🔥', style: TextStyle(fontSize: 20)),
+                    Text('🔥', style: TextStyle(fontSize: 20, fontFamilyFallback: ['NotoColorEmoji'])),
                   ],
                 ),
               ],
@@ -291,7 +284,7 @@ class _HabitsScreenState extends State<HabitsScreen> with SingleTickerProviderSt
                   ),
                 ),
                 const SizedBox(width: 12),
-                Text('$progressDays / $target', style: GoogleFonts.tajawal(color: theme.textSecondary, fontSize: 14)),
+                Text('$progressDays / $target', style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary, fontSize: 14)),
               ],
             ),
 
@@ -309,7 +302,7 @@ class _HabitsScreenState extends State<HabitsScreen> with SingleTickerProviderSt
                 ],
               )
             else
-              Text('🎉 تم التسجيل اليوم بنجاح!', style: GoogleFonts.cairo(color: Colors.green, fontSize: 14, fontWeight: FontWeight.bold)),
+              Text('🎉 تم التسجيل اليوم بنجاح!', style: GoogleFonts.ibmPlexSansArabic(color: Colors.green, fontSize: 14, fontWeight: FontWeight.bold)),
           ],
         ),
       ),
@@ -327,7 +320,7 @@ class _HabitsScreenState extends State<HabitsScreen> with SingleTickerProviderSt
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
-        child: Text(label, style: GoogleFonts.cairo(color: color, fontWeight: FontWeight.bold, fontSize: 14)),
+        child: Text(label, style: GoogleFonts.ibmPlexSansArabic(color: color, fontWeight: FontWeight.bold, fontSize: 14)),
       ),
     );
   }

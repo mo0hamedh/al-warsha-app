@@ -62,7 +62,7 @@ class ScheduleStatsTab extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('إحصائيات الأسبوع الحالي', style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 20, fontWeight: FontWeight.bold)),
+              Text('إحصائيات الأسبوع الحالي', style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 20, fontWeight: FontWeight.bold)),
               const SizedBox(height: 24),
               
               // Key Stats Row
@@ -75,7 +75,7 @@ class ScheduleStatsTab extends StatelessWidget {
               ),
               const SizedBox(height: 40),
               
-              Text('أداء الأيام (Bar Chart)', style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 18, fontWeight: FontWeight.bold)),
+              Text('أداء الأيام (Bar Chart)', style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 32),
               
               // Bar Chart using fl_chart
@@ -96,7 +96,7 @@ class ScheduleStatsTab extends StatelessWidget {
                             if (value.toInt() >= 0 && value.toInt() < days.length) {
                               return Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
-                                child: Text(days[value.toInt()], style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 12)),
+                                child: Text(days[value.toInt()], style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary, fontSize: 12)),
                               );
                             }
                             return const SizedBox.shrink();
@@ -109,7 +109,7 @@ class ScheduleStatsTab extends StatelessWidget {
                           showTitles: true,
                           reservedSize: 40,
                           getTitlesWidget: (value, meta) {
-                            return Text('${(value * 100).toInt()}%', style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 10));
+                            return Text('${(value * 100).toInt()}%', style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary, fontSize: 10));
                           }
                         )
                       ),
@@ -149,7 +149,7 @@ class ScheduleStatsTab extends StatelessWidget {
                  padding: const EdgeInsets.all(16),
                  decoration: BoxDecoration(
                    color: theme.card,
-                   borderRadius: BorderRadius.circular(16),
+                   borderRadius: BorderRadius.circular(8),
                  ),
                  child: Row(
                    children: [
@@ -158,7 +158,7 @@ class ScheduleStatsTab extends StatelessWidget {
                       Expanded(
                         child: Text(
                           'نصيحة: الإلتزام في الأيام الأولى من الأسبوع يزيد فرصتك في إكمال الجدول للنهاية.',
-                          style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 14),
+                          style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 14),
                         ),
                       )
                    ],
@@ -187,9 +187,9 @@ class ScheduleStatsTab extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Text("📚 أرشيف أسابيعي", style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 16, fontWeight: FontWeight.bold)),
+                          Text("📚 أرشيف أسابيعي", style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 16, fontWeight: FontWeight.bold)),
                           const Spacer(),
-                          Text("${archive.length} أسبوع", style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 12)),
+                          Text("${archive.length} أسبوع", style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary, fontSize: 12)),
                         ],
                       ),
                       const SizedBox(height: 12),
@@ -224,12 +224,12 @@ class ScheduleStatsTab extends StatelessWidget {
                                       children: [
                                         Text(
                                           "شهر ${week['month']} - أسبوع ${week['weekNumber']}",
-                                          style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 14, fontWeight: FontWeight.bold),
+                                          style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 14, fontWeight: FontWeight.bold),
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
                                           _formatDate(week['createdAt']),
-                                          style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 12),
+                                          style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary, fontSize: 12),
                                         ),
                                       ],
                                     ),
@@ -253,7 +253,7 @@ class ScheduleStatsTab extends StatelessWidget {
                                         Center(
                                           child: Text(
                                             "${rate.toInt()}%",
-                                            style: GoogleFonts.tajawal(color: theme.primaryText, fontSize: 14, fontWeight: FontWeight.bold),
+                                            style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 14, fontWeight: FontWeight.bold),
                                           ),
                                         ),
                                       ],
@@ -282,7 +282,7 @@ class ScheduleStatsTab extends StatelessWidget {
          padding: const EdgeInsets.all(16),
          decoration: BoxDecoration(
            color: theme.card,
-           borderRadius: BorderRadius.circular(16),
+           borderRadius: BorderRadius.circular(8),
            border: Border.all(color: color.withValues(alpha: 0.3)),
          ),
          child: Column(
@@ -290,9 +290,9 @@ class ScheduleStatsTab extends StatelessWidget {
            children: [
               Icon(icon, color: color),
               const SizedBox(height: 12),
-              Text(title, style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 14)),
+              Text(title, style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary, fontSize: 14)),
               const SizedBox(height: 4),
-              Text(value, style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 18, fontWeight: FontWeight.bold)),
+              Text(value, style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 18, fontWeight: FontWeight.bold)),
            ],
          ),
        ),
@@ -337,7 +337,7 @@ class ScheduleStatsTab extends StatelessWidget {
                   // العنوان
                   Text(
                     "شهر ${week['month']} - أسبوع ${week['weekNumber']}",
-                    style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 18, fontWeight: FontWeight.bold),
+                    style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   
                   const SizedBox(height: 8),
@@ -347,12 +347,12 @@ class ScheduleStatsTab extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
                       color: _getProgressColor((week['completionRate'] as num).toDouble()).withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: _getProgressColor((week['completionRate'] as num).toDouble()), width: 1.5),
                     ),
                     child: Text(
                       "نسبة الإنجاز: ${week['completionRate'].toInt()}%",
-                      style: GoogleFonts.cairo(color: _getProgressColor((week['completionRate'] as num).toDouble()), fontWeight: FontWeight.bold),
+                      style: GoogleFonts.ibmPlexSansArabic(color: _getProgressColor((week['completionRate'] as num).toDouble()), fontWeight: FontWeight.bold),
                     ),
                   ),
                   
@@ -361,7 +361,7 @@ class ScheduleStatsTab extends StatelessWidget {
                   // تفاصيل كل يوم
                   Align(
                     alignment: Alignment.centerRight,
-                    child: Text("تفاصيل الأيام:", style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 14, fontWeight: FontWeight.bold)),
+                    child: Text("تفاصيل الأيام:", style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 14, fontWeight: FontWeight.bold)),
                   ),
                   const SizedBox(height: 12),
                   
@@ -394,7 +394,7 @@ class ScheduleStatsTab extends StatelessWidget {
                       ),
                       child: Row(
                         children: [
-                          Text(dayName, style: GoogleFonts.cairo(color: theme.primaryText)),
+                          Text(dayName, style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText)),
                           const Spacer(),
                           // progress bar
                           SizedBox(
@@ -409,7 +409,7 @@ class ScheduleStatsTab extends StatelessWidget {
                           const SizedBox(width: 8),
                           Text(
                             "${dayRate.toInt()}%",
-                            style: GoogleFonts.tajawal(color: _getProgressColor(dayRate), fontSize: 12, fontWeight: FontWeight.bold),
+                            style: GoogleFonts.ibmPlexSansArabic(color: _getProgressColor(dayRate), fontSize: 12, fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),

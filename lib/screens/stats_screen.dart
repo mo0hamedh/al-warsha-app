@@ -44,7 +44,7 @@ class _StatsScreenState extends State<StatsScreen> {
         ),
         title: Text(
           'إحصائياتك 📊',
-          style: GoogleFonts.cairo(
+          style: GoogleFonts.ibmPlexSansArabic(
             color: themeProvider.primaryText,
             fontSize: 22,
             fontWeight: FontWeight.bold,
@@ -68,7 +68,7 @@ class _StatsScreenState extends State<StatsScreen> {
             return Center(
               child: Text(
                 'حدث خطأ في جلب البيانات.',
-                style: GoogleFonts.cairo(color: Colors.redAccent, fontSize: 16),
+                style: GoogleFonts.ibmPlexSansArabic(color: Colors.redAccent, fontSize: 16),
               ),
             );
           }
@@ -78,7 +78,7 @@ class _StatsScreenState extends State<StatsScreen> {
             return Center(
               child: Text(
                 'لم يتم العثور على بيانات المستخدم.',
-                style: GoogleFonts.cairo(color: themeProvider.textSecondary, fontSize: 16),
+                style: GoogleFonts.ibmPlexSansArabic(color: themeProvider.textSecondary, fontSize: 16),
               ),
             );
           }
@@ -141,7 +141,7 @@ class _StatsScreenState extends State<StatsScreen> {
             // Weekly Chart
             Text(
               'نشاط التركيز لهذا الأسبوع',
-              style: GoogleFonts.cairo(
+              style: GoogleFonts.ibmPlexSansArabic(
                 color: theme.primaryText,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -153,7 +153,7 @@ class _StatsScreenState extends State<StatsScreen> {
               padding: const EdgeInsets.only(top: 20, right: 20, left: 10, bottom: 10),
               decoration: BoxDecoration(
                 color: theme.card,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: theme.isDarkMode ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
               ),
               child: _buildWeeklyChart(focusSessions, theme),
@@ -163,7 +163,7 @@ class _StatsScreenState extends State<StatsScreen> {
             // Recent Sessions
             Text(
               'آخر الجلسات',
-              style: GoogleFonts.cairo(
+              style: GoogleFonts.ibmPlexSansArabic(
                 color: theme.primaryText,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -174,7 +174,7 @@ class _StatsScreenState extends State<StatsScreen> {
               Center(
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
-                  child: Text('لا توجد جلسات مسجلة بعد.', style: GoogleFonts.cairo(color: theme.textSecondary)),
+                  child: Text('لا توجد جلسات مسجلة بعد.', style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary)),
                 ),
               )
             else
@@ -198,15 +198,9 @@ class _StatsScreenState extends State<StatsScreen> {
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
       decoration: BoxDecoration(
         color: theme.card,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(8),
         border: Border.all(color: theme.isDarkMode ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        
       ),
       child: Column(
         children: [
@@ -214,7 +208,7 @@ class _StatsScreenState extends State<StatsScreen> {
           const SizedBox(height: 8),
           Text(
             value,
-            style: GoogleFonts.tajawal(
+            style: GoogleFonts.ibmPlexSansArabic(
               color: theme.primaryText,
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -224,7 +218,7 @@ class _StatsScreenState extends State<StatsScreen> {
           const SizedBox(height: 4),
           Text(
             title,
-            style: GoogleFonts.cairo(
+            style: GoogleFonts.ibmPlexSansArabic(
               color: theme.textSecondary,
               fontSize: 12,
             ),
@@ -278,7 +272,7 @@ class _StatsScreenState extends State<StatsScreen> {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.cairo(
+                  style: GoogleFonts.ibmPlexSansArabic(
                     color: theme.primaryText,
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
@@ -286,7 +280,7 @@ class _StatsScreenState extends State<StatsScreen> {
                 ),
                 Text(
                   dateStr,
-                  style: GoogleFonts.cairo(
+                  style: GoogleFonts.ibmPlexSansArabic(
                     color: theme.textSecondary,
                     fontSize: 12,
                   ),
@@ -298,11 +292,11 @@ class _StatsScreenState extends State<StatsScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
               '$duration د',
-              style: GoogleFonts.tajawal(
+              style: GoogleFonts.ibmPlexSansArabic(
                 color: color,
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
@@ -366,7 +360,7 @@ class _StatsScreenState extends State<StatsScreen> {
             getTooltipItem: (group, groupIndex, rod, rodIndex) {
               return BarTooltipItem(
                 '${rod.toY.round()} دقيقة',
-                GoogleFonts.tajawal(color: Colors.white, fontWeight: FontWeight.bold),
+                GoogleFonts.ibmPlexSansArabic(color: Colors.white, fontWeight: FontWeight.bold),
               );
             },
           ),
@@ -382,7 +376,7 @@ class _StatsScreenState extends State<StatsScreen> {
                   padding: const EdgeInsets.only(top: 8.0),
                   child: Text(
                     _getWeekdayShort(date.weekday),
-                    style: GoogleFonts.cairo(
+                    style: GoogleFonts.ibmPlexSansArabic(
                       color: theme.textSecondary,
                       fontSize: 11,
                       fontWeight: FontWeight.bold,

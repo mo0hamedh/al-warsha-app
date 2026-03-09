@@ -86,23 +86,14 @@ class _ScheduleScreenState extends State<ScheduleScreen> with SingleTickerProvid
                 height: 100,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFFFFD700), Color(0xFFFF6A00)],
+                  
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFFFF6A00).withValues(alpha: 0.5),
-                      blurRadius: 20,
-                      spreadRadius: 5,
-                    )
-                  ]
-                ),
                 child: const Icon(Icons.lock, color: Colors.white, size: 50),
               ),
               const SizedBox(height: 24),
               Text(
                 "🌿 الـ وَرشة - رحلة حياة",
-                style: GoogleFonts.cairo(
+                style: GoogleFonts.ibmPlexSansArabic(
                   color: Colors.white,
                   fontSize: 26,
                   fontWeight: FontWeight.bold,
@@ -113,21 +104,21 @@ class _ScheduleScreenState extends State<ScheduleScreen> with SingleTickerProvid
               const SizedBox(height: 16),
               Text(
                 "الورشة مش مجرد دروس بنسمعها وخلاص،\nهي رحلة إيمانية يومية هدفها إننا نعيش\nبالدين بجد، ونفضل فاكرين ربنا وسط\nزحمة الحياة 🌿\n\nإحنا مع بعض بقالنا سنتين،\nوبندعوك تشاركنا الطريق ده",
-                style: GoogleFonts.cairo(fontSize: 14, color: const Color(0xFFAAAAAA)),
+                style: GoogleFonts.ibmPlexSansArabic(fontSize: 14, color: const Color(0xFFAAAAAA)),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
               Container(
                 decoration: BoxDecoration(
                   color: const Color(0xFF1E1E1E),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: const Color(0xFFFF6A00), width: 1),
                 ),
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("📍 نظامنا في الورشة:", style: GoogleFonts.cairo(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                    Text("📍 نظامنا في الورشة:", style: GoogleFonts.ibmPlexSansArabic(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 12),
                     _buildFeatureRow("بثوث يومية: تذكرة إيمانية متجددة"),
                     _buildFeatureRow("مرونة كاملة: البث مسجل في أي وقت"),
@@ -141,18 +132,18 @@ class _ScheduleScreenState extends State<ScheduleScreen> with SingleTickerProvid
               Container(
                 decoration: BoxDecoration(
                   color: const Color(0xFF1E1E1E),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 padding: const EdgeInsets.all(16),
                 width: double.infinity,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("📚 حصاد سنتين من الرحلة:", style: GoogleFonts.cairo(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                    Text("📚 حصاد سنتين من الرحلة:", style: GoogleFonts.ibmPlexSansArabic(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
                     Text(
                       "✅ كتاب الداء والدواء كاملاً\n✅ أجزاء من كتاب الفوائد\n✅ رحلة في مدارج السالكين\n✅ دراسة في التوحيد\n✅ السيرة النبوية (مرتين)\n✅ كتاب عدة الصابرين\n✅ تفسير سورة الحشر",
-                      style: GoogleFonts.cairo(fontSize: 13, color: const Color(0xFFAAAAAA), height: 1.8),
+                      style: GoogleFonts.ibmPlexSansArabic(fontSize: 13, color: const Color(0xFFAAAAAA), height: 1.8),
                     ),
                   ],
                 ),
@@ -165,35 +156,25 @@ class _ScheduleScreenState extends State<ScheduleScreen> with SingleTickerProvid
                     debugPrint('Could not launch $url');
                   }
                 },
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(8),
                 child: Container(
                   width: double.infinity,
                   height: 56,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFFFF6A00), Color(0xFFFF4500)],
+                    
+                    borderRadius: BorderRadius.circular(8),
                     ),
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFFFF6A00).withValues(alpha: 0.4),
-                        blurRadius: 15,
-                        spreadRadius: 2,
-                        offset: const Offset(0, 4),
-                      )
-                    ]
-                  ),
                   child: Text(
                     "اشترك في الورشة 🚀",
-                    style: GoogleFonts.cairo(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                    style: GoogleFonts.ibmPlexSansArabic(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
               const SizedBox(height: 16),
               Text(
                 "قليلٌ دائم خيرٌ من كثيرٍ منقطع 🌱",
-                style: GoogleFonts.cairo(fontSize: 13, color: const Color(0xFF666666), fontStyle: FontStyle.italic),
+                style: GoogleFonts.ibmPlexSansArabic(fontSize: 13, color: const Color(0xFF666666), fontStyle: FontStyle.italic),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 32),
@@ -212,7 +193,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> with SingleTickerProvid
         children: [
           const Icon(Icons.check_circle, color: Color(0xFF66BB6A), size: 20),
           const SizedBox(width: 8),
-          Expanded(child: Text(text, style: GoogleFonts.cairo(color: Colors.white, fontSize: 13))),
+          Expanded(child: Text(text, style: GoogleFonts.ibmPlexSansArabic(color: Colors.white, fontSize: 13))),
         ],
       ),
     );
@@ -226,9 +207,9 @@ class _ScheduleScreenState extends State<ScheduleScreen> with SingleTickerProvid
        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
        decoration: BoxDecoration(
          color: theme.card,
-         borderRadius: BorderRadius.circular(20),
+         borderRadius: BorderRadius.circular(8),
          border: Border.all(color: theme.accentOrange.withValues(alpha: 0.3)),
-         boxShadow: [BoxShadow(color: theme.accentOrange.withValues(alpha: 0.1), blurRadius: 20)],
+         
        ),
        child: Row(
          textDirection: TextDirection.rtl,
@@ -237,9 +218,9 @@ class _ScheduleScreenState extends State<ScheduleScreen> with SingleTickerProvid
              child: Column(
                crossAxisAlignment: CrossAxisAlignment.start,
                children: [
-                 Text('شهر ${schedule.month} - أسبوع ${schedule.weekNumber}', style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 16)),
+                 Text('شهر ${schedule.month} - أسبوع ${schedule.weekNumber}', style: GoogleFonts.ibmPlexSansArabic(color: theme.textSecondary, fontSize: 16)),
                  const SizedBox(height: 8),
-                 Text('جدول الورشة 📋', style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 24, fontWeight: FontWeight.bold)),
+                 Text('جدول الورشة 📋', style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 24, fontWeight: FontWeight.bold)),
                ],
              ),
            ),
@@ -255,7 +236,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> with SingleTickerProvid
                    color: theme.accentOrange,
                  ),
                ),
-               Text('${rate.toStringAsFixed(0)}%', style: GoogleFonts.cairo(color: theme.accentOrange, fontSize: 22, fontWeight: FontWeight.bold, shadows: [Shadow(color: theme.accentOrange.withValues(alpha: 0.5), blurRadius: 10)])),
+               Text('${rate.toStringAsFixed(0)}%', style: GoogleFonts.ibmPlexSansArabic(color: theme.accentOrange, fontSize: 22, fontWeight: FontWeight.bold, shadows: [Shadow(color: theme.accentOrange.withValues(alpha: 0.5), blurRadius: 10)])),
              ],
            ),
          ],
@@ -329,14 +310,14 @@ class _ScheduleScaffold extends StatelessWidget {
         centerTitle: true,
         title: Text(
           'جدول الورشة 📋',
-          style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 22, fontWeight: FontWeight.bold),
+          style: GoogleFonts.ibmPlexSansArabic(color: theme.primaryText, fontSize: 22, fontWeight: FontWeight.bold),
         ),
         bottom: TabBar(
           controller: tabController,
           indicatorColor: theme.accentOrange,
           labelColor: theme.accentOrange,
           unselectedLabelColor: theme.textSecondary,
-          labelStyle: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 16),
+          labelStyle: GoogleFonts.ibmPlexSansArabic(fontWeight: FontWeight.bold, fontSize: 16),
           tabs: const [
             Tab(text: 'جدولي'),
             Tab(text: 'المنافسة'),
@@ -402,7 +383,7 @@ class _ScheduleBodyState extends State<_ScheduleBody> {
           return Center(
             child: Text(
               'لا يوجد جدول نشط حالياً',
-              style: GoogleFonts.cairo(color: widget.theme.textSecondary, fontSize: 18),
+              style: GoogleFonts.ibmPlexSansArabic(color: widget.theme.textSecondary, fontSize: 18),
             ),
           );
         }

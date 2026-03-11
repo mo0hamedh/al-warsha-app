@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../models/user_model.dart';
-import '../models/task_model.dart';
-import '../models/category_data.dart';
-import '../models/habit_model.dart';
-import '../models/schedule_model.dart';
-import '../models/study_room_model.dart';
-import '../models/admin_task.dart';
+import 'package:el_warsha/features/profile/models/category_data.dart';
+import 'package:el_warsha/features/habits/models/habit_model.dart';
+import 'package:el_warsha/features/schedule/models/schedule_model.dart';
+import 'package:el_warsha/features/study_room/models/study_room_model.dart';
+import 'package:el_warsha/features/tasks/models/admin_task_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
 
@@ -337,7 +336,7 @@ class DatabaseService {
           .set(category.toMap());
     } catch (e) {
       debugPrint('Error saving custom category: $e');
-      throw e;
+      rethrow;
     }
   }
 
@@ -379,7 +378,7 @@ class DatabaseService {
       await batch.commit();
     } catch (e) {
       debugPrint('Error deleting custom category: $e');
-      throw e;
+      rethrow;
     }
   }
 
@@ -402,7 +401,7 @@ class DatabaseService {
       await batch.commit();
     } catch (e) {
       debugPrint('Error removing friend: $e');
-      throw e;
+      rethrow;
     }
   }
 
@@ -529,7 +528,7 @@ class DatabaseService {
           .set(habit.toMap());
     } catch (e) {
       debugPrint('Error adding habit: $e');
-      throw e;
+      rethrow;
     }
   }
 
@@ -543,7 +542,7 @@ class DatabaseService {
           .delete();
     } catch (e) {
       debugPrint('Error deleting habit: $e');
-      throw e;
+      rethrow;
     }
   }
 
@@ -637,7 +636,7 @@ class DatabaseService {
 
     } catch (e) {
       debugPrint('Error checking in habit: $e');
-      throw e;
+      rethrow;
     }
   }
 
@@ -675,7 +674,7 @@ class DatabaseService {
       await _db.collection('weeklySchedule').add(data);
     } catch (e) {
       debugPrint('Error creating schedule: $e');
-      throw e;
+      rethrow;
     }
   }
 
@@ -815,7 +814,7 @@ class DatabaseService {
 
     } catch (e) {
       debugPrint('Error updating day progress: $e');
-      throw e;
+      rethrow;
     }
   }
 

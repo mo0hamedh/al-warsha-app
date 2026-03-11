@@ -4,6 +4,7 @@ class TaskModel {
   final String title;
   final String description;
   final bool isCompleted;
+  final bool isPointsEarned;
   final int estimatedMinutes;
   final String category;
 
@@ -12,6 +13,7 @@ class TaskModel {
     required this.title,
     this.description = '',
     this.isCompleted = false,
+    this.isPointsEarned = false,
     this.estimatedMinutes = 0,
     this.category = 'other',
   });
@@ -22,6 +24,7 @@ class TaskModel {
       title: data['title'] ?? '',
       description: data['description'] ?? '',
       isCompleted: data['isCompleted'] ?? false,
+      isPointsEarned: data['isPointsEarned'] ?? false,
       estimatedMinutes: data['estimatedMinutes'] ?? 0,
       category: data['category'] ?? 'other',
     );
@@ -32,6 +35,7 @@ class TaskModel {
       'title': title,
       'description': description,
       'isCompleted': isCompleted,
+      'isPointsEarned': isPointsEarned,
       'estimatedMinutes': estimatedMinutes,
       'category': category,
     };

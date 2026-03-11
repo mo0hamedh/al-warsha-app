@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../providers/theme_provider.dart';
 import '../../services/auth_service.dart';
 import '../../services/database_service.dart';
-import '../../models/user_model.dart';
 import '../../models/schedule_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

@@ -3,10 +3,10 @@ import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:confetti/confetti.dart';
 
-import '../../providers/theme_provider.dart';
-import '../../services/database_service.dart';
-import '../../services/auth_service.dart';
-import '../../models/habit_model.dart';
+import '../../../providers/theme_provider.dart';
+import '../../../services/database_service.dart';
+import 'package:el_warsha/features/auth/services/auth_service.dart';
+import '../models/habit_model.dart';
 import 'add_habit_screen.dart';
 import 'habit_detail_screen.dart';
 
@@ -57,7 +57,7 @@ class _HabitsScreenState extends State<HabitsScreen> with SingleTickerProviderSt
         centerTitle: true,
         title: Text(
           'العادات 🌱',
-          style: GoogleFonts.cairo(
+          style: GoogleFonts.tajawal(
             color: theme.primaryText,
             fontSize: 22,
             fontWeight: FontWeight.bold,
@@ -65,7 +65,7 @@ class _HabitsScreenState extends State<HabitsScreen> with SingleTickerProviderSt
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.add_circle, color: theme.accentOrange, size: 28),
+            icon: Icon(Icons.add_circle, color: theme.accentColor, size: 28),
             onPressed: () {
               Navigator.push(
                 context, 
@@ -76,10 +76,10 @@ class _HabitsScreenState extends State<HabitsScreen> with SingleTickerProviderSt
         ],
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: theme.accentOrange,
-          labelColor: theme.accentOrange,
+          indicatorColor: theme.accentColor,
+          labelColor: theme.accentColor,
           unselectedLabelColor: theme.textSecondary,
-          labelStyle: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 16),
+          labelStyle: GoogleFonts.tajawal(fontWeight: FontWeight.bold, fontSize: 16),
           tabs: const [
             Tab(text: 'عاداتي'),
             Tab(text: 'سلبية'),
@@ -93,7 +93,7 @@ class _HabitsScreenState extends State<HabitsScreen> with SingleTickerProviderSt
             stream: _dbService.getUserHabits(user.uid),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator(color: theme.accentOrange));
+                return Center(child: CircularProgressIndicator(color: theme.accentColor));
               }
 
               final allHabits = snapshot.data ?? [];
@@ -139,16 +139,9 @@ class _HabitsScreenState extends State<HabitsScreen> with SingleTickerProviderSt
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
       decoration: BoxDecoration(
         color: theme.card,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: theme.accentOrange.withValues(alpha: 0.3)),
-        boxShadow: [
-          BoxShadow(
-            color: theme.accentOrange.withValues(alpha: 0.1),
-            blurRadius: 20,
-            spreadRadius: 2,
-            offset: const Offset(0, 4),
-          )
-        ],
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: theme.accentColor.withValues(alpha: 0.3)),
+        
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -159,21 +152,21 @@ class _HabitsScreenState extends State<HabitsScreen> with SingleTickerProviderSt
              children: [
                Text(
                  'أطول سلسلة استمرار 🔥',
-                 style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 16, fontWeight: FontWeight.bold),
+                 style: GoogleFonts.tajawal(color: theme.textSecondary, fontSize: 16, fontWeight: FontWeight.bold),
                ),
                const SizedBox(height: 8),
                Text(
                  longestStreak.toString(),
                  style: GoogleFonts.tajawal(
-                   color: theme.accentOrange,
+                   color: theme.accentColor,
                    fontSize: 48,
                    fontWeight: FontWeight.w900,
-                   shadows: [Shadow(color: theme.accentOrange.withValues(alpha: 0.4), blurRadius: 15)],
+                   shadows: [Shadow(color: theme.accentColor.withValues(alpha: 0.4), blurRadius: 15)],
                  ),
                ),
                Text(
                  'يوم',
-                 style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 16),
+                 style: GoogleFonts.tajawal(color: theme.textSecondary, fontSize: 16),
                ),
              ],
            )
@@ -190,16 +183,16 @@ class _HabitsScreenState extends State<HabitsScreen> with SingleTickerProviderSt
           children: [
             Icon(Icons.spa_outlined, size: 80, color: theme.textSecondary.withValues(alpha: 0.5)),
             const SizedBox(height: 16),
-            Text(emptyMsg, style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 18)),
+            Text(emptyMsg, style: GoogleFonts.tajawal(color: theme.textSecondary, fontSize: 18)),
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AddHabitScreen())),
               style: ElevatedButton.styleFrom(
-                backgroundColor: theme.accentOrange,
+                backgroundColor: theme.accentColor,
                 padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              child: Text('ابدأ رحلتك', style: GoogleFonts.cairo(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+              child: Text('ابدأ رحلتك', style: GoogleFonts.tajawal(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
             ),
           ],
         ),
@@ -241,9 +234,9 @@ class _HabitsScreenState extends State<HabitsScreen> with SingleTickerProviderSt
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: theme.card,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(8),
           border: Border.all(color: checkedInToday ? accentColor.withValues(alpha: 0.3) : theme.isDarkMode ? Colors.white12 : Colors.black12),
-          boxShadow: checkedInToday ? [BoxShadow(color: accentColor.withValues(alpha: 0.1), blurRadius: 10)] : [],
+          
         ),
         child: Column(
           children: [
@@ -251,14 +244,14 @@ class _HabitsScreenState extends State<HabitsScreen> with SingleTickerProviderSt
             Row(
               textDirection: TextDirection.rtl,
               children: [
-                CircleAvatar(backgroundColor: accentColor.withValues(alpha: 0.2), radius: 24, child: Text(habit.icon, style: const TextStyle(fontSize: 24))),
+                CircleAvatar(backgroundColor: accentColor.withValues(alpha: 0.2), radius: 24, child: Text(habit.icon, style: const TextStyle(fontSize: 24, fontFamilyFallback: ['NotoColorEmoji']))),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(habit.name, style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 18, fontWeight: FontWeight.bold)),
-                      Text(habit.category, style: GoogleFonts.cairo(color: theme.textSecondary, fontSize: 12)),
+                      Text(habit.name, style: GoogleFonts.tajawal(color: theme.primaryText, fontSize: 18, fontWeight: FontWeight.bold)),
+                      Text(habit.category, style: GoogleFonts.tajawal(color: theme.textSecondary, fontSize: 12)),
                     ],
                   ),
                 ),
@@ -266,7 +259,7 @@ class _HabitsScreenState extends State<HabitsScreen> with SingleTickerProviderSt
                   children: [
                     Text(habit.currentStreak.toString(), style: GoogleFonts.tajawal(color: accentColor, fontSize: 24, fontWeight: FontWeight.bold)),
                     const SizedBox(width: 4),
-                    Text('🔥', style: TextStyle(fontSize: 20)),
+                    Text('🔥', style: TextStyle(fontSize: 20, fontFamilyFallback: ['NotoColorEmoji'])),
                   ],
                 ),
               ],
@@ -308,7 +301,7 @@ class _HabitsScreenState extends State<HabitsScreen> with SingleTickerProviderSt
                 ],
               )
             else
-              Text('🎉 تم التسجيل اليوم بنجاح!', style: GoogleFonts.cairo(color: Colors.green, fontSize: 14, fontWeight: FontWeight.bold)),
+              Text('🎉 تم التسجيل اليوم بنجاح!', style: GoogleFonts.tajawal(color: Colors.green, fontSize: 14, fontWeight: FontWeight.bold)),
           ],
         ),
       ),
@@ -326,7 +319,7 @@ class _HabitsScreenState extends State<HabitsScreen> with SingleTickerProviderSt
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
-        child: Text(label, style: GoogleFonts.cairo(color: color, fontWeight: FontWeight.bold, fontSize: 14)),
+        child: Text(label, style: GoogleFonts.tajawal(color: color, fontWeight: FontWeight.bold, fontSize: 14)),
       ),
     );
   }

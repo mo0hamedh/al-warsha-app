@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../services/auth_service.dart';
-import '../../providers/theme_provider.dart';
-import '../home_screen.dart';
+import '../services/auth_service.dart';
+import '../../../providers/theme_provider.dart';
+import '../../home/screens/home_screen.dart';
 import 'login_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -33,7 +33,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(error, style: GoogleFonts.cairo()),
+            content: Text(error, style: GoogleFonts.tajawal()),
             backgroundColor: Colors.redAccent,
             behavior: SnackBarBehavior.floating,
           ),
@@ -57,7 +57,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(error, style: GoogleFonts.cairo()),
+            content: Text(error, style: GoogleFonts.tajawal()),
             backgroundColor: Colors.redAccent,
             behavior: SnackBarBehavior.floating,
           ),
@@ -81,7 +81,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Scaffold(
       backgroundColor: theme.bg,
       appBar: AppBar(
-        title: Text('إنشاء حساب', style: GoogleFonts.cairo(color: theme.primaryText, fontWeight: FontWeight.bold)),
+        title: Text('إنشاء حساب', style: GoogleFonts.tajawal(color: theme.primaryText, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
         elevation: 0,
         iconTheme: IconThemeData(color: theme.primaryText),
@@ -103,7 +103,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     Text(
                       'ابدأ رحلتك!',
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.cairo(
+                      style: GoogleFonts.tajawal(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
                         color: theme.primaryText,
@@ -113,20 +113,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     Text(
                       'قم بإنشاء حساب لتنظيم مهامك بكفاءة',
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.cairo(fontSize: 16, color: theme.textSecondary),
+                      style: GoogleFonts.tajawal(fontSize: 16, color: theme.textSecondary),
                     ),
                     const SizedBox(height: 48),
                     TextFormField(
                       controller: _nameController,
-                      style: GoogleFonts.cairo(color: theme.primaryText),
+                      style: GoogleFonts.tajawal(color: theme.primaryText),
                       decoration: InputDecoration(
                         labelText: 'الاسم الكامل',
-                        labelStyle: GoogleFonts.cairo(color: theme.textSecondary),
+                        labelStyle: GoogleFonts.tajawal(color: theme.textSecondary),
                         prefixIcon: Icon(Icons.person_outline, color: theme.textSecondary),
                         filled: true,
                         fillColor: theme.card,
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-                        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: theme.accentOrange, width: 1.5)),
+                        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: theme.accentColor, width: 1.5)),
                       ),
                       validator: (val) => val != null && val.isNotEmpty ? null : 'يرجى إدخال اسمك',
                     ),
@@ -137,12 +137,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       style: GoogleFonts.tajawal(color: theme.primaryText),
                       decoration: InputDecoration(
                         labelText: 'البريد الإلكتروني',
-                        labelStyle: GoogleFonts.cairo(color: theme.textSecondary),
+                        labelStyle: GoogleFonts.tajawal(color: theme.textSecondary),
                         prefixIcon: Icon(Icons.email_outlined, color: theme.textSecondary),
                         filled: true,
                         fillColor: theme.card,
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-                        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: theme.accentOrange, width: 1.5)),
+                        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: theme.accentColor, width: 1.5)),
                       ),
                       validator: (val) => val != null && val.contains('@') ? null : 'يرجى إدخال بريد إلكتروني صحيح',
                     ),
@@ -153,12 +153,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       style: GoogleFonts.tajawal(color: theme.primaryText),
                       decoration: InputDecoration(
                         labelText: 'كلمة المرور',
-                        labelStyle: GoogleFonts.cairo(color: theme.textSecondary),
+                        labelStyle: GoogleFonts.tajawal(color: theme.textSecondary),
                         prefixIcon: Icon(Icons.lock_outline, color: theme.textSecondary),
                         filled: true,
                         fillColor: theme.card,
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-                        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: theme.accentOrange, width: 1.5)),
+                        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: theme.accentColor, width: 1.5)),
                       ),
                       validator: (val) => val != null && val.length > 5 ? null : 'يجب أن لا تقل كلمة المرور عن 6 أحرف',
                     ),
@@ -168,14 +168,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        backgroundColor: theme.accentOrange,
+                        backgroundColor: theme.accentColor,
                         foregroundColor: Colors.white,
                         elevation: 8,
-                        shadowColor: theme.accentOrange.withOpacity(0.5),
+                        shadowColor: theme.accentColor.withOpacity(0.5),
                       ),
                       child: auth.isLoading
                           ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                          : Text('إنشاء حساب', style: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.bold)),
+                          : Text('إنشاء حساب', style: GoogleFonts.tajawal(fontSize: 18, fontWeight: FontWeight.bold)),
                     ),
                     const SizedBox(height: 16),
                     OutlinedButton.icon(
@@ -187,7 +187,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         foregroundColor: theme.primaryText,
                       ),
                       icon: const Icon(Icons.login),
-                      label: Text('المتابعة بحساب جوجل', style: GoogleFonts.cairo(fontSize: 16)),
+                      label: Text('المتابعة بحساب جوجل', style: GoogleFonts.tajawal(fontSize: 16)),
                     ),
                     const SizedBox(height: 24),
                     TextButton(
@@ -197,7 +197,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           MaterialPageRoute(builder: (_) => const LoginScreen()),
                         );
                       },
-                      child: Text('لديك حساب بالفعل؟ تسجيل الدخول', style: GoogleFonts.cairo(color: theme.accentOrange)),
+                      child: Text('لديك حساب بالفعل؟ تسجيل الدخول', style: GoogleFonts.tajawal(color: theme.accentColor)),
                     ),
                   ],
                 ),

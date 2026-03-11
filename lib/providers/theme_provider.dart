@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../core/theme/app_theme.dart';
+import 'package:el_warsha/core/constants/app_theme.dart';
 
 class ThemeProvider extends ChangeNotifier {
   static const String _themeKey = 'isDarkMode';
@@ -22,7 +22,7 @@ class ThemeProvider extends ChangeNotifier {
   Color get card => isDarkMode ? AppTheme.darkCard : AppTheme.lightCard;
   Color get primaryText => isDarkMode ? AppTheme.darkPrimaryText : AppTheme.lightPrimaryText;
   Color get textSecondary => isDarkMode ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary;
-  Color get accentOrange => AppTheme.accentOrange; // same for both
+  Color get accentColor => AppTheme.accentOrange; // renamed and mapped for global use
 
   void toggleTheme() async {
     _themeMode = isDarkMode ? ThemeMode.light : ThemeMode.dark;

@@ -3,13 +3,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'firebase_options.dart';
-import 'services/auth_service.dart';
-import 'providers/task_provider.dart';
-import 'providers/pomodoro_provider.dart';
+import 'features/auth/services/auth_service.dart';
+import 'features/tasks/providers/task_provider.dart';
+import 'features/study_room/providers/pomodoro_provider.dart';
 import 'providers/theme_provider.dart';
-import 'providers/theme_provider.dart';
-import 'screens/auth_wrapper.dart';
-import 'screens/study_room_screen.dart';
+import 'features/auth/screens/auth_wrapper.dart';
+import 'features/study_room/screens/study_room_screen.dart';
 import 'services/notification_service.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -18,7 +17,7 @@ import 'package:flutter/foundation.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'models/user_model.dart';
-import 'models/habit_model.dart';
+import 'features/habits/models/habit_model.dart';
 import 'services/database_service.dart';
 
 void main() async {
@@ -32,7 +31,7 @@ void main() async {
   // تحميل الخطوط مسبقاً للويب لتحسين الأداء
   if (kIsWeb) {
     await GoogleFonts.pendingFonts([
-      GoogleFonts.ibmPlexSansArabic(),
+      GoogleFonts.tajawal(),
     ]);
   }
   

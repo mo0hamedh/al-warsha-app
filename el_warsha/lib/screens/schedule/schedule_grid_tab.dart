@@ -6,7 +6,6 @@ import '../../providers/theme_provider.dart';
 import '../../services/database_service.dart';
 import 'dart:ui' as ui;
 import '../../models/schedule_model.dart';
-import 'package:intl/intl.dart';
 
 class ScheduleGridTab extends StatelessWidget {
   final WeeklyScheduleModel schedule;
@@ -140,7 +139,7 @@ class ScheduleGridTab extends StatelessWidget {
                   ],
                 ),
              );
-          }).toList(),
+          }),
           
           // Footer Metric
           Padding(
@@ -169,7 +168,7 @@ class ScheduleGridTab extends StatelessWidget {
   Widget _buildNumberInput(dynamic value, ScheduleHabitModel habit, String dayName, bool isPast, ThemeProvider theme, DatabaseService dbService) {
       TextEditingController ctrl = TextEditingController(text: value != null ? value.toString() : '');
       
-      return Container(
+      return SizedBox(
         width: 50,
         height: 30,
         child: TextField(

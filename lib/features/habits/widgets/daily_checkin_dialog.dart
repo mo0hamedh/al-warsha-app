@@ -88,7 +88,7 @@ class _DailyCheckInDialogState extends State<DailyCheckInDialog> {
 
     return Dialog(
       backgroundColor: theme.card,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       child: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(
@@ -96,7 +96,7 @@ class _DailyCheckInDialogState extends State<DailyCheckInDialog> {
           children: [
             Text(
               'كيف كان يومك؟', 
-              style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 24, fontWeight: FontWeight.bold)
+              style: GoogleFonts.tajawal(color: theme.primaryText, fontSize: 24, fontWeight: FontWeight.bold)
             ),
             const SizedBox(height: 8),
             Text(
@@ -107,12 +107,12 @@ class _DailyCheckInDialogState extends State<DailyCheckInDialog> {
             const SizedBox(height: 24),
             CircleAvatar(backgroundColor: color.withValues(alpha: 0.2), radius: 40, child: Text(habit.icon, style: const TextStyle(fontSize: 40))),
             const SizedBox(height: 16),
-            Text(habit.name, style: GoogleFonts.cairo(color: theme.primaryText, fontSize: 22, fontWeight: FontWeight.bold)),
+            Text(habit.name, style: GoogleFonts.tajawal(color: theme.primaryText, fontSize: 22, fontWeight: FontWeight.bold)),
             
             const SizedBox(height: 32),
             
             _isSubmitting 
-              ? CircularProgressIndicator(color: theme.accentOrange)
+              ? CircularProgressIndicator(color: theme.accentColor)
               : Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   textDirection: TextDirection.rtl,
@@ -144,7 +144,7 @@ class _DailyCheckInDialogState extends State<DailyCheckInDialog> {
           children: [
             Text(icon, style: const TextStyle(fontSize: 24)),
             const SizedBox(height: 4),
-            Text(label, style: GoogleFonts.cairo(color: color, fontWeight: FontWeight.bold, fontSize: 14)),
+            Text(label, style: GoogleFonts.tajawal(color: color, fontWeight: FontWeight.bold, fontSize: 14)),
           ],
         ),
       ),

@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../providers/theme_provider.dart';
 import 'package:el_warsha/features/auth/services/auth_service.dart';
-import '../../../services/database_service.dart';
+import '../providers/habit_provider.dart';
 import '../models/habit_model.dart';
 import '../models/habit_categories.dart';
 
@@ -17,7 +17,6 @@ class AddHabitScreen extends StatefulWidget {
 }
 
 class _AddHabitScreenState extends State<AddHabitScreen> {
-  final DatabaseService _dbService = DatabaseService();
   final PageController _pageController = PageController();
   
   int _currentStep = 0;
@@ -416,13 +415,10 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
       startDate: Timestamp.now(),
     );
 
-    // Show loading
-    showDialog(context: context, barrierDismissible: false, builder: (_) => Center(child: CircularProgressIndicator(color: context.read<ThemeProvider>().accentColor)));
-
-    await _dbService.addHabit(user.uid, newHabit);
+    // Optimistic: add habit via provider (instant UI update)
+    await context.read<HabitProvider>().addHabit(newHabit);
 
     if (mounted) {
-      Navigator.pop(context); // close dialog
       Navigator.pop(context); // close screen
     }
   }

@@ -18,6 +18,26 @@ class TaskModel {
     this.category = 'other',
   });
 
+  TaskModel copyWith({
+    String? id,
+    String? title,
+    String? description,
+    bool? isCompleted,
+    bool? isPointsEarned,
+    int? estimatedMinutes,
+    String? category,
+  }) {
+    return TaskModel(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      isCompleted: isCompleted ?? this.isCompleted,
+      isPointsEarned: isPointsEarned ?? this.isPointsEarned,
+      estimatedMinutes: estimatedMinutes ?? this.estimatedMinutes,
+      category: category ?? this.category,
+    );
+  }
+
   factory TaskModel.fromMap(Map<String, dynamic> data, String documentId) {
     return TaskModel(
       id: documentId,

@@ -79,7 +79,7 @@ class NotificationService {
           'تذكير الجدول',
           importance: Importance.high,
           priority: Priority.high,
-          color: theme.accentColor,
+          color: Color(0xFFC5A87C), // accentOrange constant
         ),
         iOS: DarwinNotificationDetails(),
       ),
@@ -101,7 +101,7 @@ class NotificationService {
           'day_lock',
           'قفل اليوم',
           importance: Importance.defaultImportance,
-          color: theme.accentColor,
+          color: Color(0xFFC5A87C), // accentOrange constant
         ),
         iOS: DarwinNotificationDetails(),
       ),

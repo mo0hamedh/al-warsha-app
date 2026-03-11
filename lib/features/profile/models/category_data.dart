@@ -43,7 +43,7 @@ class TaskCategory {
 
 const List<TaskCategory> taskCategories = [
   TaskCategory(id: 'study', name: 'دراسة', icon: Icons.school, color: Color(0xFF4FC3F7)),
-  TaskCategory(id: 'work', name: 'شغل', icon: Icons.work, color: theme.accentColor),
+  TaskCategory(id: 'work', name: 'شغل', icon: Icons.work, color: Color(0xFFC5A87C)),
   TaskCategory(id: 'project', name: 'مشروع', icon: Icons.rocket_launch, color: Color(0xFFAB47BC)),
   TaskCategory(id: 'personal', name: 'شخصي', icon: Icons.person, color: Color(0xFF66BB6A)),
   TaskCategory(id: 'other', name: 'أخرى', icon: Icons.more_horiz, color: Color(0xFF78909C)),

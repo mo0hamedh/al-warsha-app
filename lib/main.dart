@@ -6,6 +6,7 @@ import 'firebase_options.dart';
 import 'features/auth/services/auth_service.dart';
 import 'features/tasks/providers/task_provider.dart';
 import 'features/study_room/providers/pomodoro_provider.dart';
+import 'features/habits/providers/habit_provider.dart';
 import 'providers/theme_provider.dart';
 import 'features/auth/screens/auth_wrapper.dart';
 import 'features/study_room/screens/study_room_screen.dart';
@@ -17,7 +18,6 @@ import 'package:flutter/foundation.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'models/user_model.dart';
-import 'features/habits/models/habit_model.dart';
 import 'services/database_service.dart';
 
 void main() async {
@@ -79,21 +79,9 @@ void main() async {
             return null;
           },
         ),
-        StreamProvider<List<HabitModel>>(
-          create: (context) {
-            final auth = context.read<AuthService>();
-            if (auth.currentUser == null) return const Stream.empty();
-            return DatabaseService().getUserHabits(auth.currentUser!.uid)
-                .handleError((error) {
-              debugPrint('Error loading user habits: $error');
-              return <HabitModel>[];
-            });
-          },
-          initialData: const [],
-          catchError: (context, error) {
-            debugPrint('StreamProvider caught error loading habits: $error');
-            return <HabitModel>[];
-          },
+        ChangeNotifierProxyProvider<AuthService, HabitProvider>(
+          create: (context) => HabitProvider(context.read<AuthService>()),
+          update: (context, auth, previous) => previous ?? HabitProvider(auth),
         ),
       ],
       child: const ElWarshaApp(),

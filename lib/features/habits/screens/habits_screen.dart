@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:confetti/confetti.dart';
 
 import '../../../providers/theme_provider.dart';
-import '../../../services/database_service.dart';
+import '../providers/habit_provider.dart';
 import 'package:el_warsha/features/auth/services/auth_service.dart';
 import '../models/habit_model.dart';
 import 'add_habit_screen.dart';
@@ -18,7 +18,6 @@ class HabitsScreen extends StatefulWidget {
 }
 
 class _HabitsScreenState extends State<HabitsScreen> with SingleTickerProviderStateMixin {
-  final DatabaseService _dbService = DatabaseService();
   late TabController _tabController;
   late ConfettiController _confettiController;
 
@@ -89,14 +88,9 @@ class _HabitsScreenState extends State<HabitsScreen> with SingleTickerProviderSt
       ),
       body: Stack(
         children: [
-          StreamBuilder<List<HabitModel>>(
-            stream: _dbService.getUserHabits(user.uid),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator(color: theme.accentColor));
-              }
-
-              final allHabits = snapshot.data ?? [];
+          Builder(
+            builder: (context) {
+              final allHabits = context.watch<HabitProvider>().habits;
               final negativeHabits = allHabits.where((h) => h.type == 'negative').toList();
               final positiveHabits = allHabits.where((h) => h.type == 'positive').toList();
 
@@ -328,7 +322,7 @@ class _HabitsScreenState extends State<HabitsScreen> with SingleTickerProviderSt
     if (status == 'clean') {
       _confettiController.play();
     }
-    await _dbService.checkInHabit(uid, habitId, status, null);
+    await context.read<HabitProvider>().checkInHabit(habitId, status, null);
   }
 
   Color _parseColor(String colorCode) {

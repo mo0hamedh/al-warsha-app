@@ -747,174 +747,146 @@ class DatabaseService {
   }
 
   Future<void> updateDayProgress(
-    String userId, 
-    String weekId, 
-    String dayString, 
-    String habitName, 
-    dynamic value, 
-    int totalHabits,
-  ) async {
+    String userId,
+    String weekId,
+    String dayString,
+    String habitName,
+    dynamic value,
+    int totalHabits, {
+    String? scheduleMonth,
+    int? scheduleWeekNumber,
+  }) async {
     try {
-       final progressRef = _db.collection('users').doc(userId).collection('scheduleProgress').doc(weekId);
-       
-       return await _db.runTransaction((transaction) async {
-          final snapshot = await transaction.get(progressRef);
-          
-          Map<String, dynamic> currentDays = {};
-          if (snapshot.exists) {
-            currentDays = Map<String, dynamic>.from(snapshot.data()!['days'] ?? {});
-          }
+      final progressRef = _db
+          .collection('users')
+          .doc(userId)
+          .collection('scheduleProgress')
+          .doc(weekId);
 
-          // Ensure map for day exists
-          if (!currentDays.containsKey(dayString)) {
-             currentDays[dayString] = <String, dynamic>{};
-          }
+      return await _db.runTransaction((transaction) async {
+        final snapshot = await transaction.get(progressRef);
 
-          // Update the specific habit
-          currentDays[dayString][habitName] = value;
+        Map<String, dynamic> currentDays = {};
+        if (snapshot.exists) {
+          currentDays = Map<String, dynamic>.from(snapshot.data()!['days'] ?? {});
+        }
 
-          // Calculate Completion Rate roughly (Total checked booleans + entered numbers > 0)
-          int completedHabits = 0;
-          currentDays.forEach((day, habitsMap) {
-             (habitsMap as Map<String, dynamic>).forEach((hName, hVal) {
-                if (hVal is bool && hVal == true) completedHabits++;
-                if (hVal is num && hVal > 0) completedHabits++;
-             });
+        // Ensure map for day exists
+        if (!currentDays.containsKey(dayString)) {
+          currentDays[dayString] = <String, dynamic>{};
+        }
+
+        // Update the specific habit
+        currentDays[dayString][habitName] = value;
+
+        // Calculate Completion Rate
+        int completedHabits = 0;
+        currentDays.forEach((day, habitsMap) {
+          (habitsMap as Map<String, dynamic>).forEach((hName, hVal) {
+            if (hVal is bool && hVal == true) completedHabits++;
+            if (hVal is num && hVal > 0) completedHabits++;
           });
+        });
 
-          // Possible Total Habits (total days passed * total habits per day) -> Approximate logic for current week. 
-          // For simplicity, defining completion rate entirely out of 7 days * totalHabits
-          int possibleMax = 7 * totalHabits;
-          double newRate = possibleMax > 0 ? (completedHabits / possibleMax) : 0.0;
-          
-          int addedPoints = 0;
-          // E.g., if a user completes a habit, instantly add point, or only apply points locally.
-          // For now, let's add 1 point for every completion action.
-          if ((value is bool && value) || (value is num && value > 0)) addedPoints = 1;
+        int possibleMax = 7 * totalHabits;
+        double newRate = possibleMax > 0 ? (completedHabits / possibleMax) : 0.0;
 
-          final newProgress = ScheduleProgressModel(
-            weekId: weekId,
-            userId: userId,
-            days: currentDays,
-            completionRate: newRate,
-            totalPoints: (snapshot.exists ? (snapshot.data()!['totalPoints'] ?? 0) : 0) + addedPoints,
-            lastUpdated: Timestamp.now(),
-          );
+        int addedPoints = 0;
+        if ((value is bool && value) || (value is num && value > 0)) addedPoints = 1;
 
-          transaction.set(progressRef, newProgress.toMap(), SetOptions(merge: true));
-          
-          // Increment global points
-          if (addedPoints > 0) {
-             transaction.update(_db.collection('users').doc(userId), {
-                'monthlyPoints': FieldValue.increment(addedPoints),
-                'totalPoints': FieldValue.increment(addedPoints)
-             });
-          }
-       });
+        final newProgress = ScheduleProgressModel(
+          weekId: weekId,
+          userId: userId,
+          days: currentDays,
+          completionRate: newRate,
+          totalPoints:
+              (snapshot.exists ? (snapshot.data()!['totalPoints'] ?? 0) : 0) +
+                  addedPoints,
+          lastUpdated: Timestamp.now(),
+        );
 
+        // Merge progress doc — also embed schedule metadata for archive reads (no fan-out needed)
+        final progressData = newProgress.toMap();
+        if (scheduleMonth != null) progressData['month'] = scheduleMonth;
+        if (scheduleWeekNumber != null) progressData['weekNumber'] = scheduleWeekNumber;
+        transaction.set(progressRef, progressData, SetOptions(merge: true));
+
+        // Update user doc: points + denormalized completion rate for leaderboard
+        final Map<String, dynamic> userUpdates = {
+          'scheduleCompletionRate': newRate,
+        };
+        if (addedPoints > 0) {
+          userUpdates['monthlyPoints'] = FieldValue.increment(addedPoints);
+          userUpdates['totalPoints'] = FieldValue.increment(addedPoints);
+        }
+        transaction.update(_db.collection('users').doc(userId), userUpdates);
+      });
     } catch (e) {
       debugPrint('Error updating day progress: $e');
       rethrow;
     }
   }
 
-  Future<List<Map>> getPremiumUsersProgress(String weekId) async {
-    // أولاً جيب كل المشتركين
-    final premiumUsers = await _db
-      .collection('users')
-      .where('isPremium', isEqualTo: true)
-      .get();
-    
-    List<Map> result = [];
-    
-    // لكل مشترك جيب الـ progress بتاعه
-    for (var doc in premiumUsers.docs) {
-      final userId = doc.id;
-      final userName = doc.data()['name'] ?? '';
-      final photoUrl = doc.data()['photoUrl'] ?? '';
-      final email = doc.data()['email'] ?? '';
-      final inviteCode = doc.data()['inviteCode'] ?? '';
-      final premiumEndDate = doc.data()['premiumEndDate'];
-      
-      final progressDoc = await _db
+  /// Compatibility shim for admin_schedule_panel — delegates to the
+  /// optimized [getWeeklyLeaderboard] while keeping the old call signature.
+  Future<List<Map<String, dynamic>>> getPremiumUsersProgress(String weekId) =>
+      getWeeklyLeaderboard(weekId);
+
+  /// Single query — reads `scheduleCompletionRate` denormalized on each
+  /// habit check-off, avoiding the old N+1 pattern entirely.
+  /// Requires Firestore composite index: isPremium ASC + scheduleCompletionRate DESC.
+  Future<List<Map<String, dynamic>>> getWeeklyLeaderboard(String weekId) async {
+    try {
+      final snapshot = await _db
+          .collection('users')
+          .where('isPremium', isEqualTo: true)
+          .orderBy('scheduleCompletionRate', descending: true)
+          .limit(10)
+          .get();
+
+      return snapshot.docs.map((doc) {
+        final data = doc.data();
+        return <String, dynamic>{
+          'userId': doc.id,
+          'name': data['name'] ?? '',
+          'photoUrl': data['photoUrl'] ?? '',
+          'completionRate': (data['scheduleCompletionRate'] as num?)?.toDouble() ?? 0.0,
+        };
+      }).toList();
+    } catch (e) {
+      debugPrint('Error fetching weekly leaderboard: $e');
+      return [];
+    }
+  }
+
+  /// Single query — month/weekNumber are now embedded in each progress doc
+  /// by updateDayProgress, so no fan-out reads to weeklySchedule are needed.
+  Future<List<Map>> getUserWeeksArchive(String userId) async {
+    final progressDocs = await _db
         .collection('users')
         .doc(userId)
         .collection('scheduleProgress')
-        .doc(weekId)
+        .orderBy('lastUpdated', descending: true)
         .get();
-      
-      double completionRate = 0;
-      if (progressDoc.exists) {
-        completionRate = progressDoc.data()?['completionRate'] ?? 0.0;
-      }
-      
-      result.add({
-        'userId': userId,
-        'name': userName,
-        'photoUrl': photoUrl,
-        'email': email,
-        'inviteCode': inviteCode,
-        'premiumEndDate': premiumEndDate,
-        'isPremium': true, // Because we filtered by isPremium: true
-        'completionRate': completionRate,
-        'progress': progressDoc.data()?['days'] ?? {},
-      });
-    }
-    
-    // رتبهم بالنسبة تنازلياً
-    result.sort((a, b) => 
-      (b['completionRate'] as double)
-      .compareTo(a['completionRate'] as double));
-    
-    return result;
-  }
 
-  Future<List<Map<String, dynamic>>> getWeeklyLeaderboard(String weekId) async {
-     try {
-       final premiumProgress = await getPremiumUsersProgress(weekId);
-       
-       // getPremiumUsersProgress returns sorted results, so just cast to the exact type
-       List<Map<String, dynamic>> rankings = premiumProgress.map((e) => Map<String, dynamic>.from(e)).toList();
-       
-       // Return Top 10
-       return rankings.take(10).toList();
-       
-      } catch (e) {
-        debugPrint('Error fetching weekly leaderboard: $e');
-        return [];
-     }
-  }
-
-  Future<List<Map>> getUserWeeksArchive(String userId) async {
-    final progressDocs = await _db
-      .collection('users')
-      .doc(userId)
-      .collection('scheduleProgress')
-      .orderBy('lastUpdated', descending: true)
-      .get();
-    
-    List<Map> archive = [];
-    
+    final List<Map> archive = [];
     for (var doc in progressDocs.docs) {
       final data = doc.data();
-      
-      final scheduleDoc = await _db
-        .collection('weeklySchedule')
-        .doc(doc.id)
-        .get();
-      
-      if (scheduleDoc.exists) {
-        archive.add({
-          'weekId': doc.id,
-          'month': scheduleDoc.data()?['month'],
-          'weekNumber': scheduleDoc.data()?['weekNumber'],
-          'completionRate': data['completionRate'] != null ? data['completionRate'] * 100 : 0.0,
-          'days': data['days'] ?? {},
-          'createdAt': data['lastUpdated'],
-        });
-      }
+      // Only include docs that already have embedded schedule metadata.
+      // Docs written before this change won't have month/weekNumber yet —
+      // they will populate naturally on the user's next habit check-off.
+      if (data['month'] == null || data['weekNumber'] == null) continue;
+
+      archive.add({
+        'weekId': doc.id,
+        'month': data['month'],
+        'weekNumber': data['weekNumber'],
+        'completionRate':
+            data['completionRate'] != null ? data['completionRate'] * 100 : 0.0,
+        'days': data['days'] ?? {},
+        'createdAt': data['lastUpdated'],
+      });
     }
-    
     return archive;
   }
 

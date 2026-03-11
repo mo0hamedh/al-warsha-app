@@ -444,7 +444,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                     ),
                     const SizedBox(height: 16),
                     if (_isLoadingProgress)
-                      const Center(child: CircularProgressIndicator(color: theme.accentColor))
+                      Center(child: CircularProgressIndicator(color: theme.accentColor))
                     else if (_usersProgress.isEmpty)
                       Center(
                         child: Text(
@@ -544,7 +544,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     IconButton(
-                                      icon: const Icon(Icons.copy, color: theme.accentColor, size: 18),
+                                      icon: Icon(Icons.copy, color: theme.accentColor, size: 18),
                                       onPressed: () {
                                         Clipboard.setData(ClipboardData(text: userMap['inviteCode'] ?? ''));
                                         ScaffoldMessenger.of(context).showSnackBar(
@@ -839,7 +839,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                 stream: _dbService.getAllPremiumUsers(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator(color: theme.accentColor));
+                    return Center(child: CircularProgressIndicator(color: theme.accentColor));
                   }
                   if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return Text(
@@ -933,7 +933,7 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
             children: [
               // زرار نسخ
               IconButton(
-                icon: const Icon(Icons.copy, color: theme.accentColor, size: 18),
+                icon: Icon(Icons.copy, color: theme.accentColor, size: 18),
                 onPressed: () {
                   Clipboard.setData(ClipboardData(text: user.inviteCode));
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -1089,13 +1089,13 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
               width: double.infinity,
               height: 48,
               child: OutlinedButton.icon(
-                icon: const Icon(Icons.calendar_today, color: theme.accentColor),
+                icon: Icon(Icons.calendar_today, color: theme.accentColor),
                 label: Text("تحديد تاريخ انتهاء 📅",
                   style: GoogleFonts.tajawal(
                     color: theme.accentColor,
                     fontWeight: FontWeight.bold)),
                 style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: theme.accentColor),
+                  side: BorderSide(color: theme.accentColor),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)),
                 ),
@@ -1108,9 +1108,9 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                     lastDate: DateTime.now().add(const Duration(days: 365)),
                     builder: (context, child) => Theme(
                       data: ThemeData.dark().copyWith(
-                        colorScheme: const ColorScheme.dark(
+                        colorScheme: ColorScheme.dark(
                           primary: theme.accentColor,
-                          surface: Color(0xFF1E1E1E),
+                          surface: const Color(0xFF1E1E1E),
                         ),
                       ),
                       child: child!,
@@ -1167,10 +1167,10 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
               width: double.infinity,
               height: 48,
               child: OutlinedButton.icon(
-                icon: const Icon(Icons.edit_calendar, color: theme.accentColor),
+                icon: Icon(Icons.edit_calendar, color: theme.accentColor),
                 label: Text("تغيير تاريخ الانتهاء 📅", style: GoogleFonts.tajawal(color: theme.accentColor)),
                 style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: theme.accentColor),
+                  side: BorderSide(color: theme.accentColor),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)),
                 ),
@@ -1182,9 +1182,9 @@ class _AdminSchedulePanelState extends State<AdminSchedulePanel> {
                     lastDate: DateTime.now().add(const Duration(days: 365)),
                     builder: (context, child) => Theme(
                       data: ThemeData.dark().copyWith(
-                        colorScheme: const ColorScheme.dark(
+                        colorScheme: ColorScheme.dark(
                           primary: theme.accentColor,
-                          surface: Color(0xFF1E1E1E),
+                          surface: const Color(0xFF1E1E1E),
                         ),
                       ),
                       child: child!,

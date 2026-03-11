@@ -64,9 +64,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               final isAdmin = data['isAdmin'] == true;
               if (!isAdmin) return const SizedBox();
               return IconButton(
-                icon: const Icon(
+                icon: Icon(
                   Icons.admin_panel_settings,
-                  color: theme.accentColor,
+                  color: themeProvider.accentColor,
                 ),
                 onPressed: () {
                   Navigator.push(

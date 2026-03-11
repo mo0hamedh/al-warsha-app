@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:el_warsha/providers/theme_provider.dart';
-import 'package:el_warsha/services/database_service.dart';
+import 'package:el_warsha/features/habits/providers/habit_provider.dart';
 import 'package:el_warsha/features/habits/models/habit_model.dart';
 import 'package:el_warsha/features/auth/services/auth_service.dart';
 
@@ -13,16 +13,14 @@ class DailyCheckInDialog extends StatefulWidget {
   const DailyCheckInDialog({super.key, required this.unloggedHabits});
 
   static Future<void> showIfNeeded(BuildContext context) async {
-    final dbService = DatabaseService();
     final authService = context.read<AuthService>();
     final user = authService.currentUser;
     if (user == null) return;
 
     final todayStr = DateTime.now().toIso8601String().split('T').first;
 
-    // Fetch habits once for a quick check instead of listening to a stream globally here
-    final habitsStream = dbService.getUserHabits(user.uid);
-    final allHabits = await habitsStream.first;
+    // Read habits from the optimistic provider (instant, no network)
+    final allHabits = context.read<HabitProvider>().habits;
     
     final List<HabitModel> unlogged = [];
     for (var h in allHabits) {
@@ -50,7 +48,6 @@ class DailyCheckInDialog extends StatefulWidget {
 }
 
 class _DailyCheckInDialogState extends State<DailyCheckInDialog> {
-  final DatabaseService _dbService = DatabaseService();
   int _currentIndex = 0;
   bool _isSubmitting = false;
 
@@ -59,12 +56,9 @@ class _DailyCheckInDialogState extends State<DailyCheckInDialog> {
     setState(() => _isSubmitting = true);
 
     final habit = widget.unloggedHabits[_currentIndex];
-    final authService = context.read<AuthService>();
-    final user = authService.currentUser;
 
-    if (user != null) {
-       await _dbService.checkInHabit(user.uid, habit.id, status, null);
-    }
+    // Optimistic: use HabitProvider for instant feedback
+    await context.read<HabitProvider>().checkInHabit(habit.id, status, null);
     
     if (mounted) {
        if (_currentIndex < widget.unloggedHabits.length - 1) {

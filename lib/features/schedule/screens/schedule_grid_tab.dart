@@ -296,7 +296,9 @@ class _ScheduleGridTabState extends State<ScheduleGridTab> {
                                         dayNameAr,
                                         habit.name,
                                         newVal,
-                                        widget.schedule.habits.length);
+                                        widget.schedule.habits.length,
+                                        scheduleMonth: widget.schedule.month,
+                                        scheduleWeekNumber: widget.schedule.weekNumber);
                                   } else {
                                     dbService.updateDayProgress(
                                         widget.userId,
@@ -304,7 +306,9 @@ class _ScheduleGridTabState extends State<ScheduleGridTab> {
                                         dayNameAr,
                                         habit.name,
                                         !completed,
-                                        widget.schedule.habits.length);
+                                        widget.schedule.habits.length,
+                                        scheduleMonth: widget.schedule.month,
+                                        scheduleWeekNumber: widget.schedule.weekNumber);
                                   }
                                 },
                           child: Container(
@@ -448,7 +452,9 @@ class _ScheduleGridTabState extends State<ScheduleGridTab> {
                 dayName,
                 habit.name,
                 int.tryParse(newVal) ?? 0,
-                widget.schedule.habits.length);
+                widget.schedule.habits.length,
+                scheduleMonth: widget.schedule.month,
+                scheduleWeekNumber: widget.schedule.weekNumber);
           }
         },
       ),

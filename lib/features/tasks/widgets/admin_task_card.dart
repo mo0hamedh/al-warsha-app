@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:el_warsha/features/tasks/models/admin_task_model.dart';
+import 'package:el_warsha/providers/theme_provider.dart';
 
 class AdminTaskCard extends StatelessWidget {
   final AdminTask task;
@@ -16,6 +18,7 @@ class AdminTaskCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = context.watch<ThemeProvider>();
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       padding: const EdgeInsets.all(14),
@@ -25,12 +28,11 @@ class AdminTaskCard extends StatelessWidget {
         border: Border.all(
           color: isCompleted
               ? const Color(0xFF333333)
-              : theme.accentColor.withOpacity(0.3),
+              : theme.accentColor.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
         children: [
-          // Checkbox
           GestureDetector(
             onTap: isCompleted ? null : onComplete,
             child: Container(
@@ -42,7 +44,7 @@ class AdminTaskCard extends StatelessWidget {
                 border: Border.all(
                   color: isCompleted
                       ? theme.accentColor
-                      : theme.accentColor.withOpacity(0.5),
+                      : theme.accentColor.withValues(alpha: 0.5),
                   width: 2,
                 ),
               ),
@@ -60,9 +62,7 @@ class AdminTaskCard extends StatelessWidget {
                   : null,
             ),
           ),
-
           const SizedBox(width: 12),
-
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -90,10 +90,7 @@ class AdminTaskCard extends StatelessWidget {
               ],
             ),
           ),
-
           const SizedBox(width: 8),
-
-          // النقاط
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
             decoration: BoxDecoration(

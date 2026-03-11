@@ -174,7 +174,7 @@ class ScheduleStatsTab extends StatelessWidget {
                 future: DatabaseService().getUserWeeksArchive(userId),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator(color: theme.accentColor));
+                    return Center(child: CircularProgressIndicator(color: theme.accentColor));
                   }
                   
                   if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -211,7 +211,7 @@ class ScheduleStatsTab extends StatelessWidget {
                                 color: theme.isDarkMode ? const Color(0xFF1E1E1E) : Colors.white,
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: _getBorderColor(rate),
+                                  color: _getBorderColor(rate, theme),
                                   width: 1,
                                 ),
                               ),
@@ -246,7 +246,7 @@ class ScheduleStatsTab extends StatelessWidget {
                                           child: CircularProgressIndicator(
                                             value: rate / 100,
                                             backgroundColor: theme.isDarkMode ? const Color(0xFF2A2A2A) : Colors.grey.shade200,
-                                            color: _getProgressColor(rate),
+                                            color: _getProgressColor(rate, theme),
                                             strokeWidth: 6,
                                           ),
                                         ),
@@ -346,13 +346,13 @@ class ScheduleStatsTab extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
-                      color: _getProgressColor((week['completionRate'] as num).toDouble()).withValues(alpha: 0.1),
+                      color: _getProgressColor((week['completionRate'] as num).toDouble(), theme).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: _getProgressColor((week['completionRate'] as num).toDouble()), width: 1.5),
+                      border: Border.all(color: _getProgressColor((week['completionRate'] as num).toDouble(), theme), width: 1.5),
                     ),
                     child: Text(
                       "نسبة الإنجاز: ${week['completionRate'].toInt()}%",
-                      style: GoogleFonts.tajawal(color: _getProgressColor((week['completionRate'] as num).toDouble()), fontWeight: FontWeight.bold),
+                      style: GoogleFonts.tajawal(color: _getProgressColor((week['completionRate'] as num).toDouble(), theme), fontWeight: FontWeight.bold),
                     ),
                   ),
                   
@@ -402,14 +402,14 @@ class ScheduleStatsTab extends StatelessWidget {
                             child: LinearProgressIndicator(
                               value: dayRate / 100,
                               backgroundColor: theme.isDarkMode ? const Color(0xFF3A3A3A) : Colors.grey.shade300,
-                              color: _getProgressColor(dayRate),
+                              color: _getProgressColor(dayRate, theme),
                               borderRadius: BorderRadius.circular(2),
                             ),
                           ),
                           const SizedBox(width: 8),
                           Text(
                             "${dayRate.toInt()}%",
-                            style: GoogleFonts.tajawal(color: _getProgressColor(dayRate), fontSize: 12, fontWeight: FontWeight.bold),
+                            style: GoogleFonts.tajawal(color: _getProgressColor(dayRate, theme), fontSize: 12, fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -425,13 +425,13 @@ class ScheduleStatsTab extends StatelessWidget {
   }
 
   // Helper functions:
-  Color _getProgressColor(double rate) {
+  Color _getProgressColor(double rate, ThemeProvider theme) {
     if (rate >= 80) return const Color(0xFF66BB6A);
     if (rate >= 50) return theme.accentColor;
     return const Color(0xFFFF5252);
   }
 
-  Color _getBorderColor(dynamic rate) {
+  Color _getBorderColor(dynamic rate, ThemeProvider theme) {
     final r = (rate as num).toDouble();
     if (r >= 80) return const Color(0xFF66BB6A).withValues(alpha: 0.5);
     if (r >= 50) return theme.accentColor.withValues(alpha: 0.5);

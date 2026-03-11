@@ -23,8 +23,10 @@ class ScheduleScreen extends StatefulWidget {
 class _ScheduleScreenState extends State<ScheduleScreen> with SingleTickerProviderStateMixin {
   final DatabaseService _dbService = DatabaseService();
   late TabController _tabController;
-  
-  Stream<DocumentSnapshot>? _userStream;
+
+  // One-time fetch instead of a real-time listener — premium status rarely
+  // changes mid-session, so there's no need for a persistent WebChannel.
+  Future<DocumentSnapshot>? _premiumFuture;
   Stream<WeeklyScheduleModel?>? _scheduleStream;
 
   @override
@@ -34,7 +36,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> with SingleTickerProvid
   }
 
   void _initStreams(String uid) {
-    _userStream ??= FirebaseFirestore.instance.collection('users').doc(uid).snapshots();
+    _premiumFuture ??= FirebaseFirestore.instance.collection('users').doc(uid).get();
     _scheduleStream ??= _dbService.getActiveSchedule();
   }
 
@@ -55,7 +57,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> with SingleTickerProvid
     _initStreams(user.uid);
 
     return _PremiumGate(
-      userStream: _userStream!,
+      premiumFuture: _premiumFuture!,
       theme: theme,
       lockedChild: _buildLockedScreen(theme),
       unlockedBuilder: () => _ScheduleScaffold(
@@ -250,13 +252,13 @@ class _ScheduleScreenState extends State<ScheduleScreen> with SingleTickerProvid
 }
 
 class _PremiumGate extends StatelessWidget {
-  final Stream<DocumentSnapshot> userStream;
+  final Future<DocumentSnapshot> premiumFuture;
   final ThemeProvider theme;
   final Widget lockedChild;
   final Widget Function() unlockedBuilder;
 
   const _PremiumGate({
-    required this.userStream,
+    required this.premiumFuture,
     required this.theme,
     required this.lockedChild,
     required this.unlockedBuilder,
@@ -264,10 +266,10 @@ class _PremiumGate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<DocumentSnapshot>(
-      stream: userStream,
+    return FutureBuilder<DocumentSnapshot>(
+      future: premiumFuture,
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting && !snapshot.hasData) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
             backgroundColor: theme.bg,
             body: Center(child: CircularProgressIndicator(color: theme.accentColor)),
@@ -627,6 +629,28 @@ class _SkeletonBox extends StatelessWidget {
         color: const Color(0xFF333333),
         borderRadius: BorderRadius.circular(radius),
       ),
+    );
+  }
+}
+
+class _SkeletonContainer extends StatelessWidget {
+  final Widget child;
+  final EdgeInsets? margin;
+  final double? height;
+
+  const _SkeletonContainer({required this.child, this.margin, this.height});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: margin,
+      height: height,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1E1E1E),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: child,
     );
   }
 }

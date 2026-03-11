@@ -96,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       context: context,
                       builder: (_) => const AddTaskDialog(),
                     ),
-                backgroundColor: theme.accentColor,
+                backgroundColor: themeProvider.accentColor,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
@@ -745,7 +745,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Icon(
+                                  Icon(
                                     Icons.lock,
                                     size: 12,
                                     color: theme.accentColor,
@@ -818,19 +818,9 @@ class _HomeScreenState extends State<HomeScreen> {
           builder: (context, adminTasksSnap) {
             final adminTasks = adminTasksSnap.data ?? [];
 
-            return StreamBuilder<List<TaskModel>>(
-              stream: taskProvider.tasksStream,
-              builder: (context, userTasksSnap) {
-                if (userTasksSnap.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(40),
-                      child: CircularProgressIndicator(color: theme.accentColor),
-                    ),
-                  );
-                }
-
-                final userTasks = userTasksSnap.data ?? [];
+            return Builder(
+              builder: (context) {
+                final userTasks = context.watch<TaskProvider>().tasks;
 
                 // 1. مهام الأدمن غير مكتملة
                 // 2. مهام المستخدم غير مكتملة
@@ -1129,14 +1119,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
     final nameController = TextEditingController();
     IconData selectedIcon = Icons.push_pin;
-    Color selectedColor = theme.accentColor;
+    final themeLocal = Provider.of<ThemeProvider>(context, listen: false);
+    Color selectedColor = themeLocal.accentColor;
     
     final icons = [
       Icons.push_pin, Icons.menu_book, Icons.work, Icons.track_changes, Icons.fitness_center,
       Icons.palette, Icons.music_note, Icons.directions_run, Icons.apple, Icons.flight
     ];
     final colors = [
-      theme.accentColor, const Color(0xFF4FC3F7),
+      themeLocal.accentColor, const Color(0xFF4FC3F7),
       const Color(0xFF66BB6A), const Color(0xFFAB47BC),
       const Color(0xFFFF5252), const Color(0xFFFFD700),
     ];
@@ -1171,8 +1162,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      color: theme.accentColor),
+                    borderSide: BorderSide(
+                      color: themeLocal.accentColor),
                   ),
                 ),
               ),
@@ -1194,12 +1185,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         color: selectedIcon == icon
-                          ? theme.accentColor.withOpacity(0.2)
+                          ? themeLocal.accentColor.withValues(alpha: 0.2)
                           : const Color(0xFF2A2A2A),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
                           color: selectedIcon == icon
-                            ? theme.accentColor
+                            ? themeLocal.accentColor
                             : Colors.transparent,
                         ),
                       ),
@@ -1250,7 +1241,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: theme.accentColor,
+                backgroundColor: themeLocal.accentColor,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -1462,7 +1453,7 @@ class HomeHeaderWidget extends StatelessWidget {
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    const Icon(Icons.info_outline, size: 12, color: theme.accentColor),
+                                    Icon(Icons.info_outline, size: 12, color: theme.accentColor),
                                     const SizedBox(width: 4),
                                     Text(
                                       "غير مشترك",
@@ -1572,9 +1563,8 @@ class PomodoroCardWidget extends StatelessWidget {
                       : Colors.black.withOpacity(0.05),
             ),
           ),
-          child: IntrinsicHeight(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+          child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // Left side: label + timer
                 Expanded(
@@ -1667,6 +1657,7 @@ class PomodoroCardWidget extends StatelessWidget {
                 // Vertical divider
                 Container(
                   width: 1,
+                  height: 120,
                   margin: const EdgeInsets.symmetric(
                     horizontal: 16,
                     vertical: 4,
@@ -1725,7 +1716,6 @@ class PomodoroCardWidget extends StatelessWidget {
             ),
           ),
         ),
-      ),
     );
   }
 }
@@ -2049,8 +2039,7 @@ class TaskCardWidget extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 }
 

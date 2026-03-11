@@ -112,7 +112,7 @@ class _DailyCheckInDialogState extends State<DailyCheckInDialog> {
             const SizedBox(height: 32),
             
             _isSubmitting 
-              ? CircularProgressIndicator(color: theme.accentOrange)
+              ? CircularProgressIndicator(color: theme.accentColor)
               : Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   textDirection: TextDirection.rtl,
